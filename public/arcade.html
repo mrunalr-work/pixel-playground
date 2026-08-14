@@ -112,9 +112,11 @@ function add(n){ score+=n; $("score").textContent=score; }
 
 games.forEach((g,i)=>{
   const b=document.createElement("button");
-  b.textContent=`${String(i+1).padStart(2,"0")} — ${g}`;
+  b.className="gb";
+  b.innerHTML=`${String(i+1).padStart(2,"0")} — ${g}` + (online[i] ? '<span style="float:right;color:var(--g);font-size:14px">● ONLINE</span>' : "");
   b.onclick=()=>selectGame(i);
   list.appendChild(b);
+
   const p=document.createElement("button");
   p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;
   p.onclick=()=>{hideLobby();selectGame(i)};
@@ -163,23 +165,6 @@ async function shareRoom(){
   await copyRoom();
 }
 
-games.forEach((g,i)=>{const b=document.createElement("button");b.textContent=`${String(i+1).padStart(2,"0")} — ${g}`;b.onclick=()=>selectGame(i);list.appendChild(b);const p=document.createElement("button");p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;p.onclick=()=>{hideLobby();selectGame(i)};gamepick.appendChild(p)});
-
-function home(){location.href="/"}
-function showLobby(){lobby.style.display="flex"}function hideLobby(){lobby.style.display="none"}function selectGame(i){current=i;title.textContent=games[i];desc.textContent=online[i]?"Online multiplayer ready.":"Single-player game.";renderGame()}
-function restart(){renderGame()}
-function add(n){score+=n;document.getElementById("score").textContent=score}
-function searchUsers(){socket.emit("lobby:search",{query:search.value})}
-socket.on("lobby:searchResults",arr=>{results.innerHTML=arr.filter(x=>x!==username).map(x=>`<button onclick="inviteUser('${x}')">● ${x} — INVITE</button>`).join("")||"<div class='desc'>No online players found.</div>"})
-function inviteUser(u){if(!online[current]){alert("Choose an online multiplayer game first.");return}socket.emit("room:create",{game:online[current],targetUsername:u});roomStatus.textContent="INVITATION SENT TO "+u}
-socket.on("friend:invite",d=>{if(confirm(`${d.from} invited you to ${games[Object.keys(online).find(k=>online[k]===d.game)]}. Join?`))socket.emit("room:join",{roomId:d.roomId})});
-socket.on("room:created",d=>{roomId=d.roomId;const u=new URL(location.href);u.pathname="/join/"+d.roomId;u.search="";roomLink.value=u.toString();roomStatus.textContent=`ROOM ${d.roomId} READY — SEND THIS LINK`;});
-socket.on("room:joined",d=>{roomId=d.roomId;roomStatus.textContent=`ROOM ${d.roomId}: ${d.players.join(" VS ")}`;hideLobby();renderGame()});
-socket.on("room:error",m=>roomStatus.textContent=m);
-socket.on("room:left",()=>{roomStatus.textContent="FRIEND LEFT THE ROOM";});
-async function copyRoom(){if(!roomLink.value)return;try{await navigator.clipboard.writeText(roomLink.value)}catch(e){const t=document.createElement("textarea");t.value=roomLink.value;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}roomStatus.textContent="LINK COPIED — SEND IT TO YOUR FRIEND"}
-async function shareRoom(){if(!roomLink.value)return;if(navigator.share)try{await navigator.share({title:"Pixel Playground",text:"Join my game!",url:roomLink.value})}catch(e){}else copyRoom()}
-
 function renderGame(){screen.innerHTML="";if(online[current]){renderOnline();return}if(current===0)clicker();else if(current===1)reaction();else if(current===3)guess();else if(current===5)memorySolo();else if(current===6)whack();else if(current===7)dodger();else if(current===8)colors();else if(current===9)typing();else if(current===10)snake();else if(current===12)breakout();else if(current===13)flappy();else if(current===14)doodle();else if(current===15)two048();else clicker()}
 function center(x){screen.innerHTML=`<div class="center">${x}</div>`}
 function clicker(){let n=0;center(`<div class="big" id="c">0</div><button class="btn" onclick="c.textContent=++window.cc">CLICK!</button>`);window.cc=0}
@@ -188,7 +173,16 @@ function guess(){const n=Math.floor(Math.random()*100)+1;center(`<div class="big
 function memorySolo(){const v=["◆","●","★","▲","■","♥","☀","☾"],d=[...v,...v].sort(()=>Math.random()-.5);let first=null,lock=false,matched=0;center(`<div class="mem-grid" id="mg"></div>`);d.forEach(x=>{const b=document.createElement("button");b.className="mem";b.textContent=x;b.onclick=()=>{if(lock||b.classList.contains("flipped"))return;b.classList.add("flipped");if(!first)first={b,x};else{lock=true;if(first.x===x){first.b.classList.add("matched");b.classList.add("matched");matched++;add(20);first=null;lock=false}else setTimeout(()=>{first.b.classList.remove("flipped");b.classList.remove("flipped");first=null;lock=false},500)}};mg.appendChild(b)})}
 function whack(){center(`<div class="big">WHACK</div><button class="btn" onclick="add(10)">HIT!</button>`)}function dodger(){center(`<div class="big">DODGER</div><button class="btn" onclick="this.style.position='relative';this.style.left=Math.random()*250+'px'">CLICK ME</button>`)}function colors(){center(`<div class="big">COLOR</div><button class="btn" onclick="add(10)">MATCH</button>`)}function typing(){center(`<div class="big">TYPE FAST</div><div>PIXEL GAMES ARE FUN</div><input placeholder="type it">`)}function snake(){center(`<div class="big">SNAKE</div><p class="desc">Use Arrow Keys — canvas version from the arcade build.</p>`)}function breakout(){center(`<div class="big">BREAKOUT</div><p class="desc">Use ← →.</p>`)}function flappy(){center(`<div class="big">FLAPPY</div><p class="desc">Click to flap.</p>`)}function doodle(){center(`<div class="big">DOODLE JUMP</div><p class="desc">Use A / D.</p>`)}function two048(){center(`<div class="big">2048</div><p class="desc">Use Arrow Keys.</p>`)}
 
-function renderOnline(){if(!roomId){showLobby();return}if(current===2)rps();if(current===4)ttt();if(current===11)pong()}
+function renderOnline(){
+  if(!roomId){
+    screen.innerHTML="";
+    showLobby();
+    return;
+  }
+  if(current===2)rps();
+  if(current===4)ttt();
+  if(current===11)pong();
+}
 function rps(){center(`<div class="online-status" id="gos">ONLINE — CREATE OR JOIN A ROOM</div><div class="big" id="rscore">0 — 0</div><div class="controls">${["ROCK","PAPER","SCISSORS"].map(x=>`<button class="btn" onclick="sendRps('${x}')">${x}</button>`).join("")}</div><div class="status" id="rstat">Make your move.</div>`)}
 function sendRps(m){socket.emit("rps:move",m);rstat.textContent="MOVE SENT — WAITING..."}socket.on("rps:state",d=>{rscore.textContent="0 — 0";gos.textContent="ONLINE — ROOM CONNECTED"});socket.on("rps:result",d=>{const ids=Object.keys(d.scores);const vals=ids.map(x=>d.scores[x]);rscore.textContent=vals.join(" — ");rstat.textContent=d.winner===socket.id?"YOU WIN!":d.winner?"FRIEND WINS":"DRAW";if(d.winner===socket.id)add(25)});
 
