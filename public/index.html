@@ -1,0 +1,15 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Playground</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
+:root{--bg:#101018;--panel:#181827;--ink:#f5f1dc;--muted:#aaa5bd;--a:#ffcc33;--g:#55e6a5;--b:#4c4968}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#282844,#101018 58%,#08080d);color:var(--ink);font:22px 'VT323',monospace}.wrap{max-width:1180px;margin:auto;padding:24px}.hero{text-align:center;padding:38px 10px 24px}.logo{font:30px 'Press Start 2P';color:var(--a);text-shadow:4px 4px #5d3b00;line-height:1.7}.hero p{color:var(--muted);font-size:25px}.panel{border:3px solid var(--b);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}h2{font:14px 'Press Start 2P';color:var(--a);line-height:1.7}.games{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.game{border:2px solid var(--b);background:#12121e;color:var(--ink);padding:14px;text-align:left;font:inherit;cursor:pointer}.game:hover{border-color:var(--a);transform:translate(-2px,-2px)}.game small{display:block;color:var(--muted);margin-top:4px}.num{color:var(--a);font-family:'Press Start 2P';font-size:10px}.btn{border:3px solid var(--ink);background:var(--a);color:#16120a;padding:10px 14px;font:inherit;font-weight:bold;box-shadow:4px 4px #6b4b00;cursor:pointer}.online{color:var(--g)}@media(max-width:900px){.games{grid-template-columns:repeat(2,1fr)}}@media(max-width:520px){.games{grid-template-columns:1fr}.logo{font-size:21px}}
+</style></head><body><div class="wrap">
+<section class="hero"><div class="logo">PIXEL PLAYGROUND</div><p>16 tiny retro games. Local play, online rooms, and real-time multiplayer.</p><button class="btn" onclick="location.href='/arcade.html'">ENTER ARCADE</button></section>
+<section class="panel"><h2>CHOOSE A GAME</h2><div class="games" id="games"></div></section>
+</div><script>
+const games=["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone","2048"];
+const online=new Set([2,4,11]);
+games.forEach((g,i)=>{const b=document.createElement("button");b.className="game";b.innerHTML=`<span class="num">${String(i+1).padStart(2,"0")}</span> <b>${g}</b><small class="${online.has(i)?"online":""}">${online.has(i)?"ONLINE MULTIPLAYER":"SOLO"}</small>`;b.onclick=()=>location.href=`/arcade.html?game=${i}`;document.getElementById("games").appendChild(b)});
+</script></body></html>

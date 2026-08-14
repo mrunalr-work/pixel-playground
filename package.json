@@ -1,0 +1,17 @@
+{
+  "name": "pixel-playground",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Retro browser arcade with real-time multiplayer rooms and username search.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
