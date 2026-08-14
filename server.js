@@ -5,8 +5,9 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, { cors: { origin: true, credentials: true } });
 
+app.get("/health", (req, res) => res.json({ ok: true, service: "pixel-playground" }));
 app.use(express.static(path.join(__dirname, "public")));
 app.get("/join/:room", (req, res) => res.sendFile(path.join(__dirname, "public", "join.html")));
 app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
@@ -174,8 +175,8 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    leaveRoom(socket, true);
     const username = sockets.get(socket.id);
+    leaveRoom(socket, true);
     if (username) {
       users.delete(username);
       sockets.delete(socket.id);
