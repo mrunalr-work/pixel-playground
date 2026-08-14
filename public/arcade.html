@@ -11,7 +11,7 @@
 <div class="app"><div class="top"><div class="logo" onclick="home()">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div><div class="badge">SCORE <b id="score">0</b></div></div></div>
 <div class="layout"><aside class="side"><div class="desc">SELECT GAME</div><div class="list" id="list"></div></aside><main class="main"><div class="head"><div><h1 id="title">PIXEL PLAYGROUND</h1><div class="desc" id="desc">Choose a game.</div></div><div class="controls"><button class="btn alt" onclick="showLobby()">← BACK</button><button class="btn alt" onclick="restart()">RESTART</button></div></div><div class="invite" id="invite"></div><div id="screen" class="screen"></div></main></div></div>
 
-<div class="login" id="login"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. We'll keep it unique while you're online.</p><input id="name" maxlength="16"><div style="height:10px"></div><button class="btn" onclick="login()">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
+<div class="login" id="login"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. We'll keep it unique while you're online.</p><input id="name" maxlength="16"><div style="height:10px"></div><button class="btn" onclick="doLogin()">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
 
 <div class="lobby" id="lobby"><div class="lobbybox">
 <div class="lcard"><h2>WHAT GAME WOULD YOU LIKE TO PLAY?</h2><div class="gamepick" id="gamepick"></div></div>
@@ -19,43 +19,154 @@
 </div></div>
 
 <script>
+const socket = io();
+let authed = false;
+let username = "";
+let roomId = "";
+let score = 0;
+let current = Number(new URLSearchParams(location.search).get("game"));
+if (!Number.isInteger(current) || current < 0 || current >= 16) current = 0;
 
-const socket=io();
-let authed=false;
-function randomName(){const a=["PIXEL","TURBO","NEON","RETRO","CYBER","MEGA","NOVA"];const b=["FOX","BOT","NINJA","WIZARD","GHOST","RIDER"];return a[Math.floor(Math.random()*a.length)]+"_"+b[Math.floor(Math.random()*b.length)]+"_"+Math.floor(10+Math.random()*90)}
-function doLogin(){
-  const input=document.getElementById("loginName");
-  const status=document.getElementById("loginStatus");
-  const n=(input.value||randomName()).trim();
-  if(!socket.connected){
-    status.textContent="CONNECTING TO GAME SERVER...";
-    socket.connect();
-    setTimeout(()=>{if(socket.connected){socket.emit("auth",{username:n});}else{status.textContent="SERVER OFFLINE — REFRESH AND TRY AGAIN";}},1200);
-    return;
-  }
-  status.textContent="CONNECTING...";
-  socket.emit("auth",{username:n});
+const $ = id => document.getElementById(id);
+const loginOverlay = $("loginOverlay");
+const loginName = $("loginName");
+const loginStatus = $("loginStatus");
+const me = $("me");
+const lobby = $("lobby");
+const list = $("list");
+const gamepick = $("gamepick");
+const screen = $("screen");
+const title = $("title");
+const desc = $("desc");
+const roomStatus = $("roomStatus");
+const roomLink = $("roomLink");
+const results = $("results");
+const search = $("search");
+
+const games = ["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone","2048"];
+const online = {2:"rps",4:"ttt",11:"pong"};
+
+function randomName(){
+  const a=["PIXEL","TURBO","NEON","RETRO","CYBER","MEGA","NOVA"];
+  const b=["FOX","BOT","NINJA","WIZARD","GHOST","RIDER"];
+  return a[Math.floor(Math.random()*a.length)]+"_"+b[Math.floor(Math.random()*b.length)]+"_"+Math.floor(10+Math.random()*90);
 }
-socket.on("connect",()=>{document.getElementById("loginStatus").textContent="SERVER CONNECTED";});
-socket.on("connect_error",()=>document.getElementById("loginStatus").textContent="SERVER CONNECTION ERROR — CHECK THE RENDER DEPLOYMENT");
-socket.on("disconnect",()=>{if(!authed)document.getElementById("loginStatus").textContent="SERVER DISCONNECTED";});
-socket.on("auth:ok",d=>{
-  authed=true; username=d.username; me.textContent=username;
-  document.getElementById("loginOverlay").style.display="none";
-  const q=new URLSearchParams(location.search);
-  if(q.get("room")){socket.emit("room:join",{roomId:q.get("room")});}
-  else if(q.has("game")){showLobby();selectGame(Number(q.get("game")))}
-  else showLobby();
-});
-const games=["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone"];const online={2:"rps",4:"ttt",11:"pong"};
-let current=Number(new URLSearchParams(location.search).get("game"));if(!Number.isInteger(current)||current<0||current>=games.length)current=0;
-let username="",roomId="",score=0,gameState=null;
 
-loginName.value=randomName();
-loginName.addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
+loginName.value = randomName();
+
+function doLogin(){
+  const n = (loginName.value || randomName()).trim().replace(/[^a-zA-Z0-9_-]/g,"").slice(0,16) || randomName();
+  loginStatus.textContent = socket.connected ? "AUTHENTICATING..." : "CONNECTING TO SERVER...";
+  if (!socket.connected) {
+    socket.connect();
+    const timer = setTimeout(() => {
+      if (!authed && !socket.connected) loginStatus.textContent = "SERVER CONNECTION FAILED — TRY REFRESHING";
+    }, 5000);
+    socket.once("connect", () => {
+      clearTimeout(timer);
+      socket.emit("auth", {username:n});
+    });
+  } else {
+    socket.emit("auth", {username:n});
+  }
+}
+
+loginName.addEventListener("keydown", e => { if(e.key === "Enter") doLogin(); });
+
+socket.on("connect", () => {
+  if (!authed) loginStatus.textContent = "SERVER CONNECTED — CLICK ENTER ARCADE";
+});
+socket.on("connect_error", err => {
+  console.error("Socket connection error:", err);
+  loginStatus.textContent = "SERVER CONNECTION ERROR — REFRESH THE PAGE";
+});
+socket.on("disconnect", reason => {
+  if (!authed) loginStatus.textContent = "SERVER DISCONNECTED";
+});
+
+socket.on("auth:ok", data => {
+  authed = true;
+  username = data.username;
+  me.textContent = username;
+  loginOverlay.style.display = "none";
+  const q = new URLSearchParams(location.search);
+  if (q.get("room")) {
+    roomId = q.get("room").toUpperCase();
+    socket.emit("room:join", {roomId});
+  } else if (q.has("game")) {
+    showLobby();
+    selectGame(Number(q.get("game")));
+  } else {
+    showLobby();
+  }
+});
+
+function home(){ location.href="/"; }
+function showLobby(){ lobby.style.display="flex"; }
+function hideLobby(){ lobby.style.display="none"; }
+function selectGame(i){
+  if (!Number.isInteger(i) || i < 0 || i >= games.length) return;
+  current=i; title.textContent=games[i]; desc.textContent=online[i]?"Online multiplayer ready.":"Single-player game."; renderGame();
+}
+function restart(){ renderGame(); }
+function add(n){ score+=n; $("score").textContent=score; }
+
+games.forEach((g,i)=>{
+  const b=document.createElement("button");
+  b.textContent=`${String(i+1).padStart(2,"0")} — ${g}`;
+  b.onclick=()=>selectGame(i);
+  list.appendChild(b);
+  const p=document.createElement("button");
+  p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;
+  p.onclick=()=>{hideLobby();selectGame(i)};
+  gamepick.appendChild(p);
+});
+
+function searchUsers(){ socket.emit("lobby:search",{query:search.value}); }
+socket.on("lobby:searchResults",arr=>{
+  results.innerHTML=arr.filter(x=>x!==username).map(x=>`<button onclick="inviteUser('${x}')">● ${x} — INVITE</button>`).join("") || "<div class='desc'>No online players found.</div>";
+});
+function inviteUser(u){
+  if(!online[current]){alert("Choose an online multiplayer game first.");return;}
+  socket.emit("room:create",{game:online[current],targetUsername:u});
+  roomStatus.textContent="INVITATION SENT TO "+u;
+}
+socket.on("friend:invite",d=>{
+  const key=Object.keys(online).find(k=>online[k]===d.game);
+  if(confirm(`${d.from} invited you to ${games[Number(key)]}. Join?`)) socket.emit("room:join",{roomId:d.roomId});
+});
+socket.on("room:created",d=>{
+  roomId=d.roomId;
+  const u=new URL(location.href);
+  u.pathname="/join/"+d.roomId;
+  u.search="";
+  roomLink.value=u.toString();
+  roomStatus.textContent=`ROOM ${d.roomId} READY — SEND THIS LINK`;
+});
+socket.on("room:joined",d=>{
+  roomId=d.roomId;
+  roomStatus.textContent=`ROOM ${d.roomId}: ${d.players.join(" VS ")}`;
+  hideLobby();
+  renderGame();
+});
+socket.on("room:error",m=>{roomStatus.textContent=m;showLobby();});
+socket.on("room:left",()=>{roomStatus.textContent="FRIEND LEFT THE ROOM";});
+
+async function copyRoom(){
+  if(!roomLink.value)return;
+  try{await navigator.clipboard.writeText(roomLink.value)}
+  catch(e){const t=document.createElement("textarea");t.value=roomLink.value;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();}
+  roomStatus.textContent="LINK COPIED — SEND IT TO YOUR FRIEND";
+}
+async function shareRoom(){
+  if(!roomLink.value)return;
+  if(navigator.share){try{await navigator.share({title:"Pixel Playground",text:"Join my game!",url:roomLink.value});return}catch(e){}}
+  await copyRoom();
+}
+
 games.forEach((g,i)=>{const b=document.createElement("button");b.textContent=`${String(i+1).padStart(2,"0")} — ${g}`;b.onclick=()=>selectGame(i);list.appendChild(b);const p=document.createElement("button");p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;p.onclick=()=>{hideLobby();selectGame(i)};gamepick.appendChild(p)});
 
-function home(){location.href="/"}function login(){socket.emit("auth",{username:name.value});}socket.on("auth:ok",d=>{username=d.username;me.textContent=username;login.style.display="none";showLobby()});
+function home(){location.href="/"}
 function showLobby(){lobby.style.display="flex"}function hideLobby(){lobby.style.display="none"}function selectGame(i){current=i;title.textContent=games[i];desc.textContent=online[i]?"Online multiplayer ready.":"Single-player game.";renderGame()}
 function restart(){renderGame()}
 function add(n){score+=n;document.getElementById("score").textContent=score}
