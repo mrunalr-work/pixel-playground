@@ -9,7 +9,18 @@
 :root{--bg:#0d0d15;--panel:#171725;--ink:#f4f0dc;--muted:#aaa7ba;--a:#ffcc33;--g:#55e6a5;--r:#ff6070;--line:#4a4765;--blue:#63b3ff}
 *{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#292844,#0d0d15 62%);color:var(--ink);font:23px 'VT323',monospace}.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font:20px 'Press Start 2P';line-height:1.6;color:var(--a);text-shadow:3px 3px #5c3e00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge{border:2px solid var(--line);background:var(--panel);padding:8px 11px}.layout{display:grid;grid-template-columns:285px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--line);background:var(--panel);box-shadow:7px 7px #07070b}.side{padding:11px}.side-title{font:13px 'Press Start 2P';color:var(--a);margin-bottom:10px}.game-list{display:grid;gap:7px}.gb{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gb:hover,.gb.active{border-color:var(--a)}.gb .online{float:right;color:var(--g);font-size:16px}.main{padding:15px;min-height:760px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:2px dashed var(--line);padding-bottom:12px}.head h1{margin:0;font:18px 'Press Start 2P';line-height:1.5;color:var(--a)}.desc{color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:3px solid var(--ink);background:var(--a);color:#17130a;padding:9px 13px;font:inherit;font-weight:bold;cursor:pointer;box-shadow:4px 4px #6b4a00}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:590px;border:3px solid #55516f;background:#09090f;padding:16px;overflow:auto}.center{min-height:550px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}.big{font:28px 'Press Start 2P';line-height:1.7;color:var(--a)}.status{color:var(--g);min-height:28px}.error{color:var(--r)}input{background:#09090f;color:var(--ink);border:3px solid var(--line);padding:9px;font:inherit}.room-card{width:min(720px,100%);border:3px solid var(--line);background:#12121d;padding:16px;text-align:left}.room-card h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin:0 0 8px}.share-row{display:flex;gap:7px;margin-top:8px}.share-row input{flex:1;min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--line);color:var(--a);font:25px 'Press Start 2P';cursor:pointer}.rps-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--line);color:transparent;font:24px 'Press Start 2P';cursor:pointer}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.login{position:fixed;inset:0;background:#0b0b13f2;z-index:30;display:grid;place-items:center;padding:20px}.loginbox{width:min(560px,100%);background:var(--panel);border:4px solid var(--line);padding:30px;text-align:center;box-shadow:9px 9px #07070b}.loginbox input{width:min(330px,100%)}.loginbox h2{font:15px 'Press Start 2P';line-height:1.7;color:var(--a)}.lobby{position:fixed;inset:0;background:#0b0b13f2;z-index:20;display:none;place-items:center;padding:20px}.lobbybox{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--line);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}.lcard h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin-top:0}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:68vh;overflow:auto}.gamepick button{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover{border-color:var(--a)}.searchrow{display:flex;gap:7px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#11111b;color:var(--ink);border:2px solid var(--line);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}canvas{max-width:100%;height:auto;background:#050509;border:3px solid var(--line)}.keyhint{color:var(--muted);text-align:center}.color-btn{width:120px;height:70px;border:3px solid var(--ink);cursor:pointer}.flap{font-size:55px}.jump-player{font-size:45px}.t2048{display:grid;grid-template-columns:repeat(4,72px);gap:7px}.t2048 button{width:72px;height:72px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:20px 'Press Start 2P'}@media(max-width:900px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}@media(max-width:520px){.head{flex-direction:column}.grid3{grid-template-columns:repeat(3,72px)}.cell{width:72px;height:72px}.mem-grid{grid-template-columns:repeat(4,64px)}.mem{width:64px;height:64px;font-size:18px}.big{font-size:20px}}
 
-.wordle-grid{display:grid;grid-template-columns:repeat(5,58px);gap:6px}.letter{width:58px;height:58px;border:3px solid var(--line);display:grid;place-items:center;font:20px 'Press Start 2P'}.letter.correct{background:#2d9d67;border-color:#55e6a5}.letter.present{background:#9b7b25;border-color:#ffcc33}.letter.absent{background:#252532;color:#777}.wordle-keys{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:620px}.key{min-width:38px;padding:9px 7px;background:#252536;color:var(--ink);border:2px solid var(--line);font:18px 'VT323';cursor:pointer}.key.wide{min-width:90px}.color-target{font:24px 'Press Start 2P';color:var(--a);padding:12px}.color-grid{display:grid;grid-template-columns:repeat(5,minmax(90px,1fr));gap:7px;max-width:700px;width:100%}.color-choice{height:58px;border:3px solid var(--ink);color:#fff;text-shadow:2px 2px #000;font:18px 'Press Start 2P';cursor:pointer}.mine-grid{display:grid;grid-template-columns:repeat(9,38px);gap:3px}.mine-cell{width:38px;height:38px;background:#252536;color:var(--a);border:2px solid var(--line);font:18px 'Press Start 2P';cursor:pointer}.mine-cell.revealed{background:#11111b;border-color:#333047}.t2048{display:grid;grid-template-columns:repeat(4,78px);gap:7px;padding:8px;background:#151522;border:3px solid var(--line)}.tile2048{width:78px;height:78px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:18px 'Press Start 2P';transition:transform .12s,filter .12s}.tile2048:not(:empty){animation:pop2048 .18s ease}.tile2048.max{background:#ffcc33;color:#111}.win{color:var(--g)!important}@keyframes pop2048{0%{transform:scale(.72);filter:brightness(1.8)}100%{transform:scale(1);filter:brightness(1)}}@keyframes merge2048{0%{transform:scale(.72);filter:brightness(2.3)}55%{transform:scale(1.16);filter:brightness(1.7)}100%{transform:scale(1);filter:brightness(1)}}.tile2048.merged2048{animation:merge2048 .28s ease}</style>
+.wordle-grid{display:grid;grid-template-columns:repeat(5,58px);gap:6px}.letter{width:58px;height:58px;border:3px solid var(--line);display:grid;place-items:center;font:20px 'Press Start 2P'}.letter.correct{background:#2d9d67;border-color:#55e6a5}.letter.present{background:#9b7b25;border-color:#ffcc33}.letter.absent{background:#252532;color:#777}.wordle-keys{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:620px}.key{min-width:38px;padding:9px 7px;background:#252536;color:var(--ink);border:2px solid var(--line);font:18px 'VT323';cursor:pointer}.key.wide{min-width:90px}.color-target{font:24px 'Press Start 2P';color:var(--a);padding:12px}.color-grid{display:grid;grid-template-columns:repeat(5,minmax(90px,1fr));gap:7px;max-width:700px;width:100%}.color-choice{height:58px;border:3px solid var(--ink);color:#fff;text-shadow:2px 2px #000;font:18px 'Press Start 2P';cursor:pointer}.mine-grid{display:grid;grid-template-columns:repeat(9,38px);gap:3px}.mine-cell{width:38px;height:38px;background:#252536;color:var(--a);border:2px solid var(--line);font:18px 'Press Start 2P';cursor:pointer}.mine-cell.revealed{background:#11111b;border-color:#333047}.t2048{display:grid;grid-template-columns:repeat(4,78px);gap:7px;padding:8px;background:#151522;border:3px solid var(--line)}.tile2048{width:78px;height:78px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:18px 'Press Start 2P';transition:transform .12s,filter .12s}.tile2048:not(:empty){animation:pop2048 .18s ease}.tile2048.max{background:#ffcc33;color:#111}
+.tile2048.tile-2{background:#fff4b0;color:#2a2510}
+.tile2048.tile-4{background:#ffe98a;color:#2a2510}
+.tile2048.tile-8{background:#ffdf63;color:#2a2510}
+.tile2048.tile-16{background:#ffd34a;color:#2a2510}
+.tile2048.tile-32{background:#ffc62f;color:#211b0a}
+.tile2048.tile-64{background:#ffb91f;color:#211b0a}
+.tile2048.tile-128{background:#f5aa12;color:#211b0a}
+.tile2048.tile-256{background:#e99a0b;color:#fff}
+.tile2048.tile-512{background:#dc8b08;color:#fff}
+.tile2048.tile-1024{background:#c97b05;color:#fff}
+.tile2048.tile-2048{background:#b96b00;color:#fff}.win{color:var(--g)!important}@keyframes pop2048{0%{transform:scale(.72);filter:brightness(1.8)}100%{transform:scale(1);filter:brightness(1)}}@keyframes merge2048{0%{transform:scale(.72);filter:brightness(2.3)}55%{transform:scale(1.16);filter:brightness(1.7)}100%{transform:scale(1);filter:brightness(1)}}.tile2048.merged2048{animation:merge2048 .28s ease}</style>
 </head>
 <body>
 <div class="app">
@@ -218,10 +229,27 @@ function timerText(ms){return `${Math.max(0,Math.round(ms))} ms`;}
 
 const SOLO = {
   0: function(){
-    const WORDS=["APPLE","BRAVE","CHAIR","CLOUD","CRANE","DREAM","FLAME","GRAPE","HOUSE","LIGHT","MOUSE","NIGHT","PLANT","ROBOT","SHARE","SMILE","SNAKE","SPACE","STONE","TRAIN","WATER","WORLD"];
+    const WORDS=[
+"APPLE","BRAVE","CHAIR","CLOUD","CRANE","DREAM","FLAME","GRAPE","HOUSE","LIGHT",
+"MOUSE","NIGHT","PLANT","ROBOT","SHARE","SMILE","SNAKE","SPACE","STONE","TRAIN",
+"WATER","WORLD","ABOUT","ABOVE","ADULT","AFTER","AGAIN","ALONE","ANGEL","ANGLE",
+"BEACH","BLACK","BRAIN","BREAD","BRICK","BRING","BROWN","BUILD","CARRY","CAUSE",
+"CHESS","CHILD","CLEAN","CLEAR","CLOCK","COAST","COLOR","COUNT","COVER","CROWN",
+"DANCE","DEATH","DEPTH","DOUBT","EARTH","EMPTY","ENJOY","EVERY","FAIRY","FAITH",
+"FIELD","FINAL","FIRST","FLOOR","FRUIT","FUNNY","GIANT","GLASS","GOLDEN","GREEN",
+"HEART","HONEY","HORSE","HOUSE","HUMAN","IDEAL","IMAGE","INNER","JOINT","KNIFE",
+"LEARN","LEMON","LEVEL","LOCAL","LUCKY","MAGIC","MAKER","MARCH","METAL","MONEY",
+"MUSIC","OCEAN","ORDER","OTHER","PAPER","PARTY","PEACE","PHONE","PIANO","PILOT",
+"PLANE","PLATE","POINT","POWER","PRIDE","PRIME","QUEEN","QUIET","RADIO","RAINY",
+"READY","ROBIN","ROUND","ROYAL","RULER","SCALE","SCHOOL","SHEEP","SHORT","SILLY",
+"SMALL","SOLID","SOUND","SOUTH","SPOON","SPORT","STAGE","STAND","START","STEAM",
+"STEEL","STORM","STORY","SUGAR","TABLE","TASTE","TEACH","THINK","TIGER","TODAY",
+"TOUCH","TOWER","TRACK","TRADE","TRAIL","TRUST","UNCLE","UNDER","UNION","VALUE",
+"VOICE","WATCH","WHEEL","WHITE","WHOLE","WOMAN","WORLD","WRITE","YOUNG","ZEBRA"
+];
     const answer=WORDS[Math.floor(Math.random()*WORDS.length)], max=6;
     let row=0, guess="",gameOver=false;
-    center('<div class="big">WORDLE</div><div class="desc">Guess the 5-letter word in 6 tries.</div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
+    center('<div class="big">WORDLE</div><div class="desc">Guess the 5-letter word in 6 tries. Common dictionary words only.</div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
     const grid=$("wordleGrid"), status=$("wordleStatus"), keys=$("wordleKeys");
     for(let i=0;i<30;i++){const d=document.createElement("div");d.className="letter";grid.appendChild(d);}
     const keyChars="QWERTYUIOPASDFGHJKLZXCVBNM";
@@ -315,18 +343,123 @@ const SOLO = {
     draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
   },
   13: function(){
-    center('<canvas id="flappyCanvas" width="640" height="420"></canvas><div id="flappyStatus" class="status">SPACE / CLICK to flap.</div>');
-    const c=$("flappyCanvas"),ctx=c.getContext("2d");let bird={x:120,y:210,vy:0,r:13},pipes=[],frame=0,alive=true,scoreLocal=0;
-    function spawn(){const gap=145,top=50+Math.random()*180;pipes.push({x:640,top:top,gap:gap,w:52,passed:false});}
-    function flap(){if(!alive)return;bird.vy=-7;}
-    c.addEventListener("click",flap);window.addEventListener("keydown",e=>{if(e.code==="Space")flap();});
-    const timer=setInterval(()=>{if(!alive)return;frame++;if(frame%95===0)spawn();bird.vy+=.38;bird.y+=bird.vy;
-      pipes.forEach(p=>{p.x-=3.2;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;scoreLocal++;addScore(10);}});
-      const hitWall=bird.y-bird.r<0||bird.y+bird.r>420;const hitPipe=pipes.some(p=>bird.x+bird.r>p.x&&bird.x-bird.r<p.x+p.w&&(bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap));
-      if(hitWall||hitPipe){alive=false;$("flappyStatus").textContent="GAME OVER — CLICK TO RESTART";}draw();
+    center('<canvas id="flappyCanvas" width="640" height="420"></canvas><div id="flappyStatus" class="status">CLICK or SPACE to flap.</div>');
+    const c=$("flappyCanvas"),ctx=c.getContext("2d");
+    let bird={x:120,y:210,vy:0,r:12},pipes=[],frame=0,alive=true,scoreLocal=0;
+
+    function spawn(){
+      const gap=145,top=50+Math.random()*180;
+      pipes.push({x:640,top:top,gap:gap,w:52,passed:false});
+    }
+
+    function flap(){
+      if(!alive)return;
+      bird.vy=-7;
+    }
+
+    function restart(){
+      bird={x:120,y:210,vy:0,r:12};
+      pipes=[];frame=0;scoreLocal=0;alive=true;
+      $("flappyStatus").textContent="CLICK or SPACE to flap.";
+      spawn();
+      draw();
+    }
+
+    const click=()=>flap();
+    const key=e=>{
+      // Flappy Bird is intentionally NOT controlled by arrow keys.
+      if(e.code==="Space"){
+        e.preventDefault();
+        flap();
+      }
+    };
+
+    c.addEventListener("click",click);
+    window.addEventListener("keydown",key);
+
+    const timer=setInterval(()=>{
+      if(!alive)return;
+
+      frame++;
+      if(frame%95===0)spawn();
+
+      bird.vy+=0.38;
+      bird.y+=bird.vy;
+
+      pipes.forEach(p=>{
+        p.x-=3.2;
+        if(!p.passed&&p.x+p.w<bird.x){
+          p.passed=true;
+          scoreLocal++;
+          addScore(10);
+        }
+      });
+
+      pipes=pipes.filter(p=>p.x+p.w>-10);
+
+      const hitWall=bird.y-bird.r<0||bird.y+bird.r>420;
+      const hitPipe=pipes.some(p=>
+        bird.x+bird.r>p.x &&
+        bird.x-bird.r<p.x+p.w &&
+        (bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap)
+      );
+
+      if(hitWall||hitPipe){
+        alive=false;
+        $("flappyStatus").textContent="GAME OVER — CLICK or SPACE TO RESTART";
+      }
+
+      draw();
     },16);
-    function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";pipes.forEach(p=>{ctx.fillRect(p.x,0,p.w,p.top);ctx.fillRect(p.x,p.top+p.gap,p.w,420-(p.top+p.gap));});ctx.fillStyle="#f4f0dc";ctx.beginPath();ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.arc(bird.x+4,bird.y-3,3,0,Math.PI*2);ctx.fill();ctx.font="24px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText("SCORE "+scoreLocal,20,30);}
-    spawn();draw();gameCleanup=()=>{clearInterval(timer);c.removeEventListener("click",flap);};
+
+    function draw(){
+      ctx.clearRect(0,0,c.width,c.height);
+
+      // Yellow obstacles.
+      ctx.fillStyle="#ffcc33";
+      pipes.forEach(p=>{
+        ctx.fillRect(p.x,0,p.w,p.top);
+        ctx.fillRect(p.x,p.top+p.gap,p.w,420-(p.top+p.gap));
+      });
+
+      // Small blue bird.
+      ctx.fillStyle="#3b9cff";
+      ctx.beginPath();
+      ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2);
+      ctx.fill();
+
+      // Blue wing.
+      ctx.fillStyle="#1976d2";
+      ctx.beginPath();
+      ctx.ellipse(bird.x-4,bird.y+3,7,4,-0.35,0,Math.PI*2);
+      ctx.fill();
+
+      // Beak.
+      ctx.fillStyle="#ffcc33";
+      ctx.beginPath();
+      ctx.moveTo(bird.x+9,bird.y);
+      ctx.lineTo(bird.x+17,bird.y+3);
+      ctx.lineTo(bird.x+9,bird.y+6);
+      ctx.closePath();
+      ctx.fill();
+
+      // Eye.
+      ctx.fillStyle="#111";
+      ctx.beginPath();
+      ctx.arc(bird.x+5,bird.y-5,2,0,Math.PI*2);
+      ctx.fill();
+
+      ctx.font="24px VT323";
+      ctx.fillStyle="#f4f0dc";
+      ctx.fillText("SCORE "+scoreLocal,20,30);
+    }
+
+    restart();
+    gameCleanup=()=>{
+      clearInterval(timer);
+      c.removeEventListener("click",click);
+      window.removeEventListener("keydown",key);
+    };
   },
   14: function(){
     const N=9, mines=10;let board=Array(N*N).fill(0),mineSet=new Set(),revealed=Array(N*N).fill(false),flags=Array(N*N).fill(false),ended=false;
@@ -377,7 +510,7 @@ const SOLO = {
       const el=$("tw");el.innerHTML="";
       board.forEach(v=>{
         const b=document.createElement("button");
-        b.className="tile2048 "+(v>=2048?"max":"");
+        b.className="tile2048 tile-"+(v||0)+" "+(v>=2048?"max":"");
         b.textContent=v||"";
         if(v&&mergedValues.includes(v)) b.classList.add("merged2048");
         el.appendChild(b);
@@ -385,8 +518,15 @@ const SOLO = {
       const s=$("twoStatus");
       if(!over&&!won)s.textContent="Score "+score2048+" • Arrow keys / WASD • "+(mergedValues.length?("MERGED → "+mergedValues.join(" + ")+"!"): "Move a tile.");
     }
-    center('<div class="big">2048</div><div class="desc">Merge equal tiles. Each tile can merge once per move.</div><div class="t2048" id="tw"></div><div id="twoStatus" class="status"></div><button class="btn alt" id="twoRestart">NEW GAME</button>');
-    const key=e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")move(-1);if(k==="arrowright"||k==="d")move(1);if(k==="arrowup"||k==="w")move(2);if(k==="arrowdown"||k==="s")move(3);};
+    center('<div class="big">2048</div><div class="desc">Use all four ARROW KEYS to move. Merge equal tiles; each tile merges once per move.</div><div class="t2048" id="tw"></div><div id="twoStatus" class="status"></div><button class="btn alt" id="twoRestart">NEW GAME</button>');
+    const key=e=>{
+      const k=e.key.toLowerCase();
+      if(["arrowleft","arrowright","arrowup","arrowdown"].includes(k)) e.preventDefault();
+      if(k==="arrowleft"||k==="a")move(-1);
+      if(k==="arrowright"||k==="d")move(1);
+      if(k==="arrowup"||k==="w")move(2);
+      if(k==="arrowdown"||k==="s")move(3);
+    };
     window.addEventListener("keydown",key);$("twoRestart").onclick=start;start();gameCleanup=()=>window.removeEventListener("keydown",key);
   }
 };
