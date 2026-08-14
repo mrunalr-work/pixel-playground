@@ -5,244 +5,295 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: true, credentials: true } });
+const io = new Server(server, {
+  cors: { origin: true, credentials: true },
+  transports: ["websocket", "polling"]
+});
 
-app.get("/health", (req, res) => res.json({ ok: true, service: "pixel-playground" }));
+const PORT = Number(process.env.PORT) || 3000;
+const MAX_ROOM_PLAYERS = 2;
+const GAME_KEYS = new Set(["rps", "ttt", "pong"]);
+
+const users = new Map();   // username -> { socketId, roomId }
+const sockets = new Map(); // socketId -> username
+const rooms = new Map();   // roomId -> room
+
+app.get("/health", (_req, res) => res.status(200).json({ ok: true, service: "pixel-playground" }));
 app.use(express.static(path.join(__dirname, "public")));
-app.get("/join/:room", (req, res) => res.sendFile(path.join(__dirname, "public", "join.html")));
-app.get("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+app.get("/join/:room", (_req, res) => res.sendFile(path.join(__dirname, "public", "join.html")));
+app.get("*", (_req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
 
-const users = new Map();       // username -> { id, roomId, online }
-const sockets = new Map();     // socket.id -> username
-const rooms = new Map();       // roomId -> room state
-
-const games = {
-  rps: "Rock Paper Scissors",
-  ttt: "Tic-Tac-Toe",
-  pong: "Pong"
-};
-
-function cleanName(name) {
-  return String(name || "")
+function cleanUsername(value) {
+  return String(value ?? "")
     .trim()
     .replace(/[^a-zA-Z0-9_-]/g, "")
     .slice(0, 16);
 }
-function uniqueName(name) {
-  const base = cleanName(name) || "PLAYER";
+function makeUsername(requested) {
+  const base = cleanUsername(requested) || "PLAYER";
   if (!users.has(base)) return base;
-  for (let i = 2; i < 1000; i++) {
-    const candidate = `${base}_${i}`;
+  for (let n = 2; n <= 9999; n++) {
+    const candidate = `${base}_${n}`;
     if (!users.has(candidate)) return candidate;
   }
-  return `${base}_${Date.now()}`;
+  return `PLAYER_${Math.floor(1000 + Math.random() * 9000)}`;
 }
-function roomCode() {
-  let code;
-  do code = Math.random().toString(36).slice(2, 8).toUpperCase();
-  while (rooms.has(code));
-  return code;
+function makeRoomId() {
+  let id;
+  do id = Math.random().toString(36).slice(2, 8).toUpperCase();
+  while (rooms.has(id));
+  return id;
 }
-function publicRooms() {
-  return [...rooms.values()]
-    .filter(r => r.players.length < 2)
-    .map(r => ({
-      id: r.id,
-      game: r.game,
-      host: r.players[0]?.username || "PLAYER",
-      players: r.players.length
-    }));
-}
-function emitLobby() {
-  io.emit("lobby:update", { users: [...users.keys()].slice(0, 100), rooms: publicRooms() });
+function getUser(socket) {
+  const name = sockets.get(socket.id);
+  return name ? users.get(name) : null;
 }
 function getRoom(socket) {
-  const username = sockets.get(socket.id);
-  const user = users.get(username);
+  const user = getUser(socket);
   return user?.roomId ? rooms.get(user.roomId) : null;
 }
-function otherPlayer(room, socketId) {
-  return room.players.find(p => p.id !== socketId);
+function roomPlayers(room) {
+  return room.players.map(p => p.username);
+}
+function emitLobby() {
+  io.emit("lobby:update", {
+    onlineUsers: [...users.keys()].sort().slice(0, 100),
+    openRooms: [...rooms.values()]
+      .filter(r => r.players.length < MAX_ROOM_PLAYERS)
+      .map(r => ({ id: r.id, game: r.game, host: r.players[0]?.username ?? "PLAYER", players: r.players.length }))
+  });
+}
+function removeSocketFromRoom(socket, notify = true) {
+  const name = sockets.get(socket.id);
+  const user = name ? users.get(name) : null;
+  if (!user?.roomId) return;
+
+  const room = rooms.get(user.roomId);
+  user.roomId = null;
+
+  if (!room) return;
+  room.players = room.players.filter(p => p.socketId !== socket.id);
+  socket.leave(room.id);
+
+  if (notify && room.players.length) {
+    io.to(room.id).emit("room:playerLeft", { username: name, players: roomPlayers(room) });
+  }
+  if (room.players.length === 0) rooms.delete(room.id);
+  else resetGameForRoom(room);
+  emitLobby();
+}
+function resetGameForRoom(room) {
+  if (room.game === "rps") room.rps = {};
+  if (room.game === "ttt") room.ttt = makeTttState();
+  if (room.game === "pong") room.pong = makePongState();
+}
+
+function makeTttState() {
+  return { board: Array(9).fill(""), turn: "X", winner: "", over: false };
+}
+function tttWinner(board) {
+  const lines = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for (const [a,b,c] of lines) if (board[a] && board[a] === board[b] && board[b] === board[c]) return board[a];
+  return "";
+}
+function makePongState() {
+  return {
+    ball: { x: 360, y: 220, vx: 5, vy: 3 },
+    paddles: { left: 180, right: 180 },
+    scores: [0, 0]
+  };
+}
+function resetPongBall(p) {
+  p.ball = {
+    x: 360, y: 220,
+    vx: Math.random() < 0.5 ? 5 : -5,
+    vy: Math.random() < 0.5 ? 3 : -3
+  };
 }
 
 io.on("connection", socket => {
-  socket.on("auth", ({ username }) => {
-    const name = uniqueName(username);
-    users.set(name, { id: socket.id, roomId: null, online: true });
+  socket.on("auth", ({ username } = {}) => {
+    if (sockets.has(socket.id)) return;
+    const name = makeUsername(username);
+    users.set(name, { socketId: socket.id, roomId: null });
     sockets.set(socket.id, name);
     socket.emit("auth:ok", { username: name });
     emitLobby();
   });
 
-  socket.on("lobby:search", ({ query }) => {
-    const q = cleanName(query).toLowerCase();
-    const results = [...users.entries()]
-      .filter(([name, u]) => u.online && name.toLowerCase().includes(q))
-      .slice(0, 20)
-      .map(([name]) => name);
+  socket.on("lobby:search", ({ query } = {}) => {
+    const q = cleanUsername(query).toLowerCase();
+    const results = [...users.keys()]
+      .filter(name => name.toLowerCase().includes(q))
+      .slice(0, 20);
     socket.emit("lobby:searchResults", results);
   });
 
-  socket.on("room:create", ({ game, targetUsername }) => {
+  socket.on("room:create", ({ game, invitee } = {}) => {
     const username = sockets.get(socket.id);
-    if (!username || !games[game]) return;
-    const id = roomCode();
+    if (!username) return socket.emit("room:error", "Please log in first.");
+    if (!GAME_KEYS.has(game)) return socket.emit("room:error", "That game is not multiplayer.");
+    removeSocketFromRoom(socket, false);
+
+    const id = makeRoomId();
     const room = {
-      id, game, players: [{ id: socket.id, username }],
-      createdAt: Date.now(), state: null, rps: {}, ttt: null, pong: null
+      id,
+      game,
+      players: [{ socketId: socket.id, username }],
+      rps: {},
+      ttt: makeTttState(),
+      pong: makePongState()
     };
     rooms.set(id, room);
     users.get(username).roomId = id;
-
-    if (targetUsername && users.has(targetUsername) && users.get(targetUsername).online) {
-      const target = users.get(targetUsername);
-      io.to(target.id).emit("friend:invite", { roomId: id, game, from: username });
-    }
     socket.join(id);
-    socket.emit("room:created", { roomId: id, game, invitePath: `/join/${id}` });
+
+    const inviteUrl = `/join/${id}`;
+    socket.emit("room:created", { roomId: id, game, inviteUrl, players: roomPlayers(room) });
+
+    if (invitee) {
+      const target = users.get(cleanUsername(invitee));
+      if (target && target.socketId !== socket.id) {
+        io.to(target.socketId).emit("friend:invite", { roomId: id, game, from: username });
+      }
+    }
     emitLobby();
   });
 
-  socket.on("room:join", ({ roomId }) => {
+  socket.on("room:join", ({ roomId } = {}) => {
     const username = sockets.get(socket.id);
-    const room = rooms.get(String(roomId || "").toUpperCase());
-    if (!username || !room) return socket.emit("room:error", "Room not found.");
-    if (room.players.length >= 2) return socket.emit("room:error", "That room is full.");
+    if (!username) return socket.emit("room:error", "Please log in first.");
 
-    room.players.push({ id: socket.id, username });
+    const id = String(roomId ?? "").trim().toUpperCase();
+    const room = rooms.get(id);
+    if (!room) return socket.emit("room:error", "Room not found. Ask your friend for a new link.");
+    if (room.players.some(p => p.socketId === socket.id)) return;
+    if (room.players.length >= MAX_ROOM_PLAYERS) return socket.emit("room:error", "That room is full.");
+
+    removeSocketFromRoom(socket, false);
+    room.players.push({ socketId: socket.id, username });
     users.get(username).roomId = room.id;
     socket.join(room.id);
 
     io.to(room.id).emit("room:joined", {
       roomId: room.id,
       game: room.game,
-      players: room.players.map(p => p.username)
+      players: roomPlayers(room)
     });
-    if (room.game === "rps") initRps(room);
-    if (room.game === "ttt") initTtt(room);
-    if (room.game === "pong") initPong(room);
-    emitLobby();
-  });
 
-  socket.on("room:leave", () => leaveRoom(socket));
-
-  // RPS: server resolves both moves.
-  socket.on("rps:move", move => {
-    const room = getRoom(socket);
-    if (!room || room.game !== "rps" || !room.players.some(p => p.id === socket.id)) return;
-    room.rps[socket.id] = move;
-    if (Object.keys(room.rps).length < 2) return socket.emit("game:waiting", "Waiting for your opponent.");
-    const [a,b] = room.players;
-    const ma = room.rps[a.id], mb = room.rps[b.id];
-    const winner = ma === mb ? null :
-      ((ma === "ROCK" && mb === "SCISSORS") || (ma === "PAPER" && mb === "ROCK") || (ma === "SCISSORS" && mb === "PAPER")) ? a.id : b.id;
-    room.state = room.state || { scores: {} };
-    room.state.scores[a.id] = room.state.scores[a.id] || 0;
-    room.state.scores[b.id] = room.state.scores[b.id] || 0;
-    if (winner) room.state.scores[winner]++;
-    io.to(room.id).emit("rps:result", {
-      moves: { [a.id]: ma, [b.id]: mb },
-      winner,
-      scores: room.state.scores
-    });
-    room.rps = {};
-  });
-
-  // Tic Tac Toe: server owns board/turn.
-  socket.on("ttt:move", index => {
-    const room = getRoom(socket);
-    if (!room || room.game !== "ttt" || !room.ttt || room.ttt.over) return;
-    const pIndex = room.players.findIndex(p => p.id === socket.id);
-    const mark = pIndex === 0 ? "X" : "O";
-    if (room.ttt.turn !== mark || room.ttt.board[index]) return;
-    room.ttt.board[index] = mark;
-    const winner = tttWinner(room.ttt.board);
-    if (winner || room.ttt.board.every(Boolean)) room.ttt.over = true;
-    else room.ttt.turn = mark === "X" ? "O" : "X";
-    io.to(room.id).emit("ttt:state", room.ttt);
-  });
-  socket.on("ttt:reset", () => {
-    const room = getRoom(socket);
-    if (room?.game === "ttt") { initTtt(room); io.to(room.id).emit("ttt:state", room.ttt); }
-  });
-
-  // Pong: server is authoritative for physics; clients send paddle intent.
-  socket.on("pong:input", y => {
-    const room = getRoom(socket);
-    if (!room || room.game !== "pong" || !room.pong) return;
-    const side = room.players[0].id === socket.id ? "left" : "right";
-    room.pong[side].y = Math.max(0, Math.min(360, Number(y) || 0));
-  });
-
-  socket.on("disconnect", () => {
-    const username = sockets.get(socket.id);
-    leaveRoom(socket, true);
-    if (username) {
-      users.delete(username);
-      sockets.delete(socket.id);
+    if (room.game === "rps") {
+      room.rps = {};
+      io.to(room.id).emit("rps:state", { scores: [0, 0], players: roomPlayers(room) });
+    }
+    if (room.game === "ttt") {
+      room.ttt = makeTttState();
+      io.to(room.id).emit("ttt:state", room.ttt);
+    }
+    if (room.game === "pong") {
+      room.pong = makePongState();
+      io.to(room.id).emit("pong:state", room.pong);
     }
     emitLobby();
   });
 
-  emitLobby();
+  socket.on("room:leave", () => removeSocketFromRoom(socket, true));
+
+  socket.on("rps:move", move => {
+    const room = getRoom(socket);
+    if (!room || room.game !== "rps" || room.players.length !== 2) return;
+    if (!["ROCK", "PAPER", "SCISSORS"].includes(move)) return;
+    room.rps[socket.id] = move;
+    socket.emit("rps:waiting");
+    if (Object.keys(room.rps).length !== 2) return;
+
+    const [a,b] = room.players;
+    const ma = room.rps[a.socketId], mb = room.rps[b.socketId];
+    let winner = "";
+    if (ma !== mb) {
+      const aWins =
+        (ma === "ROCK" && mb === "SCISSORS") ||
+        (ma === "PAPER" && mb === "ROCK") ||
+        (ma === "SCISSORS" && mb === "PAPER");
+      winner = aWins ? a.socketId : b.socketId;
+    }
+    room.rps.scores ??= [0, 0];
+    if (winner) room.rps.scores[winner === a.socketId ? 0 : 1]++;
+    io.to(room.id).emit("rps:result", {
+      moves: { [a.socketId]: ma, [b.socketId]: mb },
+      winner,
+      scores: room.rps.scores
+    });
+    room.rps = { scores: room.rps.scores };
+  });
+
+  socket.on("ttt:move", rawIndex => {
+    const room = getRoom(socket);
+    if (!room || room.game !== "ttt" || room.players.length !== 2 || room.ttt.over) return;
+    const index = Number(rawIndex);
+    if (!Number.isInteger(index) || index < 0 || index > 8 || room.ttt.board[index]) return;
+
+    const playerIndex = room.players.findIndex(p => p.socketId === socket.id);
+    const mark = playerIndex === 0 ? "X" : "O";
+    if (room.ttt.turn !== mark) return;
+
+    room.ttt.board[index] = mark;
+    room.ttt.winner = tttWinner(room.ttt.board);
+    room.ttt.over = Boolean(room.ttt.winner) || room.ttt.board.every(Boolean);
+    if (!room.ttt.over) room.ttt.turn = mark === "X" ? "O" : "X";
+    io.to(room.id).emit("ttt:state", room.ttt);
+  });
+
+  socket.on("ttt:reset", () => {
+    const room = getRoom(socket);
+    if (!room || room.game !== "ttt" || room.players.length !== 2) return;
+    room.ttt = makeTttState();
+    io.to(room.id).emit("ttt:state", room.ttt);
+  });
+
+  socket.on("pong:input", rawY => {
+    const room = getRoom(socket);
+    if (!room || room.game !== "pong" || room.players.length !== 2) return;
+    const y = Math.max(0, Math.min(360, Number(rawY)));
+    if (!Number.isFinite(y)) return;
+    const side = room.players[0].socketId === socket.id ? "left" : "right";
+    room.pong.paddles[side] = y;
+  });
+
+  socket.on("disconnect", () => {
+    const username = sockets.get(socket.id);
+    removeSocketFromRoom(socket, true);
+    if (username) users.delete(username);
+    sockets.delete(socket.id);
+    emitLobby();
+  });
 });
 
-function initRps(room) {
-  room.rps = {};
-  room.state = { scores: Object.fromEntries(room.players.map(p => [p.id, 0])) };
-  io.to(room.id).emit("rps:state", { scores: room.state.scores });
-}
-function tttWinner(b) {
-  return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-    .find(([a,c,d]) => b[a] && b[a] === b[c] && b[c] === b[d]) ? b[[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
-    .find(([a,c,d]) => b[a] && b[a] === b[c] && b[c] === b[d])[0]] : null;
-}
-function initTtt(room) {
-  room.ttt = { board: Array(9).fill(""), turn: "X", over: false };
-}
-function initPong(room) {
-  room.pong = {
-    x: 360, y: 220, vx: 5, vy: 3,
-    left: { y: 180 }, right: { y: 180 },
-    scores: [0, 0]
-  };
-  io.to(room.id).emit("pong:state", room.pong);
-}
-function leaveRoom(socket, silent=false) {
-  const username = sockets.get(socket.id);
-  const user = username ? users.get(username) : null;
-  if (!user?.roomId) return;
-  const room = rooms.get(user.roomId);
-  if (room) {
-    room.players = room.players.filter(p => p.id !== socket.id);
-    socket.leave(room.id);
-    io.to(room.id).emit("room:left", { username });
-    if (room.players.length === 0) rooms.delete(room.id);
-  }
-  user.roomId = null;
-  if (!silent) socket.emit("room:left");
-  emitLobby();
-}
-
+// Authoritative Pong physics.
 setInterval(() => {
   for (const room of rooms.values()) {
-    if (room.game !== "pong" || room.players.length !== 2 || !room.pong) continue;
+    if (room.game !== "pong" || room.players.length !== 2) continue;
     const p = room.pong;
-    p.x += p.vx; p.y += p.vy;
-    if (p.y < 8 || p.y > 432) p.vy *= -1;
-    if (p.x < 32 && p.y > p.left.y && p.y < p.left.y + 80) { p.vx = Math.abs(p.vx); p.x = 32; }
-    if (p.x > 680 && p.y > p.right.y && p.y < p.right.y + 80) { p.vx = -Math.abs(p.vx); p.x = 680; }
-    if (p.x < 0) { p.scores[1]++; resetBall(p); }
-    if (p.x > 720) { p.scores[0]++; resetBall(p); }
+    p.ball.x += p.ball.vx;
+    p.ball.y += p.ball.vy;
+
+    if (p.ball.y <= 8 || p.ball.y >= 432) p.ball.vy *= -1;
+
+    if (p.ball.x <= 32 && p.ball.x >= 20 &&
+        p.ball.y >= p.paddles.left && p.ball.y <= p.paddles.left + 80) {
+      p.ball.vx = Math.abs(p.ball.vx);
+      p.ball.x = 32;
+    }
+    if (p.ball.x >= 688 && p.ball.x <= 700 &&
+        p.ball.y >= p.paddles.right && p.ball.y <= p.paddles.right + 80) {
+      p.ball.vx = -Math.abs(p.ball.vx);
+      p.ball.x = 688;
+    }
+
+    if (p.ball.x < 0) { p.scores[1]++; resetPongBall(p); }
+    if (p.ball.x > 720) { p.scores[0]++; resetPongBall(p); }
+
     io.to(room.id).emit("pong:state", p);
   }
 }, 1000 / 60);
 
-function resetBall(p) {
-  p.x = 360; p.y = 220;
-  p.vx = Math.random() > .5 ? 5 : -5;
-  p.vy = Math.random() > .5 ? 3 : -3;
-}
-
-const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Pixel Playground running on port ${PORT}`));

@@ -1,196 +1,418 @@
 <!doctype html>
-<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pixel Playground — Arcade</title><script src="/socket.io/socket.io.js"></script>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pixel Playground — Arcade</title>
+<script src="/socket.io/socket.io.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
-:root{--bg:#101018;--panel:#181827;--ink:#f5f1dc;--muted:#aaa5bd;--a:#ffcc33;--g:#55e6a5;--r:#ff5b6e;--b:#4c4968}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#22223b,#101018 52%,#08080d);color:var(--ink);font:22px 'VT323',monospace}.app{max-width:1200px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;align-items:center;gap:15px}.logo{font:20px 'Press Start 2P';color:var(--a);text-shadow:3px 3px #5d3b00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge,.card{border:2px solid var(--b);background:var(--panel);padding:8px 10px}.layout{display:grid;grid-template-columns:260px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--b);background:var(--panel);box-shadow:6px 6px #07070b}.side{padding:10px}.list{display:grid;gap:6px}.gb{background:#12121e;color:var(--ink);border:2px solid var(--b);padding:9px;text-align:left;font:inherit;cursor:pointer}.gb.active,.gb:hover{border-color:var(--a)}.main{padding:15px;min-height:700px}.head{display:flex;justify-content:space-between;gap:12px;border-bottom:2px dashed var(--b);padding-bottom:12px}.head h1{font:18px 'Press Start 2P';color:var(--a);line-height:1.5;margin:0}.desc{color:var(--muted)}.btn{border:3px solid var(--ink);background:var(--a);color:#16120a;padding:8px 12px;font:inherit;font-weight:bold;box-shadow:4px 4px #6b4b00;cursor:pointer}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:550px;border:3px solid #55516e;background:#0b0b12;padding:15px;overflow:hidden}.center{min-height:500px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center}.big{font:34px 'Press Start 2P';color:var(--a)}input{background:#09090f;color:var(--ink);border:3px solid var(--b);padding:9px;font:inherit}.controls{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--b);color:var(--a);font:25px 'Press Start 2P'}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--b);color:transparent;font:24px 'Press Start 2P'}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.status{color:var(--g);min-height:28px}.login{position:fixed;inset:0;background:#0c0c14eF;z-index:20;display:flex;align-items:center;justify-content:center;padding:20px}.loginbox{width:min(550px,100%);border:4px solid var(--b);background:var(--panel);padding:28px;text-align:center;box-shadow:9px 9px #07070b}.loginbox h2{font:15px 'Press Start 2P';color:var(--a);line-height:1.7}.loginbox input{width:min(320px,100%)}.room{border:3px solid var(--b);padding:12px;background:#0d0d15;margin:10px 0}.room input{width:100%}.invite{display:none}.login{position:fixed;inset:0;background:#0c0c14f2;z-index:30;display:flex;align-items:center;justify-content:center;padding:20px}.loginbox{width:min(540px,100%);border:4px solid var(--b);background:var(--panel);padding:28px;text-align:center;box-shadow:9px 9px #07070b}.loginbox h2{font:15px "Press Start 2P";color:var(--a);line-height:1.7}.loginbox input{width:min(320px,100%)}
-.lobby{position:fixed;inset:0;background:#0c0c14f2;z-index:15;display:none;align-items:center;justify-content:center;padding:20px}.lobbybox{width:min(1000px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--b);background:var(--panel);padding:18px;box-shadow:6px 6px #07070b}.lcard h2{font:14px 'Press Start 2P';color:var(--a);line-height:1.7}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.gamepick button{background:#12121e;color:var(--ink);border:2px solid var(--b);padding:11px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover{border-color:var(--a)}.searchrow{display:flex;gap:6px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#12121e;color:var(--ink);border:2px solid var(--b);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}@media(max-width:850px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}
-</style></head><body>
-<div class="login" id="loginOverlay"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose your username. A unique name will be assigned if it is already taken.</p><input id="loginName" maxlength="16" placeholder="USERNAME"><div style="height:10px"></div><button class="btn" onclick="doLogin()">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
-<div class="app"><div class="top"><div class="logo" onclick="home()">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div><div class="badge">SCORE <b id="score">0</b></div></div></div>
-<div class="layout"><aside class="side"><div class="desc">SELECT GAME</div><div class="list" id="list"></div></aside><main class="main"><div class="head"><div><h1 id="title">PIXEL PLAYGROUND</h1><div class="desc" id="desc">Choose a game.</div></div><div class="controls"><button class="btn alt" onclick="showLobby()">← BACK</button><button class="btn alt" onclick="restart()">RESTART</button></div></div><div class="invite" id="invite"></div><div id="screen" class="screen"></div></main></div></div>
+:root{--bg:#0d0d15;--panel:#171725;--ink:#f4f0dc;--muted:#aaa7ba;--a:#ffcc33;--g:#55e6a5;--r:#ff6070;--line:#4a4765;--blue:#63b3ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#292844,#0d0d15 62%);color:var(--ink);font:23px 'VT323',monospace}.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font:20px 'Press Start 2P';line-height:1.6;color:var(--a);text-shadow:3px 3px #5c3e00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge{border:2px solid var(--line);background:var(--panel);padding:8px 11px}.layout{display:grid;grid-template-columns:285px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--line);background:var(--panel);box-shadow:7px 7px #07070b}.side{padding:11px}.side-title{font:13px 'Press Start 2P';color:var(--a);margin-bottom:10px}.game-list{display:grid;gap:7px}.gb{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gb:hover,.gb.active{border-color:var(--a)}.gb .online{float:right;color:var(--g);font-size:16px}.main{padding:15px;min-height:760px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:2px dashed var(--line);padding-bottom:12px}.head h1{margin:0;font:18px 'Press Start 2P';line-height:1.5;color:var(--a)}.desc{color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:3px solid var(--ink);background:var(--a);color:#17130a;padding:9px 13px;font:inherit;font-weight:bold;cursor:pointer;box-shadow:4px 4px #6b4a00}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:590px;border:3px solid #55516f;background:#09090f;padding:16px;overflow:auto}.center{min-height:550px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}.big{font:28px 'Press Start 2P';line-height:1.7;color:var(--a)}.status{color:var(--g);min-height:28px}.error{color:var(--r)}input{background:#09090f;color:var(--ink);border:3px solid var(--line);padding:9px;font:inherit}.room-card{width:min(720px,100%);border:3px solid var(--line);background:#12121d;padding:16px;text-align:left}.room-card h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin:0 0 8px}.share-row{display:flex;gap:7px;margin-top:8px}.share-row input{flex:1;min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--line);color:var(--a);font:25px 'Press Start 2P';cursor:pointer}.rps-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--line);color:transparent;font:24px 'Press Start 2P';cursor:pointer}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.login{position:fixed;inset:0;background:#0b0b13f2;z-index:30;display:grid;place-items:center;padding:20px}.loginbox{width:min(560px,100%);background:var(--panel);border:4px solid var(--line);padding:30px;text-align:center;box-shadow:9px 9px #07070b}.loginbox input{width:min(330px,100%)}.loginbox h2{font:15px 'Press Start 2P';line-height:1.7;color:var(--a)}.lobby{position:fixed;inset:0;background:#0b0b13f2;z-index:20;display:none;place-items:center;padding:20px}.lobbybox{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--line);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}.lcard h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin-top:0}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:68vh;overflow:auto}.gamepick button{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover{border-color:var(--a)}.searchrow{display:flex;gap:7px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#11111b;color:var(--ink);border:2px solid var(--line);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}canvas{max-width:100%;height:auto;background:#050509;border:3px solid var(--line)}.keyhint{color:var(--muted);text-align:center}.color-btn{width:120px;height:70px;border:3px solid var(--ink);cursor:pointer}.flap{font-size:55px}.jump-player{font-size:45px}.t2048{display:grid;grid-template-columns:repeat(4,72px);gap:7px}.t2048 button{width:72px;height:72px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:20px 'Press Start 2P'}@media(max-width:900px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}@media(max-width:520px){.head{flex-direction:column}.grid3{grid-template-columns:repeat(3,72px)}.cell{width:72px;height:72px}.mem-grid{grid-template-columns:repeat(4,64px)}.mem{width:64px;height:64px;font-size:18px}.big{font-size:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><div class="logo" id="homeBtn">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div><div class="badge">SCORE <b id="score">0</b></div></div></div>
+  <div class="layout">
+    <aside class="side"><div class="side-title">SELECT GAME</div><div class="game-list" id="gameList"></div></aside>
+    <main class="main">
+      <div class="head"><div><h1 id="title">CHOOSE A GAME</h1><div class="desc" id="desc">Pick a game from the list.</div></div><div class="controls"><button class="btn alt" id="backBtn">← BACK</button><button class="btn alt" id="restartBtn">RESTART</button></div></div>
+      <div class="screen" id="screen"></div>
+    </main>
+  </div>
+</div>
 
-<div class="lobby id="lobby"><div class="lobbybox">
-<div class="lcard"><h2>WHAT GAME WOULD YOU LIKE TO PLAY?</h2><div class="gamepick" id="gamepick"></div></div>
-<div class="lcard"><h2>PLAY WITH FRIENDS</h2><div class="desc">Create a room, copy the URL, and send it. You can also invite an online username.</div><div class="room"><div class="desc">FRIEND SEARCH</div><div class="searchrow"><input id="search" placeholder="username"><button class="btn alt" onclick="searchUsers()">SEARCH</button></div><div class="results" id="results"></div></div><div class="room"><div class="desc">ROOM</div><div id="roomStatus" class="status">No room yet.</div><input id="roomLink" readonly placeholder="Your copyable invite link appears here"><div class="controls"><button class="btn" onclick="copyRoom()">COPY LINK</button><button class="btn alt" onclick="shareRoom()">SHARE</button></div></div><button class="btn alt" onclick="hideLobby()">← BACK TO GAME</button></div>
+<div class="login" id="loginOverlay"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. A unique suffix is added if it is already online.</p><input id="loginName" maxlength="16"><div style="height:12px"></div><button class="btn" id="loginBtn">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
+
+<div class="lobby" id="lobby"><div class="lobbybox">
+  <div class="lcard"><h2>WHAT GAME WOULD YOU LIKE TO PLAY?</h2><div class="gamepick" id="gamePick"></div></div>
+  <div class="lcard"><h2>PLAY WITH FRIENDS</h2>
+    <p class="desc">Search an online username or use a room link.</p>
+    <div class="room-card"><h2>FRIEND SEARCH</h2><div class="searchrow"><input id="searchInput" placeholder="username"><button class="btn alt" id="searchBtn">SEARCH</button></div><div class="results" id="searchResults"></div></div>
+    <div class="room-card"><h2>OPEN ROOMS</h2><div id="openRooms" class="desc">No open rooms.</div></div>
+    <button class="btn alt" id="closeLobby">← BACK TO ARCADE</button>
+  </div>
 </div></div>
 
 <script>
-const socket = io();
-let authed = false;
-let username = "";
-let roomId = "";
-let score = 0;
-let current = Number(new URLSearchParams(location.search).get("game"));
-if (!Number.isInteger(current) || current < 0 || current >= 16) current = 0;
+(() => {
+"use strict";
+
+const socket = io({ transports:["websocket","polling"], reconnection:true, reconnectionAttempts:Infinity, reconnectionDelay:1000, reconnectionDelayMax:5000 });
+const GAMES = ["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone","2048"];
+const ONLINE = {2:"rps",4:"ttt",11:"pong"};
 
 const $ = id => document.getElementById(id);
-const loginOverlay = $("loginOverlay");
-const loginName = $("loginName");
-const loginStatus = $("loginStatus");
-const me = $("me");
-const lobby = $("lobby");
-const list = $("list");
-const gamepick = $("gamepick");
-const screen = $("screen");
-const title = $("title");
-const desc = $("desc");
-const roomStatus = $("roomStatus");
-const roomLink = $("roomLink");
-const results = $("results");
-const search = $("search");
+const ui = {
+  login: $("loginOverlay"), loginName:$("loginName"), loginBtn:$("loginBtn"), loginStatus:$("loginStatus"),
+  lobby:$("lobby"), gameList:$("gameList"), gamePick:$("gamePick"), search:$("searchInput"), searchBtn:$("searchBtn"), searchResults:$("searchResults"), openRooms:$("openRooms"),
+  title:$("title"), desc:$("desc"), screen:$("screen"), me:$("me"), score:$("score"), back:$("backBtn"), restart:$("restartBtn"), home:$("homeBtn"), closeLobby:$("closeLobby")
+};
 
-const games = ["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone","2048"];
-const online = {2:"rps",4:"ttt",11:"pong"};
+let current = Number(new URLSearchParams(location.search).get("game"));
+if (!Number.isInteger(current) || current < 0 || current >= GAMES.length) current = 0;
+let authed = false, username = "", roomId = "", score = 0, gameCleanup = () => {};
+let roomGame = "";
 
-function randomName(){
-  const a=["PIXEL","TURBO","NEON","RETRO","CYBER","MEGA","NOVA"];
-  const b=["FOX","BOT","NINJA","WIZARD","GHOST","RIDER"];
-  return a[Math.floor(Math.random()*a.length)]+"_"+b[Math.floor(Math.random()*b.length)]+"_"+Math.floor(10+Math.random()*90);
+function randomName(){const a=["PIXEL","TURBO","NEON","RETRO","CYBER","NOVA"],b=["FOX","NINJA","GHOST","RIDER","BOT","WIZARD"];return `${a[Math.floor(Math.random()*a.length)]}_${b[Math.floor(Math.random()*b.length)]}_${Math.floor(10+Math.random()*90)}`;}
+ui.loginName.value = randomName();
+
+function setStatus(text, error=false){ui.loginStatus.textContent=text;ui.loginStatus.className=error?"status error":"status";}
+function showLobby(){if(!authed)return;ui.lobby.style.display="grid";refreshOpenRooms();}
+function hideLobby(){ui.lobby.style.display="none";}
+function home(){location.href="/";}
+function resetScreen(){gameCleanup();gameCleanup=()=>{};ui.screen.innerHTML="";}
+function addScore(n){score=Math.max(0,score+n);ui.score.textContent=score;}
+
+function selectGame(index){
+  if(index<0||index>=GAMES.length)return;
+  current=index; roomGame=""; titleAndDescription(); renderSelectedGameOverride();
+}
+function titleAndDescription(){ui.title.textContent=GAMES[current];ui.desc.textContent=ONLINE[current]?"Online multiplayer — create a room or join a friend.":"Solo game.";}
+function renderSelectedGame(){
+  resetScreen();
+  if(ONLINE[current]){renderMultiplayerMenu();return;}
+  const f=SOLO[current]||SOLO[0];f();
 }
 
-loginName.value = randomName();
+function buildLists(){
+  ui.gameList.innerHTML="";ui.gamePick.innerHTML="";
+  GAMES.forEach((name,i)=>{
+    const b=document.createElement("button");b.className="gb"+(i===current?" active":"");
+    b.innerHTML=`${String(i+1).padStart(2,"0")} — ${name}${ONLINE[i]?'<span class="online">● ONLINE</span>':""}`;
+    b.onclick=()=>{hideLobby();selectGame(i);};ui.gameList.appendChild(b);
+    const p=document.createElement("button");p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><br><span class="desc">${ONLINE[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;
+    p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);
+  });
+}
+function refreshActive(){[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",i===current));}
 
-function doLogin(){
-  const n = (loginName.value || randomName()).trim().replace(/[^a-zA-Z0-9_-]/g,"").slice(0,16) || randomName();
-  loginStatus.textContent = socket.connected ? "AUTHENTICATING..." : "CONNECTING TO SERVER...";
-  if (!socket.connected) {
-    socket.connect();
-    const timer = setTimeout(() => {
-      if (!authed && !socket.connected) loginStatus.textContent = "SERVER CONNECTION FAILED — TRY REFRESHING";
-    }, 5000);
-    socket.once("connect", () => {
-      clearTimeout(timer);
-      socket.emit("auth", {username:n});
-    });
-  } else {
-    socket.emit("auth", {username:n});
-  }
+function renderMultiplayerMenu(){
+  const gameName=GAMES[current];
+  ui.screen.innerHTML=`
+  <div class="center">
+    <div class="big">${gameName}</div>
+    <div class="desc">PLAY ONLINE WITH ANOTHER PLAYER</div>
+    <div class="room-card">
+      <h2>CREATE A ROOM</h2>
+      <p class="desc">Create a private room, then copy the generated link and send it to your friend.</p>
+      <button class="btn" id="createRoomBtn">CREATE ROOM</button>
+      <div class="status" id="mainRoomStatus">No room created.</div>
+      <div class="share-row"><input id="mainRoomLink" readonly placeholder="Invite link appears here"><button class="btn alt" id="copyMain">COPY LINK</button><button class="btn alt" id="shareMain">SHARE</button></div>
+    </div>
+    <div class="room-card">
+      <h2>JOIN A ROOM</h2><p class="desc">Paste the room code from your friend.</p>
+      <div class="searchrow"><input id="roomCode" maxlength="8" placeholder="ROOM CODE"><button class="btn" id="joinRoomBtn">JOIN ROOM</button></div>
+    </div>
+    <button class="btn alt" id="lobbyFromGame">← FRIEND SEARCH / LOBBY</button>
+  </div>`;
+  $("createRoomBtn").onclick=()=>createRoom(current);
+  $("joinRoomBtn").onclick=()=>joinRoom($("roomCode").value);
+  $("lobbyFromGame").onclick=showLobby;
+  $("copyMain").onclick=async()=>copyValue($("mainRoomLink"),$("mainRoomStatus"));
+  $("shareMain").onclick=async()=>shareValue($("mainRoomLink"));
 }
 
-loginName.addEventListener("keydown", e => { if(e.key === "Enter") doLogin(); });
-
-socket.on("connect", () => {
-  if (!authed) loginStatus.textContent = "SERVER CONNECTED — CLICK ENTER ARCADE";
-});
-socket.on("connect_error", err => {
-  console.error("Socket connection error:", err);
-  loginStatus.textContent = "SERVER CONNECTION ERROR — REFRESH THE PAGE";
-});
-socket.on("disconnect", reason => {
-  if (!authed) loginStatus.textContent = "SERVER DISCONNECTED";
-});
-
-socket.on("auth:ok", data => {
-  authed = true;
-  username = data.username;
-  me.textContent = username;
-  loginOverlay.style.display = "none";
-  loginStatus.textContent = "LOGIN SUCCESSFUL";
-  const q = new URLSearchParams(location.search);
-  if (q.get("room")) {
-    roomId = q.get("room").toUpperCase();
-    socket.emit("room:join", {roomId});
-  } else if (q.has("game")) {
-    showLobby();
-    selectGame(Number(q.get("game")));
-  } else {
-    showLobby();
-  }
-});
-
-function home(){ location.href="/"; }
-function showLobby(){ lobby.style.display="flex"; }
-function hideLobby(){ lobby.style.display="none"; }
-function selectGame(i){
-  if (!Number.isInteger(i) || i < 0 || i >= games.length) return;
-  current=i; title.textContent=games[i]; desc.textContent=online[i]?"Online multiplayer ready.":"Single-player game."; renderGame();
+async function copyValue(input,statusEl){
+  if(!input?.value)return;
+  try{await navigator.clipboard.writeText(input.value);}catch(e){input.select();document.execCommand("copy");}
+  if(statusEl)statusEl.textContent="LINK COPIED — SEND IT TO YOUR FRIEND";
 }
-function restart(){ renderGame(); }
-function add(n){ score+=n; $("score").textContent=score; }
-
-games.forEach((g,i)=>{
-  const b=document.createElement("button");
-  b.className="gb";
-  b.innerHTML=`${String(i+1).padStart(2,"0")} — ${g}` + (online[i] ? '<span style="float:right;color:var(--g);font-size:14px">● ONLINE</span>' : "");
-  b.onclick=()=>selectGame(i);
-  list.appendChild(b);
-
-  const p=document.createElement("button");
-  p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;
-  p.onclick=()=>{hideLobby();selectGame(i)};
-  gamepick.appendChild(p);
-});
-
-function searchUsers(){ socket.emit("lobby:search",{query:search.value}); }
-socket.on("lobby:searchResults",arr=>{
-  results.innerHTML=arr.filter(x=>x!==username).map(x=>`<button onclick="inviteUser('${x}')">● ${x} — INVITE</button>`).join("") || "<div class='desc'>No online players found.</div>";
-});
-function inviteUser(u){
-  if(!online[current]){alert("Choose an online multiplayer game first.");return;}
-  socket.emit("room:create",{game:online[current],targetUsername:u});
-  roomStatus.textContent="INVITATION SENT TO "+u;
+async function shareValue(input){
+  if(!input?.value)return;
+  if(navigator.share){try{await navigator.share({title:"Pixel Playground",text:`Join my ${GAMES[current]} game!`,url:input.value});return;}catch(e){}}
+  await copyValue(input,$("mainRoomStatus"));
 }
-socket.on("friend:invite",d=>{
-  const key=Object.keys(online).find(k=>online[k]===d.game);
-  if(confirm(`${d.from} invited you to ${games[Number(key)]}. Join?`)) socket.emit("room:join",{roomId:d.roomId});
+function createRoom(gameIndex, invitee=""){
+  const game=ONLINE[gameIndex];if(!game){return;}
+  socket.emit("room:create",{game,invitee});
+  const status=$("mainRoomStatus");if(status)status.textContent="CREATING ROOM...";
+}
+function joinRoom(code){
+  const id=String(code||"").trim().toUpperCase();if(!id)return;
+  socket.emit("room:join",{roomId:id});
+  const status=$("mainRoomStatus");if(status)status.textContent=`JOINING ROOM ${id}...`;
+}
+function inviteUsername(name){
+  if(!ONLINE[current]){alert("Select Pong, Tic-Tac-Toe, or Rock Paper Scissors first.");return;}
+  createRoom(current,name);
+}
+function searchUsers(){socket.emit("lobby:search",{query:ui.search.value});}
+
+function renderRoomReady(data){
+  roomId=data.roomId;roomGame=data.game;
+  const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";
+  const link=url.toString();
+  const input=$("mainRoomLink");const status=$("mainRoomStatus");
+  if(input)input.value=link;if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
+}
+
+function renderInRoom(data){
+  roomId=data.roomId;roomGame=data.game;const found=Object.keys(ONLINE).find(k=>ONLINE[k]===data.game); if(found!==undefined) current=Number(found);
+  refreshActive();hideLobby();titleAndDescription();renderSelectedGame();
+  const players=data.players.join(" VS ");
+  const s=document.querySelector("#roomStatus");if(s)s.textContent=`ROOM ${data.roomId}: ${players}`;
+}
+
+socket.on("connect",()=>{if(!authed)setStatus("SERVER CONNECTED — READY");});
+socket.on("connect_error",()=>{if(!authed)setStatus("SERVER CONNECTION ERROR — REFRESH OR TRY AGAIN",true);});
+socket.on("disconnect",()=>{if(!authed)setStatus("SERVER DISCONNECTED",true);});
+
+function login(){
+  const n=(ui.loginName.value||randomName()).trim().replace(/[^a-zA-Z0-9_-]/g,"").slice(0,16)||randomName();
+  setStatus("AUTHENTICATING...");
+  socket.emit("auth",{username:n});
+}
+ui.loginBtn.onclick=login;ui.loginName.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+socket.on("auth:ok",data=>{
+  authed=true;username=data.username;ui.me.textContent=username;ui.login.style.display="none";
+  const q=new URLSearchParams(location.search);
+  if(q.get("room")) socket.emit("room:join",{roomId:q.get("room")});
+  else showLobby();
 });
-socket.on("room:created",d=>{
-  roomId=d.roomId;
-  const u=new URL(location.href);
-  u.pathname="/join/"+d.roomId;
-  u.search="";
-  roomLink.value=u.toString();
-  roomStatus.textContent=`ROOM ${d.roomId} READY — SEND THIS LINK`;
-});
-socket.on("room:joined",d=>{
-  roomId=d.roomId;
-  roomStatus.textContent=`ROOM ${d.roomId}: ${d.players.join(" VS ")}`;
+
+socket.on("room:created",data=>{
+  renderRoomReady(data);
+  // If this room was created from friend search, stay on the current multiplayer screen.
   hideLobby();
-  renderGame();
+  if(ONLINE[current]===data.game) renderMultiplayerMenu();
+  const input=$("mainRoomLink"),status=$("mainRoomStatus");
+  if(input){const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";input.value=url.toString();}
+  if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
 });
-socket.on("room:error",m=>{roomStatus.textContent=m;showLobby();});
-socket.on("room:left",()=>{roomStatus.textContent="FRIEND LEFT THE ROOM";});
+socket.on("room:joined",data=>renderInRoom(data));
+socket.on("room:error",message=>{
+  const s=$("mainRoomStatus");if(s)s.textContent=message;
+  else {showLobby();ui.searchResults.innerHTML=`<div class="error">${message}</div>`;}
+});
+socket.on("room:playerLeft",data=>{roomId="";renderMultiplayerMenu();const s=$("mainRoomStatus");if(s)s.textContent=`${data.username} left the room.`;});
+socket.on("friend:invite",data=>{
+  const gameIndex=Object.keys(ONLINE).find(k=>ONLINE[k]===data.game);
+  const gameName=GAMES[Number(gameIndex)];
+  if(confirm(`${data.from} invited you to ${gameName}. Join?`)){current=Number(gameIndex);socket.emit("room:join",{roomId:data.roomId});}
+});
+socket.on("lobby:searchResults",names=>{
+  ui.searchResults.innerHTML="";
+  names.filter(n=>n!==username).forEach(n=>{const b=document.createElement("button");b.textContent=`● ${n} — INVITE`;b.onclick=()=>{current=ONLINE[current]?current:2;selectGame(current);setTimeout(()=>inviteUsername(n),0)};ui.searchResults.appendChild(b);});
+  if(!ui.searchResults.children.length)ui.searchResults.innerHTML="<div class='desc'>No matching online players.</div>";
+});
+socket.on("lobby:update",data=>{
+  if(!data.openRooms.length){ui.openRooms.textContent="No open rooms.";return;}
+  ui.openRooms.innerHTML="";
+  data.openRooms.forEach(r=>{
+    const b=document.createElement("button");
+    b.className="btn alt";
+    b.style.margin="4px";
+    b.textContent=`${r.id} — ${r.game.toUpperCase()} — ${r.host}`;
+    b.onclick=()=>{const k=Object.keys(ONLINE).find(key=>ONLINE[key]===r.game);current=Number(k);joinRoom(r.id);};
+    ui.openRooms.appendChild(b);
+  });
+});
+ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});
+ui.home.onclick=home;ui.closeLobby.onclick=hideLobby;
+ui.back.onclick=()=>{if(roomId){socket.emit("room:leave");roomId="";}showLobby();};ui.restart.onclick=()=>renderSelectedGame();
 
-async function copyRoom(){
-  if(!roomLink.value)return;
-  try{await navigator.clipboard.writeText(roomLink.value)}
-  catch(e){const t=document.createElement("textarea");t.value=roomLink.value;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove();}
-  roomStatus.textContent="LINK COPIED — SEND IT TO YOUR FRIEND";
-}
-async function shareRoom(){
-  if(!roomLink.value)return;
-  if(navigator.share){try{await navigator.share({title:"Pixel Playground",text:"Join my game!",url:roomLink.value});return}catch(e){}}
-  await copyRoom();
-}
+function center(html){ui.screen.innerHTML=`<div class="center">${html}</div>`;}
+function timerText(ms){return `${Math.max(0,Math.round(ms))} ms`;}
 
-function renderGame(){screen.innerHTML="";if(online[current]){renderOnline();return}if(current===0)clicker();else if(current===1)reaction();else if(current===3)guess();else if(current===5)memorySolo();else if(current===6)whack();else if(current===7)dodger();else if(current===8)colors();else if(current===9)typing();else if(current===10)snake();else if(current===12)breakout();else if(current===13)flappy();else if(current===14)doodle();else if(current===15)two048();else clicker()}
-function center(x){screen.innerHTML=`<div class="center">${x}</div>`}
-function clicker(){let n=0;center(`<div class="big" id="c">0</div><button class="btn" onclick="c.textContent=++window.cc">CLICK!</button>`);window.cc=0}
-function reaction(){center(`<div class="big">REACTION</div><button class="btn" id="rb">START</button><div class="status" id="rs">Click start.</div>`);let ready=false,t=0;rb.onclick=()=>{if(!ready){rs.textContent="WAIT...";rb.disabled=true;setTimeout(()=>{ready=true;t=performance.now();rb.disabled=false;rb.textContent="CLICK!";rs.textContent="GO!"},1000+Math.random()*2000)}else{let ms=Math.round(performance.now()-t);rs.textContent=ms+" ms";add(Math.max(1,1000-ms));ready=false;rb.textContent="START"}}}
-function guess(){const n=Math.floor(Math.random()*100)+1;center(`<div class="big">1–100</div><input id="gi" type="number"><button class="btn" onclick="g()">GUESS</button><div id="gs" class="status"></div>`);window.g=()=>{const v=+gi.value;gs.textContent=v===n?"CORRECT!":v<n?"TOO LOW":"TOO HIGH";if(v===n)add(50)}}
-function memorySolo(){const v=["◆","●","★","▲","■","♥","☀","☾"],d=[...v,...v].sort(()=>Math.random()-.5);let first=null,lock=false,matched=0;center(`<div class="mem-grid" id="mg"></div>`);d.forEach(x=>{const b=document.createElement("button");b.className="mem";b.textContent=x;b.onclick=()=>{if(lock||b.classList.contains("flipped"))return;b.classList.add("flipped");if(!first)first={b,x};else{lock=true;if(first.x===x){first.b.classList.add("matched");b.classList.add("matched");matched++;add(20);first=null;lock=false}else setTimeout(()=>{first.b.classList.remove("flipped");b.classList.remove("flipped");first=null;lock=false},500)}};mg.appendChild(b)})}
-function whack(){center(`<div class="big">WHACK</div><button class="btn" onclick="add(10)">HIT!</button>`)}function dodger(){center(`<div class="big">DODGER</div><button class="btn" onclick="this.style.position='relative';this.style.left=Math.random()*250+'px'">CLICK ME</button>`)}function colors(){center(`<div class="big">COLOR</div><button class="btn" onclick="add(10)">MATCH</button>`)}function typing(){center(`<div class="big">TYPE FAST</div><div>PIXEL GAMES ARE FUN</div><input placeholder="type it">`)}function snake(){center(`<div class="big">SNAKE</div><p class="desc">Use Arrow Keys — canvas version from the arcade build.</p>`)}function breakout(){center(`<div class="big">BREAKOUT</div><p class="desc">Use ← →.</p>`)}function flappy(){center(`<div class="big">FLAPPY</div><p class="desc">Click to flap.</p>`)}function doodle(){center(`<div class="big">DOODLE JUMP</div><p class="desc">Use A / D.</p>`)}function two048(){center(`<div class="big">2048</div><p class="desc">Use Arrow Keys.</p>`)}
-
-function renderOnline(){
-  if(!roomId){
-    screen.innerHTML="";
-    showLobby();
-    return;
+const SOLO = {
+  0: function(){
+    let n=0;
+    center('<div class="big" id="clickScore">0</div><button class="btn" id="clickBtn">CLICK!</button>');
+    $("clickBtn").onclick=function(){n++;$("clickScore").textContent=n;addScore(1);};
+  },
+  1: function(){
+    center('<div class="big">REACTION TIMER</div><button class="btn" id="reactBtn">START</button><div class="status" id="reactStatus">Click START, then wait.</div>');
+    let ready=false,start=0,timer=null;
+    $("reactBtn").onclick=function(){
+      if(ready){
+        const ms=performance.now()-start; ready=false;
+        $("reactBtn").textContent="START"; $("reactStatus").textContent=timerText(ms);
+        addScore(Math.max(1,1000-Math.round(ms))); return;
+      }
+      $("reactBtn").disabled=true; $("reactStatus").textContent="WAIT...";
+      timer=setTimeout(function(){
+        ready=true; start=performance.now(); $("reactBtn").disabled=false;
+        $("reactBtn").textContent="CLICK!"; $("reactStatus").textContent="GO!";
+      },800+Math.random()*2200);
+    };
+    gameCleanup=function(){clearTimeout(timer);};
+  },
+  3: function(){
+    const target=Math.floor(Math.random()*100)+1;
+    center('<div class="big">GUESS 1–100</div><input id="guessInput" type="number" min="1" max="100"><button class="btn" id="guessBtn">GUESS</button><div class="status" id="guessStatus"></div>');
+    $("guessBtn").onclick=function(){
+      const v=Number($("guessInput").value);
+      $("guessStatus").textContent=v===target?"CORRECT!":(v<target?"TOO LOW":"TOO HIGH");
+      if(v===target)addScore(50);
+    };
+  },
+  5: function(){
+    const symbols=["◆","●","★","▲","■","♥","☀","☾"];
+    const deck=symbols.concat(symbols).sort(function(){return Math.random()-.5;});
+    let first=null,lock=false,matched=0;
+    center('<div class="mem-grid" id="memoryGrid"></div><div class="status" id="memoryStatus">Find all pairs.</div>');
+    deck.forEach(function(sym){
+      const b=document.createElement("button");b.className="mem";b.textContent=sym;
+      b.onclick=function(){
+        if(lock||b.classList.contains("flipped"))return;
+        b.classList.add("flipped");
+        if(!first){first={b:b,sym:sym};return;}
+        lock=true;
+        if(first.sym===sym){
+          first.b.classList.add("matched");b.classList.add("matched");matched++;addScore(20);
+          first=null;lock=false;if(matched===symbols.length)$("memoryStatus").textContent="YOU WIN!";
+        }else{
+          const old=first.b;setTimeout(function(){old.classList.remove("flipped");b.classList.remove("flipped");first=null;lock=false;},550);
+        }
+      };
+      $("memoryGrid").appendChild(b);
+    });
+  },
+  6: function(){
+    let hits=0,time=20,timer;
+    center('<div class="big">WHACK-A-MOLE</div><button class="btn" id="mole">WHACK!</button><div id="moleStatus" class="status">20 seconds.</div>');
+    const b=$("mole"),s=$("moleStatus");
+    b.onclick=function(){hits++;b.style.transform="translate("+(Math.random()*180-90)+"px,"+(Math.random()*120-60)+"px)";addScore(5);};
+    timer=setInterval(function(){time--;s.textContent=time+"s — HITS "+hits;if(time<=0){clearInterval(timer);b.disabled=true;s.textContent="TIME! HITS "+hits;}},1000);
+    gameCleanup=function(){clearInterval(timer);};
+  },
+  7: function(){
+    center('<div class="big">BUTTON DODGER</div><div style="height:240px;width:min(600px,100%);position:relative;border:2px dashed var(--line)"><button class="btn" id="dodge" style="position:absolute">CLICK ME</button></div><div class="status" id="dodgeStatus">Move your mouse toward it.</div>');
+    const b=$("dodge");
+    b.onmouseenter=function(){b.style.left=Math.random()*80+"%";b.style.top=Math.random()*80+"%";};
+    b.onclick=function(){addScore(25);$("dodgeStatus").textContent="NICE HIT!";};
+  },
+  8: function(){
+    const colors=["RED","BLUE","GREEN","YELLOW"],target=colors[Math.floor(Math.random()*colors.length)];
+    center('<div class="big">'+target+'</div><div class="controls" id="colorButtons"></div><div class="status" id="colorStatus">Click the matching color.</div>');
+    const map={RED:"#d84b5b",BLUE:"#4d8fd8",GREEN:"#48b981",YELLOW:"#d6b84a"};
+    colors.forEach(function(c){const b=document.createElement("button");b.className="color-btn";b.style.background=map[c];b.textContent=c;b.onclick=function(){const ok=c===target;$("colorStatus").textContent=ok?"CORRECT!":"WRONG";if(ok)addScore(30);};$("colorButtons").appendChild(b);});
+  },
+  9: function(){
+    const words=["PIXEL","ARCADE","RETRO","GAMER","SPEED","PLAY","SCORE","BUTTON"];
+    const word=words[Math.floor(Math.random()*words.length)],start=performance.now();
+    center('<div class="big">'+word+'</div><input id="typeInput" autofocus placeholder="type it"><div class="status" id="typeStatus">GO!</div>');
+    $("typeInput").addEventListener("input",function(){
+      if($("typeInput").value.toUpperCase()===word){const ms=performance.now()-start;$("typeStatus").textContent=word+" — "+timerText(ms);addScore(Math.max(10,500-Math.round(ms)));}
+    });
+  },
+  10: function(){
+    center('<canvas id="snakeCanvas" width="480" height="360"></canvas><div class="keyhint">Arrow keys or WASD</div>');
+    const c=$("snakeCanvas"),ctx=c.getContext("2d"),size=20,cols=24,rows=18;
+    let snake=[{x:12,y:9}],dir={x:1,y:0},next={x:1,y:0},food={x:5,y:5},alive=true;
+    const key=function(e){const k=e.key.toLowerCase();if((k==="arrowup"||k==="w")&&dir.y===0)next={x:0,y:-1};if((k==="arrowdown"||k==="s")&&dir.y===0)next={x:0,y:1};if((k==="arrowleft"||k==="a")&&dir.x===0)next={x:-1,y:0};if((k==="arrowright"||k==="d")&&dir.x===0)next={x:1,y:0};};
+    const timer=setInterval(function(){
+      if(!alive)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};
+      if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(function(p){return p.x===head.x&&p.y===head.y;})){alive=false;return;}
+      snake.unshift(head);
+      if(head.x===food.x&&head.y===food.y){addScore(10);do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(function(p){return p.x===food.x&&p.y===food.y;}));}else snake.pop();
+      ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#55e6a5";snake.forEach(function(p){ctx.fillRect(p.x*size,p.y*size,size-2,size-2);});ctx.fillStyle="#ffcc33";ctx.fillRect(food.x*size,food.y*size,size-2,size-2);
+    },120);
+    window.addEventListener("keydown",key);gameCleanup=function(){clearInterval(timer);window.removeEventListener("keydown",key);};
+  },
+  12: function(){
+    center('<canvas id="breakoutCanvas" width="640" height="400"></canvas><div class="keyhint">Arrow keys / A D</div>');
+    const c=$("breakoutCanvas"),ctx=c.getContext("2d");let paddle=270,ball={x:320,y:340,vx:3,vy:-3},bricks=[];
+    for(let r=0;r<5;r++)for(let col=0;col<10;col++)bricks.push({x:col*64,y:r*24,w:60,h:18,on:true});
+    const key={l:false,r:false},kd=function(e){if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")key.l=true;if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")key.r=true;},ku=function(e){if(e.key==="ArrowLeft"||e.key.toLowerCase()==="a")key.l=false;if(e.key==="ArrowRight"||e.key.toLowerCase()==="d")key.r=false;};
+    window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);
+    const timer=setInterval(function(){
+      paddle=Math.max(0,Math.min(540,paddle+(key.r-key.l)*7));ball.x+=ball.vx;ball.y+=ball.vy;
+      if(ball.x<8||ball.x>632)ball.vx*=-1;if(ball.y<8)ball.vy*=-1;if(ball.y>365&&ball.y<400&&ball.x>paddle-10&&ball.x<paddle+130)ball.vy=-Math.abs(ball.vy);
+      bricks.forEach(function(b){if(b.on&&ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;addScore(10);}});
+      if(ball.y>420)ball={x:320,y:340,vx:3,vy:-3};
+      ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";ctx.fillRect(paddle,380,130,12);ctx.fillStyle="#f4f0dc";ctx.fillRect(ball.x-7,ball.y-7,14,14);ctx.fillStyle="#55e6a5";bricks.filter(function(b){return b.on;}).forEach(function(b){ctx.fillRect(b.x,b.y,b.w,b.h);});
+    },16);
+    gameCleanup=function(){clearInterval(timer);window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
+  },
+  13: function(){
+    center('<div class="flap">🐤</div><button class="btn" id="flapBtn">FLAP</button><div id="flapStatus" class="status">Click to flap.</div>');
+    let y=0,vy=0,playing=false;const b=$("flapBtn");
+    const timer=setInterval(function(){if(!playing)return;vy+=.5;y+=vy;if(y>120){playing=false;$("flapStatus").textContent="GAME OVER — FLAP TO RESTART";}if(y<0){y=0;vy=0;}$("flapStatus").style.transform="translateY("+y+"px)";},30);
+    b.onclick=function(){playing=true;vy=-7;};gameCleanup=function(){clearInterval(timer);};
+  },
+  14: function(){
+    center('<div class="jump-player">🧑</div><div class="keyhint">A / D to move. Reach 10 platforms.</div><div id="jumpStatus" class="status">Platform 1 / 10</div>');
+    let x=50,platform=0;
+    const key=function(e){const k=e.key.toLowerCase();if(k==="a")x=Math.max(0,x-5);if(k==="d")x=Math.min(100,x+5);$("jumpStatus").textContent="X "+x+"% — PLATFORM "+(platform+1)+" / 10";if(Math.random()<.08){platform++;addScore(10);if(platform>=10)$("jumpStatus").textContent="YOU REACHED THE TOP!";}};
+    window.addEventListener("keydown",key);gameCleanup=function(){window.removeEventListener("keydown",key);};
+  },
+  15: function(){
+    let board=Array(16).fill(0);
+    function spawn(){const empty=[];board.forEach(function(v,i){if(!v)empty.push(i);});if(empty.length)board[empty[Math.floor(Math.random()*empty.length)]]=Math.random()<.9?2:4;}
+    spawn();spawn();center('<div class="t2048" id="tw"></div><div class="keyhint">Arrow keys or WASD</div>');
+    function draw(){const el=$("tw");el.innerHTML="";board.forEach(function(v){const b=document.createElement("button");b.textContent=v||"";el.appendChild(b);});}
+    function move(dx,dy){let moved=false;for(let y=0;y<4;y++)for(let x=0;x<4;x++){const i=y*4+x,nx=x+dx,ny=y+dy;if(board[i]&&nx>=0&&nx<4&&ny>=0&&ny<4&&board[ny*4+nx]===0){board[ny*4+nx]=board[i];board[i]=0;moved=true;}}if(moved){spawn();addScore(1);draw();}}
+    const key=function(e){const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")move(-1,0);if(k==="arrowright"||k==="d")move(1,0);if(k==="arrowup"||k==="w")move(0,-1);if(k==="arrowdown"||k==="s")move(0,1);};
+    window.addEventListener("keydown",key);draw();gameCleanup=function(){window.removeEventListener("keydown",key);};
   }
-  if(current===2)rps();
-  if(current===4)ttt();
-  if(current===11)pong();
+};
+
+function renderRps(){
+  center(`<div class="big">ROCK PAPER SCISSORS</div><div id="rpsPlayers" class="desc">Waiting for opponent...</div><div id="rpsScore" class="big">0 — 0</div><div class="rps-buttons">${["ROCK","PAPER","SCISSORS"].map(m=>`<button class="btn" data-move="${m}">${m}</button>`).join("")}</div><div id="rpsStatus" class="status">Choose your move.</div>`);
+  document.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>socket.emit("rps:move",b.dataset.move));
 }
-function rps(){center(`<div class="online-status" id="gos">ONLINE — CREATE OR JOIN A ROOM</div><div class="big" id="rscore">0 — 0</div><div class="controls">${["ROCK","PAPER","SCISSORS"].map(x=>`<button class="btn" onclick="sendRps('${x}')">${x}</button>`).join("")}</div><div class="status" id="rstat">Make your move.</div>`)}
-function sendRps(m){socket.emit("rps:move",m);rstat.textContent="MOVE SENT — WAITING..."}socket.on("rps:state",d=>{rscore.textContent="0 — 0";gos.textContent="ONLINE — ROOM CONNECTED"});socket.on("rps:result",d=>{const ids=Object.keys(d.scores);const vals=ids.map(x=>d.scores[x]);rscore.textContent=vals.join(" — ");rstat.textContent=d.winner===socket.id?"YOU WIN!":d.winner?"FRIEND WINS":"DRAW";if(d.winner===socket.id)add(25)});
+function renderTtt(){
+  center(`<div class="big">TIC-TAC-TOE</div><div id="tttPlayers" class="desc">Waiting for opponent...</div><div id="tttTurn" class="status"></div><div class="grid3" id="tttGrid"></div><button class="btn alt" id="tttReset">NEW GAME</button>`);
+  for(let i=0;i<9;i++){const b=document.createElement("button");b.className="cell";b.onclick=()=>socket.emit("ttt:move",i);$("tttGrid").appendChild(b);}
+  $("tttReset").onclick=()=>socket.emit("ttt:reset");
+}
+function renderPong(){
+  center(`<div class="big">PONG</div><div id="pongPlayers" class="desc">Waiting for opponent...</div><canvas id="pongCanvas" width="720" height="440"></canvas><div class="keyhint">W/S or ↑/↓ — server controls the ball.</div>`);
+  const canvas=$("pongCanvas"),ctx=canvas.getContext("2d");
+  const send=e=>{let y=window.__pongY??180;if(["w","ArrowUp"].includes(e.key))y-=20;if(["s","ArrowDown"].includes(e.key))y+=20;window.__pongY=Math.max(0,Math.min(360,y));socket.emit("pong:input",window.__pongY);};
+  window.addEventListener("keydown",send);gameCleanup=()=>{window.removeEventListener("keydown",send);socket.off("pong:state",window.__pixelPongDraw);};
+  socket.off("pong:state", window.__pixelPongDraw);
+  window.__pixelPongDraw=drawPong;
+  socket.on("pong:state", window.__pixelPongDraw);
+  function drawPong(p){if(!document.body.contains(canvas))return;ctx.clearRect(0,0,720,440);ctx.fillStyle="#ffcc33";ctx.fillRect(20,p.paddles.left,12,80);ctx.fillStyle="#63b3ff";ctx.fillRect(688,p.paddles.right,12,80);ctx.fillStyle="#f4f0dc";ctx.fillRect(p.ball.x-8,p.ball.y-8,16,16);ctx.font="28px VT323";ctx.fillText(p.scores[0],320,40);ctx.fillText(p.scores[1],390,40);}
+}
 
-function ttt(){center(`<div class="online-status" id="tos">ONLINE TIC-TAC-TOE</div><div class="grid3" id="tg"></div><button class="btn alt" onclick="socket.emit('ttt:reset')">NEW GAME</button>`);for(let i=0;i<9;i++){const b=document.createElement("button");b.className="cell";b.onclick=()=>socket.emit("ttt:move",i);tg.appendChild(b)}}
-socket.on("ttt:state",s=>{document.querySelectorAll("#tg .cell").forEach((b,i)=>b.textContent=s.board[i]);tos.textContent=s.over?"GAME OVER":`TURN: ${s.turn}`});
 
-function pong(){center(`<div class="online-status">ONLINE PONG — YOU CONTROL THE ${socket.id?"PADDLE":""}</div><canvas id="pc" width="720" height="440"></canvas><div class="desc">Move with W/S or ↑/↓. Server owns the ball.</div>`);const z=pc.getContext("2d");window.onkeydown=e=>{if(["w","s","ArrowUp","ArrowDown"].includes(e.key))socket.emit("pong:input",e.key==="w"||e.key==="ArrowUp"?Math.max(0,(window.py||180)-20):Math.min(360,(window.py||180)+20));};socket.on("pong:state",p=>{z.clearRect(0,0,720,440);z.fillStyle="#ffcc33";z.fillRect(20,p.left.y,12,80);z.fillStyle="#63b3ff";z.fillRect(688,p.right.y,12,80);z.fillStyle="#f5f1dc";z.fillRect(p.x-8,p.y-8,16,16);z.font="28px VT323";z.fillText(p.scores[0],320,40);z.fillText(p.scores[1],390,40)})}
+function renderInRoom(data){
+  roomId=data.roomId;
+  roomGame=data.game;
+  const idx=Object.keys(ONLINE).find(k=>ONLINE[k]===data.game);
+  if(idx!==undefined) current=Number(idx);
+  titleAndDescription();
+  refreshActive();
+  hideLobby();
+  renderSelectedGameOverride();
+}
+socket.on("rps:state",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const p=$("rpsPlayers");if(p)p.textContent=data.players.join(" VS ");});
+socket.on("rps:waiting",()=>{const s=$("rpsStatus");if(s)s.textContent="MOVE LOCKED — WAITING FOR OPPONENT";});
+socket.on("rps:result",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const s=$("rpsStatus");if(s)s.textContent=data.winner===socket.id?"YOU WIN!":data.winner?"OPPONENT WINS":"DRAW";});
+socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;});
+socket.on("pong:state",p=>{const el=$("pongPlayers");if(el)el.textContent="PONG ONLINE";});
 
-socket.on("game:waiting",m=>{const x=document.querySelector(".status");if(x)x.textContent=m});
-const params=new URLSearchParams(location.search);if(params.get("room")){setTimeout(()=>socket.emit("room:join",{roomId:params.get("room")}),500)}
-</script></body></html>
+function renderOnlineGame(){
+  if(current===2)renderRps();
+  if(current===4)renderTtt();
+  if(current===11)renderPong();
+}
+function renderSelectedGameOverride(){
+  resetScreen();
+  if(ONLINE[current]){if(!roomId){renderMultiplayerMenu();}else renderOnlineGame();return;}
+  SOLO[current]();
+}
+
+function refreshOpenRooms(){ /* server pushes updates; no polling required */ }
+
+// Replace renderSelectedGame's body with the authoritative version.
+window.renderSelectedGame=renderSelectedGameOverride;
+
+// Rebind list and controls after all functions are defined.
+ui.home.onclick=home;
+ui.back.onclick=()=>{if(ONLINE[current] && roomId){socket.emit("room:leave");roomId="";}showLobby();};
+ui.restart.onclick=()=>renderSelectedGameOverride();
+buildLists();
+refreshActive();
+
+// If an invite URL is opened, login first and then join its room.
+// If a game query is present, login first and open that game's selection.
+if(new URLSearchParams(location.search).has("game")) selectGame(current);
+
+})();
+</script>
+</body></html>

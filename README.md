@@ -1,52 +1,18 @@
-# Pixel Playground 2.0
+# Pixel Playground — Final
 
-A retro 16-game browser arcade with a real-time multiplayer foundation.
+Retro 16-game arcade with Node.js + Socket.IO multiplayer.
 
 ## Multiplayer
-Server-authoritative multiplayer is implemented for:
-- Rock Paper Scissors
-- Tic-Tac-Toe
-- Pong
+Rock Paper Scissors, Tic-Tac-Toe and Pong use a server-authoritative room model. Players can create a room, copy an HTTPS invite URL, search online usernames, accept invitations, or join an open room.
 
-The server handles:
-- usernames / online presence
-- username search
-- room creation
-- room capacity
-- invite links
-- friend invitations
-- RPS result resolution
-- Tic-Tac-Toe turn validation
-- Pong physics and paddle state
+## Deploy on Render
+- Runtime: Node
+- Root Directory: blank
+- Build Command: `npm install`
+- Start Command: `npm start`
+- Instance Type: Free
 
-## Run locally
+The server listens on `process.env.PORT` and exposes `/health`.
 
-Requirements: Node.js 18+
-
-```bash
-npm install
-npm start
-```
-
-Open:
-http://localhost:3000
-
-## Deploy
-
-Deploy the entire project to a Node-compatible host such as Render, Railway, Fly.io, or a VPS.
-
-Set the port from the platform's PORT environment variable (the server already does this).
-
-For production:
-1. Use HTTPS.
-2. Restrict CORS to your own domain.
-3. Add Redis if you run multiple server instances.
-4. Add PostgreSQL/Supabase for persistent accounts, profiles, friends, and leaderboards.
-5. Add rate limiting and server-side input validation.
-6. Use a persistent session/authentication system instead of ephemeral usernames.
-
-## Recommended production architecture
-
-Browser -> HTTPS load balancer -> Node/Socket.IO -> Redis adapter -> PostgreSQL/Supabase
-
-The current build is deliberately simple enough to run as one Node process while establishing the correct multiplayer model.
+## Production notes
+For a larger public launch, add persistent authentication/database, Redis for multi-instance Socket.IO, rate limiting, analytics, moderation, and durable match history. The current single-instance deployment is designed for a small free-tier arcade.
