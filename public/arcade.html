@@ -11,9 +11,7 @@
 <div class="app"><div class="top"><div class="logo" onclick="home()">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div><div class="badge">SCORE <b id="score">0</b></div></div></div>
 <div class="layout"><aside class="side"><div class="desc">SELECT GAME</div><div class="list" id="list"></div></aside><main class="main"><div class="head"><div><h1 id="title">PIXEL PLAYGROUND</h1><div class="desc" id="desc">Choose a game.</div></div><div class="controls"><button class="btn alt" onclick="showLobby()">← BACK</button><button class="btn alt" onclick="restart()">RESTART</button></div></div><div class="invite" id="invite"></div><div id="screen" class="screen"></div></main></div></div>
 
-<div class="login" id="login"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. We'll keep it unique while you're online.</p><input id="name" maxlength="16"><div style="height:10px"></div><button class="btn" onclick="doLogin()">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
-
-<div class="lobby" id="lobby"><div class="lobbybox">
+<div class="lobby id="lobby"><div class="lobbybox">
 <div class="lcard"><h2>WHAT GAME WOULD YOU LIKE TO PLAY?</h2><div class="gamepick" id="gamepick"></div></div>
 <div class="lcard"><h2>PLAY WITH FRIENDS</h2><div class="desc">Create a room, copy the URL, and send it. You can also invite an online username.</div><div class="room"><div class="desc">FRIEND SEARCH</div><div class="searchrow"><input id="search" placeholder="username"><button class="btn alt" onclick="searchUsers()">SEARCH</button></div><div class="results" id="results"></div></div><div class="room"><div class="desc">ROOM</div><div id="roomStatus" class="status">No room yet.</div><input id="roomLink" readonly placeholder="Your copyable invite link appears here"><div class="controls"><button class="btn" onclick="copyRoom()">COPY LINK</button><button class="btn alt" onclick="shareRoom()">SHARE</button></div></div><button class="btn alt" onclick="hideLobby()">← BACK TO GAME</button></div>
 </div></div>
@@ -89,6 +87,7 @@ socket.on("auth:ok", data => {
   username = data.username;
   me.textContent = username;
   loginOverlay.style.display = "none";
+  loginStatus.textContent = "LOGIN SUCCESSFUL";
   const q = new URLSearchParams(location.search);
   if (q.get("room")) {
     roomId = q.get("room").toUpperCase();
