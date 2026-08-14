@@ -14,7 +14,7 @@
 <section class="panel"><h2>THE ARCADE</h2><div class="games" id="games"></div></section>
 </div>
 <script>
-const games=["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Doodle Jump Clone","2048"];
+const games=["Wordle","Reaction Timer","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Color Guessing Game","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Minesweeper","2048"];
 const online=new Set([2,4,11]);
 const el=document.getElementById("games");
 games.forEach((name,i)=>{const b=document.createElement("button");b.className="game";b.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><small class="${online.has(i)?"online":""}">${online.has(i)?"● ONLINE MULTIPLAYER":"SOLO"}</small>`;b.onclick=()=>location.href=`/arcade.html?game=${i}`;el.appendChild(b)});
