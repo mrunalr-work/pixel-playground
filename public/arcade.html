@@ -24,11 +24,21 @@ const socket=io();
 let authed=false;
 function randomName(){const a=["PIXEL","TURBO","NEON","RETRO","CYBER","MEGA","NOVA"];const b=["FOX","BOT","NINJA","WIZARD","GHOST","RIDER"];return a[Math.floor(Math.random()*a.length)]+"_"+b[Math.floor(Math.random()*b.length)]+"_"+Math.floor(10+Math.random()*90)}
 function doLogin(){
-  const n=(document.getElementById("loginName").value||randomName()).trim();
+  const input=document.getElementById("loginName");
+  const status=document.getElementById("loginStatus");
+  const n=(input.value||randomName()).trim();
+  if(!socket.connected){
+    status.textContent="CONNECTING TO GAME SERVER...";
+    socket.connect();
+    setTimeout(()=>{if(socket.connected){socket.emit("auth",{username:n});}else{status.textContent="SERVER OFFLINE — REFRESH AND TRY AGAIN";}},1200);
+    return;
+  }
+  status.textContent="CONNECTING...";
   socket.emit("auth",{username:n});
-  document.getElementById("loginStatus").textContent="CONNECTING...";
 }
-socket.on("connect_error",()=>document.getElementById("loginStatus").textContent="SERVER CONNECTION ERROR");
+socket.on("connect",()=>{document.getElementById("loginStatus").textContent="SERVER CONNECTED";});
+socket.on("connect_error",()=>document.getElementById("loginStatus").textContent="SERVER CONNECTION ERROR — CHECK THE RENDER DEPLOYMENT");
+socket.on("disconnect",()=>{if(!authed)document.getElementById("loginStatus").textContent="SERVER DISCONNECTED";});
 socket.on("auth:ok",d=>{
   authed=true; username=d.username; me.textContent=username;
   document.getElementById("loginOverlay").style.display="none";
@@ -41,7 +51,8 @@ const games=["Click Counter","Reaction Timer","Rock Paper Scissors","Guess the N
 let current=Number(new URLSearchParams(location.search).get("game"));if(!Number.isInteger(current)||current<0||current>=games.length)current=0;
 let username="",roomId="",score=0,gameState=null;
 
-loginName.value=["PIXEL","TURBO","NEON","RETRO"][Math.floor(Math.random()*4)]+"_"+Math.floor(10+Math.random()*90);
+loginName.value=randomName();
+loginName.addEventListener("keydown",e=>{if(e.key==="Enter")doLogin()});
 games.forEach((g,i)=>{const b=document.createElement("button");b.textContent=`${String(i+1).padStart(2,"0")} — ${g}`;b.onclick=()=>selectGame(i);list.appendChild(b);const p=document.createElement("button");p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${g}</b><br><span class="desc">${online[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;p.onclick=()=>{hideLobby();selectGame(i)};gamepick.appendChild(p)});
 
 function home(){location.href="/"}function login(){socket.emit("auth",{username:name.value});}socket.on("auth:ok",d=>{username=d.username;me.textContent=username;login.style.display="none";showLobby()});
