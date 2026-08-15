@@ -3,7 +3,17 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pixel Playground — Arcade</title>
-<script src="/socket.io/socket.io.js"></script>
+<script>
+window.__errs=[];
+window.addEventListener("error",e=>{window.__errs.push(e.message+" @ "+e.filename+":"+e.lineno);});
+const __handlers={};
+window.io=()=>({
+  on:(ev,fn)=>{(__handlers[ev]||(__handlers[ev]=[])).push(fn); if(ev==="connect") setTimeout(fn,0);},
+  emit:(ev,data)=>{
+    if(ev==="auth") setTimeout(()=>__handlers["auth:ok"]?.forEach(fn=>fn({username:data.username})),0);
+  }
+});
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 :root{--bg:#0d0d15;--panel:#171725;--ink:#f4f0dc;--muted:#aaa7ba;--a:#ffcc33;--g:#55e6a5;--r:#ff6070;--line:#4a4765;--blue:#63b3ff}
@@ -74,7 +84,7 @@ function setStatus(text, error=false){ui.loginStatus.textContent=text;ui.loginSt
 function showLobby(){if(!authed)return;ui.lobby.style.display="grid";refreshOpenRooms();}
 function hideLobby(){ui.lobby.style.display="none";}
 function home(){location.href="/";}
-function resetScreen(){try{gameCleanup();}catch(e){console.error("cleanup",e);}gameCleanup=()=>{};if(ui.screen)ui.screen.innerHTML="";}
+function resetScreen(){gameCleanup();gameCleanup=()=>{};ui.screen.innerHTML="";}
 function addScore(n){score=Math.max(0,score+n);if(ui.score)ui.score.textContent=score;}
 
 function selectGame(index){
@@ -82,6 +92,11 @@ function selectGame(index){
   current=index; roomGame=""; titleAndDescription(); refreshActive(); renderSelectedGame();
 }
 function titleAndDescription(){ui.title.textContent=GAMES[current];ui.desc.textContent=ONLINE[current]?"Online multiplayer — create a room or join a friend.":"Solo game.";}
+function renderSelectedGame(){
+  resetScreen();
+  if(ONLINE[current]){renderMultiplayerMenu();return;}
+  const f=SOLO[current]||SOLO[0];f();
+}
 
 function buildLists(){
   ui.gameList.innerHTML="";ui.gamePick.innerHTML="";
@@ -93,7 +108,7 @@ function buildLists(){
     p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);
   });
 }
-function refreshActive(){if(ui.gameList)[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",i===current));if(ui.gamePick)[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",i===current));}
+function refreshActive(){[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",i===current));[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",i===current));}
 
 function renderMultiplayerMenu(){
   const gameName=GAMES[current];
@@ -156,6 +171,12 @@ function renderRoomReady(data){
   if(input)input.value=link;if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
 }
 
+function renderInRoom(data){
+  roomId=data.roomId;roomGame=data.game;const found=Object.keys(ONLINE).find(k=>ONLINE[k]===data.game); if(found!==undefined) current=Number(found);
+  refreshActive();hideLobby();titleAndDescription();renderSelectedGame();
+  const players=data.players.join(" VS ");
+  const s=document.querySelector("#roomStatus");if(s)s.textContent=`ROOM ${data.roomId}: ${players}`;
+}
 
 socket.on("connect",()=>{if(!authed)setStatus("SERVER CONNECTED — READY");});
 socket.on("connect_error",()=>{if(!authed)setStatus("SERVER CONNECTION ERROR — REFRESH OR TRY AGAIN",true);});
@@ -452,32 +473,10 @@ function renderOnlineGame(){
 }
 function renderSelectedGame(){
   resetScreen();
-  try{
-    if(ONLINE[current]){
-      if(!roomId) renderMultiplayerMenu();
-      else renderOnlineGame();
-      return;
-    }
-    const fn=SOLO[current];
-    if(typeof fn!=="function") throw new Error(`Missing renderer for game ${current+1}: ${GAMES[current]}`);
-    fn();
-  }catch(err){
-    console.error("GAME RENDER ERROR",GAMES[current],err);
-    ui.screen.innerHTML=`<div class="center">
-      <div class="big">${GAMES[current]}</div>
-      <div class="error">GAME FAILED TO LOAD</div>
-      <div class="desc">${String(err?.message||err)}</div>
-      <button class="btn" onclick="location.reload()">RELOAD GAME</button>
-      ${controlsPanel()}
-    </div>`;
-  }
+  if(ONLINE[current]){if(!roomId){renderMultiplayerMenu();}else renderOnlineGame();return;}
+  SOLO[current]();
 }
 
-function validateGameRenderers(){
-  const missing=[];
-  GAMES.forEach((name,i)=>{if(!ONLINE[i] && typeof SOLO[i]!=="function") missing.push(`${i+1} — ${name}`);});
-  if(missing.length) console.error("Missing game renderers:",missing);
-}
 function refreshOpenRooms(){ /* server pushes updates; no polling required */ }
 
 
@@ -487,7 +486,6 @@ ui.back.onclick=()=>{if(ONLINE[current] && roomId){socket.emit("room:leave");roo
 ui.restart.onclick=()=>renderSelectedGame();
 buildLists();
 refreshActive();
-validateGameRenderers();
 
 // If an invite URL is opened, login first and then join its room.
 // If a game query is present, login first and open that game's selection.
@@ -495,4 +493,21 @@ if(new URLSearchParams(location.search).has("game")) selectGame(current);
 
 })();
 </script>
-</body></html>
+<script>
+setTimeout(()=>{
+  const btn=document.querySelector("#loginBtn");
+  if(btn) btn.click();
+  setTimeout(()=>{
+    window.__testSelectResults=[];
+    for(let i=0;i<17;i++){
+      try{
+        window.__testSelectResults.push([i,document.querySelector("#screen").innerHTML.length]);
+        const b=document.querySelectorAll("#gameList .gb")[i];
+        if(b)b.click();
+        window.__testSelectResults[window.__testSelectResults.length-1][1]=document.querySelector("#screen").innerHTML.length;
+      }catch(e){window.__testSelectResults.push([i,"ERR "+e.message]);}
+    }
+    document.body.setAttribute("data-test",JSON.stringify({errs:window.__errs,results:window.__testSelectResults}));
+  },100);
+},100);
+</script></body></html>
