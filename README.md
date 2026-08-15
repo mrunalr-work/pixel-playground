@@ -16,3 +16,8 @@ The server listens on `process.env.PORT` and exposes `/health`.
 
 ## Production notes
 For a larger public launch, add persistent authentication/database, Redis for multi-instance Socket.IO, rate limiting, analytics, moderation, and durable match history. The current single-instance deployment is designed for a small free-tier arcade.
+
+## Default Build Baseline
+
+`DEFAULT_BUILD_CONFIG.json` is the source of truth for the current Pixel Playground configuration.
+Future builds must preserve the game mechanics and arcade layout in that file unless the user explicitly requests a change.

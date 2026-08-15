@@ -1,0 +1,30 @@
+{
+  "name": "Pixel Playground Default Baseline",
+  "version": "V11",
+  "rule": "Do not change game mechanics or arcade layout in future builds unless explicitly requested by the user.",
+  "game_count": 17,
+  "layout": "Retro arcade: game list sidebar + selected game panel + permanent controls section",
+  "mechanics": {
+    "Asteroids": {
+      "ship_speed": "50% of the previous V10 thrust/max-speed values",
+      "starting_asteroids": "reduced by half",
+      "asteroids_increase_gradually": true
+    },
+    "Breakout": {
+      "brick_shape": "box",
+      "layout_changes_each_restart": true,
+      "paddle_hit_speed": "multiply current speed by 1.25"
+    },
+    "2048": {
+      "grid_background": true,
+      "movement": "all tiles slide in the requested arrow-key direction",
+      "merge": "standard 2048 single-merge-per-move rule",
+      "animation": "smooth slide"
+    }
+  },
+  "global": {
+    "prevent_arrow_wasd_page_scroll": true,
+    "show_game_controls_while_playing": true,
+    "selected_game_highlight": true
+  }
+}
