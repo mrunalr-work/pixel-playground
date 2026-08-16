@@ -42,3 +42,16 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - CRT scanlines, subtle flicker, pixel particles, button press motion, coin-in messaging, and a short READY countdown are part of the default arcade presentation.
 - Achievement set expanded to 12 achievements with event-based unlock hooks for Snake, Breakout, Asteroids, 2048, Minesweeper, and Tetris.
 - `DEFAULT_BUILD_CONFIG.json` remains the source of truth for future builds.
+
+
+## V15 Product Baseline
+
+- Quick Play removed; **RANDOM GAME** is the single random-launch action.
+- Random Game uses the former Quick Play primary-button styling.
+- The six dashboard categories are rendered once, in a fixed top navigation bar.
+- The internal duplicate dashboard tab row was removed.
+- Game panels use a responsive viewport so the selected game and its controls fit the window more consistently.
+- Breakout playfield is vertically expanded and the paddle remains near the bottom with more separation from the brick field.
+- Breakout paddle hits increase current ball speed by 5%.
+- Responsive breakpoints improve desktop, tablet, and mobile scaling.
+- V15 visual polish keeps the same retro aesthetic while tightening borders, spacing, hierarchy, and focus states.

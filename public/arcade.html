@@ -101,6 +101,81 @@ body::after{
     radial-gradient(circle at 56% 44%,#ffcc33 0 1px,transparent 2px);
 }
 
+
+/* V15 layout + visual polish */
+html{scroll-behavior:smooth}
+body{min-width:0;overflow-x:hidden}
+.app{width:min(100%,1440px);padding:86px clamp(10px,2vw,24px) 60px;margin:auto}
+.persistent-nav{
+  position:fixed;left:0;right:0;top:0;z-index:60;width:100%;
+  padding:10px max(12px,calc((100vw - 1440px)/2 + 12px));
+  margin:0;background:rgba(13,13,21,.95);
+  border-bottom:2px solid var(--line);
+  box-shadow:0 5px 18px rgba(0,0,0,.35);
+  backdrop-filter:blur(7px)
+}
+.persistent-nav::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--a),transparent);opacity:.32}
+.pnav{min-width:0;white-space:nowrap}
+.layout{grid-template-columns:minmax(220px,285px) minmax(0,1fr);align-items:stretch}
+.side,.main{min-width:0}
+.main{min-height:0}
+.game-list{max-height:calc(100vh - 190px);overflow:auto;padding-right:2px;gap:6px}
+.gb{min-height:44px;display:flex;align-items:center}
+.screen{
+  height:clamp(420px,calc(100vh - 285px),720px);
+  min-height:420px;overflow:hidden;display:block;
+  padding:clamp(10px,1.5vw,16px)
+}
+.center{height:100%;min-height:0;overflow:auto;padding:4px 4px 8px}
+.center>canvas,.screen canvas{
+  flex:0 1 auto;max-height:min(52vh,500px);width:auto;max-width:100%;object-fit:contain
+}
+.game-controls{flex:0 0 auto;width:min(100%,980px);margin:6px auto 0}
+.game-control-item{font-size:20px}
+.lobby{inset:70px 0 0;padding:18px;place-items:start center;overflow:auto}
+.lobby .hub{width:min(1180px,100%);max-height:calc(100vh - 95px);overflow:auto}
+.gamepick{max-height:calc(100vh - 250px)}
+.multi-layout{grid-template-columns:minmax(0,1.15fr) minmax(280px,.85fr)}
+.multi-games{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.achievement-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.side{background:rgba(23,23,37,.94);border-color:#575371}
+.main{background:rgba(23,23,37,.95);border-color:#575371}
+.screen{background:rgba(7,7,14,.93);border-color:#5c5878;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+.head{align-items:center}
+.head .controls{flex-shrink:0}
+.gb.active,.pnav.active{outline:1px solid rgba(255,204,51,.28);outline-offset:-4px}
+.room-card{box-shadow:inset 0 0 0 1px rgba(255,255,255,.02)}
+@media(max-width:1000px){
+  .layout{grid-template-columns:minmax(190px,235px) minmax(0,1fr)}
+  .pnav{padding:8px 10px}
+  .game-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:760px){
+  .app{padding-top:132px}
+  .persistent-nav{padding:8px 10px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .pnav{font-size:17px}
+  .layout{grid-template-columns:1fr}
+  .side{max-height:250px;overflow:auto}
+  .screen{height:clamp(500px,calc(100vh - 320px),700px)}
+  .game-controls{grid-template-columns:1fr}
+  .lobby{inset:126px 0 0}
+  .lobby .hub{max-height:calc(100vh - 145px)}
+  .achievement-grid,.profile-grid,.stats-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:520px){
+  .app{padding-top:184px}
+  .persistent-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pnav{font-size:16px;padding:8px 7px}
+  .screen{height:clamp(480px,calc(100vh - 365px),650px)}
+  .head{gap:10px}
+  .head h1{font-size:15px}
+  .controls{width:100%}
+  .controls .btn{flex:1}
+  .achievement-grid,.profile-grid,.stats-grid{grid-template-columns:1fr}
+  .lobby{inset:178px 0 0;padding:10px}
+  .lobby .hub{max-height:calc(100vh - 190px);padding:12px}
+}
+
 </style>
 </head>
 <body>
@@ -151,16 +226,6 @@ body::after{
       </div>
       <button class="btn alt" id="hubClose">← CLOSE</button>
     </div>
-
-    <div class="hub-tabs" role="tablist">
-      <button class="hub-tab active" data-tab="solo">SOLO GAMES</button>
-      <button class="hub-tab" data-tab="multi">MULTIPLAYER</button>
-      <button class="hub-tab" data-tab="profile">PROFILE</button>
-      <button class="hub-tab" data-tab="leaderboard">LEADERBOARD</button>
-      <button class="hub-tab" data-tab="achievements">ACHIEVEMENTS</button>
-      <button class="hub-tab" data-tab="daily">DAILY CHALLENGE</button>
-    </div>
-
     <section class="hub-panel active" data-panel="solo">
       <div class="hub-section-title">CHOOSE YOUR GAME</div>
       <div class="gamepick" id="gamePick"></div>
@@ -274,7 +339,7 @@ const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Ti
   // these game mechanics and the arcade layout unless the user explicitly asks
   // for a mechanic/layout change.
   const DEFAULT_BUILD_CONFIG = Object.freeze({
-    version: "V14",
+    version: "V15",
     gameCount: 17,
     layout: "retro-arcade-sidebar-selection-with-dedicated-game-panel-and-controls",
     mechanicsLocked: true,
@@ -284,7 +349,6 @@ const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Ti
     keyboardScrollLock: true,
     controlsAlwaysVisible: true,
     persistentTopNavigation: true,
-    quickPlay: true,
     randomGame: true,
     crtPresentation: true
   });
@@ -357,7 +421,7 @@ function renderAchievements(){if(!ui.achievementPanel)return;const all=[
 function dailyGame(){const pool=SOLO_INDEXES,d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;return pool[Math.abs(hash)%pool.length];}
 function renderDaily(){if(!ui.dailyPanel)return;const idx=dailyGame(),d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;if(profile.daily.date!==key){profile.daily={date:key,game:GAMES[idx],completed:false,started:false};saveProfile();}const done=profile.daily.completed;ui.dailyPanel.innerHTML=`<div class="hub-section-title">DAILY CHALLENGE</div><div class="daily-card"><div class="desc">TODAY'S FEATURED GAME</div><div class="daily-game">${GAMES[idx]}</div><p>Play today's featured game and try to beat your personal best.</p><div class="status">${done?"✓ CHALLENGE COMPLETED":"READY TO PLAY"}</div><button class="btn" id="dailyPlay">${done?"PLAY AGAIN":"PLAY TODAY'S CHALLENGE"}</button></div>`;$("dailyPlay").onclick=()=>{profile.daily.started=true;saveProfile();hideLobby();selectGame(idx);};}
 function renderLeaderboard(){if(!ui.leaderboardPanel)return;ui.leaderboardPanel.innerHTML=`<div class="hub-section-title">LIVE LEADERBOARD</div><table class="leader-table"><thead><tr><th>#</th><th>PLAYER</th><th>POINTS</th><th>WINS</th></tr></thead><tbody id="leaderBody"><tr><td colspan="4">CONNECTING...</td></tr></tbody></table>`;socket.emit("leaderboard:request");}
-function switchHubTab(tab){document.querySelectorAll(".hub-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));if(tab==="leaderboard")renderLeaderboard();}
+function switchHubTab(tab){document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));if(tab==="leaderboard")renderLeaderboard();}
 function syncPersistentNav(tab){
   document.querySelectorAll(".pnav").forEach(b=>b.classList.toggle("active",b.dataset.pgtab===tab));
 }
@@ -385,7 +449,6 @@ function showArcadeSequence(){
 }
 
 function initHubActions(){
-  document.querySelectorAll(".hub-tab").forEach(b=>b.onclick=()=>{syncPersistentNav(b.dataset.tab);switchHubTab(b.dataset.tab);});
   document.querySelectorAll(".pnav").forEach(b=>b.onclick=()=>openHubTab(b.dataset.pgtab));
 ui.closeLobby.onclick=hideLobby;ui.createHubRoom.onclick=()=>{const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);if(idx===undefined)return;current=idx;titleAndDescription();createRoom(idx);};ui.joinHubRoom.onclick=()=>joinRoom(ui.hubRoomCode.value);ui.copyHubLink.onclick=async()=>copyValue(ui.hubRoomLink,ui.hubRoomStatus);ui.shareHubLink.onclick=async()=>shareValue(ui.hubRoomLink);ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});}
 function showLobby(){if(!authed)return;if(profile.daily.started&&!profile.daily.completed){profile.daily.completed=true;profile.daily.started=false;saveProfile();awardAchievement("daily");}ui.lobby.style.display="grid";ui.hubUser.textContent=username;renderProfile();renderAchievements();renderDaily();renderLeaderboard();refreshOpenRooms();}
@@ -482,7 +545,7 @@ socket.on("auth:ok",data=>{
   authed=true;username=data.username;ui.me.textContent=username;ui.hubUser.textContent=username;ui.login.style.display="none";initHubActions();reportProfile();
   const q=new URLSearchParams(location.search);
   if(q.get("room"))socket.emit("room:join",{roomId:q.get("room")});
-  else if(q.get("quick")||q.get("random"))launchRandomGame();
+  else if(q.get("random"))launchRandomGame();
   else showLobby();
 });
 
@@ -632,21 +695,21 @@ const SOLO = {
     const timer=setInterval(()=>{if(!alive)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(p=>p.x===head.x&&p.y===head.y)){alive=false;$("snakeStatus").textContent="GAME OVER — SNAKE HIT THE BOUNDARY OR ITSELF";draw();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){addScore(10);if(score>=500)awardAchievement("snake-master");do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(p=>p.x===food.x&&p.y===food.y));}else snake.pop();draw();},120);window.addEventListener("keydown",key);draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
   },
   12: function(){
-    center('<canvas id="breakoutCanvas" width="640" height="400"></canvas><div id="breakoutStatus" class="status">BREAKOUT — CLEAR THE BOXES. PADDLE HIT = 0.75× SPEED.</div>');
+    center('<canvas id="breakoutCanvas" width="640" height="520"></canvas><div id="breakoutStatus" class="status">BREAKOUT — CLEAR THE BOXES. PADDLE HIT = +5% SPEED.</div>');
     const c=$("breakoutCanvas"),ctx=c.getContext("2d");let level=1,scoreB=0,ended=false,bricks=[],ball,paddle,keys={l:false,r:false},speedBoost=1;
     const layouts=[()=>Array.from({length:50},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:40},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:45},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:35},(_,i)=>({r:Math.floor(i/10),col:i%10}))];
-    function buildLevel(){const base=layouts[(level-1)%layouts.length]();const shuffled=base.sort(()=>Math.random()-.5);const cols=[...Array(10).keys()];const rows=Math.max(...base.map(b=>b.r))+1;const jitter=()=>Math.floor(Math.random()*Math.max(1,10-Math.min(8,level-1)));const used=new Set();bricks=shuffled.map(b=>{let col=b.col,row=b.r;let tries=0;do{col=Math.floor(Math.random()*10);row=Math.floor(Math.random()*5);tries++;}while(used.has(row+","+col)&&tries<50);used.add(row+","+col);return {x:col*64+6,y:row*24+4,w:52,h:16,on:true};});paddle={x:255,w:130};const baseSpeed=4+Math.min(level-1,8)*.45;const a=Math.random()<.5?-1:1;ball={x:320,y:340,vx:a*baseSpeed,vy:-baseSpeed};speedBoost=1;ended=false;$("breakoutStatus").textContent=`LEVEL ${level} — ${bricks.length} BOXES — CLEAR THE WALL`;
+    function buildLevel(){const base=layouts[(level-1)%layouts.length]();const shuffled=base.sort(()=>Math.random()-.5);const cols=[...Array(10).keys()];const rows=Math.max(...base.map(b=>b.r))+1;const jitter=()=>Math.floor(Math.random()*Math.max(1,10-Math.min(8,level-1)));const used=new Set();bricks=shuffled.map(b=>{let col=b.col,row=b.r;let tries=0;do{col=Math.floor(Math.random()*10);row=Math.floor(Math.random()*5);tries++;}while(used.has(row+","+col)&&tries<50);used.add(row+","+col);return {x:col*64+6,y:row*24+4,w:52,h:16,on:true};});paddle={x:255,w:130};const baseSpeed=4+Math.min(level-1,8)*.45;const a=Math.random()<.5?-1:1;ball={x:320,y:c.height-180,vx:a*baseSpeed,vy:-baseSpeed};speedBoost=1;ended=false;$("breakoutStatus").textContent=`LEVEL ${level} — ${bricks.length} BOXES — CLEAR THE WALL`;
       draw();}
     function restart(){level=1;scoreB=0;buildLevel();}
     function nextLevel(){level++;paddle.w=Math.max(90,130-(level-1)*8);if(level>=6)awardAchievement("brick-breaker");buildLevel();}
-    function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";ctx.fillRect(paddle.x,380,paddle.w,12);ctx.fillStyle="#f4f0dc";ctx.beginPath();ctx.arc(ball.x,ball.y,7,0,Math.PI*2);ctx.fill();bricks.filter(b=>b.on).forEach((b,i)=>{ctx.fillStyle=i%2?"#55e6a5":"#63b3ff";ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle="#17130a";ctx.strokeRect(b.x,b.y,b.w,b.h);});ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText(`LEVEL ${level}`,15,395);}
-    function resetBallFromPaddle(){ball.x=paddle.x+paddle.w/2;ball.y=370;const speed=(4+Math.min(level-1,8)*.45)*speedBoost;ball.vx=(Math.random()<.5?-1:1)*speed;ball.vy=-speed;}
+    function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";ctx.fillRect(paddle.x,c.height-28,paddle.w,12);ctx.fillStyle="#f4f0dc";ctx.beginPath();ctx.arc(ball.x,ball.y,7,0,Math.PI*2);ctx.fill();bricks.filter(b=>b.on).forEach((b,i)=>{ctx.fillStyle=i%2?"#55e6a5":"#63b3ff";ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle="#17130a";ctx.strokeRect(b.x,b.y,b.w,b.h);});ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText(`LEVEL ${level}`,15,c.height-8);}
+    function resetBallFromPaddle(){ball.x=paddle.x+paddle.w/2;ball.y=c.height-38;const speed=(4+Math.min(level-1,8)*.45)*speedBoost;ball.vx=(Math.random()<.5?-1:1)*speed;ball.vy=-speed;}
     const kd=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.l=true;if(k==="arrowright"||k==="d")keys.r=true;};
     const ku=e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.l=false;if(k==="arrowright"||k==="d")keys.r=false;};window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);
-    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>365&&ball.y<400&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.05);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.05;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
+    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>c.height-45&&ball.y<c.height-10&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.05);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.05;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
       for(const b of bricks){if(!b.on)continue;if(ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;scoreB+=10;addScore(10);break;}}
       if(bricks.every(b=>!b.on)){addScore(100);nextLevel();last=performance.now();requestAnimationFrame(loop);return;}
-      if(ball.y>400){ended=true;$("breakoutStatus").textContent="YOU LOSE — BALL LOST";draw();return;}draw();requestAnimationFrame(loop);}
+      if(ball.y>c.height){ended=true;$("breakoutStatus").textContent="YOU LOSE — BALL LOST";draw();return;}draw();requestAnimationFrame(loop);}
     $("breakoutStatus").textContent="LEVEL 1 — BOXES CHANGE PLACEMENT EACH RESTART • PADDLE +5% SPEED";restart();requestAnimationFrame(loop);gameCleanup=()=>{ended=true;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
   },
   13: function(){
