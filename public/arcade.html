@@ -7,7 +7,37 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 :root{--bg:#0d0d15;--panel:#171725;--ink:#f4f0dc;--muted:#aaa7ba;--a:#ffcc33;--g:#55e6a5;--r:#ff6070;--line:#4a4765;--blue:#63b3ff}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#292844,#0d0d15 62%);color:var(--ink);font:23px 'VT323',monospace}.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font:20px 'Press Start 2P';line-height:1.6;color:var(--a);text-shadow:3px 3px #5c3e00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge{border:2px solid var(--line);background:var(--panel);padding:8px 11px}.layout{display:grid;grid-template-columns:285px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--line);background:var(--panel);box-shadow:7px 7px #07070b}.side{padding:11px}.side-title{font:13px 'Press Start 2P';color:var(--a);margin-bottom:10px}.game-list{display:grid;gap:7px}.gb{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gb:hover,.gb.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.gb .online{float:right;color:var(--g);font-size:16px}.main{padding:15px;min-height:760px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:2px dashed var(--line);padding-bottom:12px}.head h1{margin:0;font:18px 'Press Start 2P';line-height:1.5;color:var(--a)}.desc{color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:3px solid var(--ink);background:var(--a);color:#17130a;padding:9px 13px;font:inherit;font-weight:bold;cursor:pointer;box-shadow:4px 4px #6b4a00}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:590px;border:3px solid #55516f;background:#09090f;padding:16px;overflow:auto}.center{min-height:550px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}.big{font:28px 'Press Start 2P';line-height:1.7;color:var(--a)}.status{color:var(--g);min-height:28px}.error{color:var(--r)}input{background:#09090f;color:var(--ink);border:3px solid var(--line);padding:9px;font:inherit}.room-card{width:min(720px,100%);border:3px solid var(--line);background:#12121d;padding:16px;text-align:left}.room-card h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin:0 0 8px}.share-row{display:flex;gap:7px;margin-top:8px}.share-row input{flex:1;min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--line);color:var(--a);font:25px 'Press Start 2P';cursor:pointer}.rps-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--line);color:transparent;font:24px 'Press Start 2P';cursor:pointer}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.login{position:fixed;inset:0;background:#0b0b13f2;z-index:30;display:grid;place-items:center;padding:20px}.loginbox{width:min(560px,100%);background:var(--panel);border:4px solid var(--line);padding:30px;text-align:center;box-shadow:9px 9px #07070b}.loginbox input{width:min(330px,100%)}.loginbox h2{font:15px 'Press Start 2P';line-height:1.7;color:var(--a)}.lobby{position:fixed;inset:0;background:#0b0b13f2;z-index:20;display:none;place-items:center;padding:20px}.lobbybox{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--line);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}.lcard h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin-top:0}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:68vh;overflow:auto}.gamepick button{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover,.gamepick button.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.searchrow{display:flex;gap:7px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#11111b;color:var(--ink);border:2px solid var(--line);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}canvas{max-width:100%;height:auto;background:#050509;border:3px solid var(--line)}.keyhint{color:var(--muted);text-align:center}.game-controls{width:min(980px,100%);border:3px solid var(--line);background:#12121d;padding:12px 14px;text-align:left;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:4px}.game-controls-title{font:12px 'Press Start 2P';color:var(--a);grid-column:1/-1}.game-control-item{border:2px solid #3c3955;background:#0d0d16;padding:8px 10px;color:var(--ink);min-height:38px}.color-btn{width:120px;height:70px;border:3px solid var(--ink);cursor:pointer}.flap{font-size:55px}.jump-player{font-size:45px}.t2048{display:grid;grid-template-columns:repeat(4,72px);gap:7px}.t2048 button{width:72px;height:72px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:20px 'Press Start 2P'}@media(max-width:900px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}@media(max-width:520px){.head{flex-direction:column}.grid3{grid-template-columns:repeat(3,72px)}.cell{width:72px;height:72px}.mem-grid{grid-template-columns:repeat(4,64px)}.mem{width:64px;height:64px;font-size:18px}.big{font-size:20px}}
+.site-footer{position:fixed;left:14px;right:14px;bottom:10px;z-index:12;display:flex;justify-content:space-between;align-items:center;gap:12px;pointer-events:none;font:16px 'VT323';color:var(--muted);text-shadow:2px 2px #07070b;padding:5px 2px}
+.site-footer .made,.site-footer .clock{white-space:nowrap;background:rgba(13,13,21,.82);border:1px solid #343149;padding:5px 9px}
+.site-footer .controller{font-size:18px;color:var(--a);vertical-align:-1px}
+@media(max-width:520px){.site-footer{font-size:13px;bottom:6px}.site-footer .made,.site-footer .clock{padding:4px 6px}}
+.hub{width:min(1180px,100%);max-height:92vh;overflow:auto;background:rgba(23,23,37,.97);border:4px solid var(--line);box-shadow:10px 10px #07070b;padding:18px}
+.hub-top{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;margin-bottom:12px}
+.hub-logo{font:20px 'Press Start 2P';line-height:1.5;color:var(--a);text-shadow:3px 3px #5c3e00}
+.hub-tabs{display:flex;flex-wrap:wrap;gap:6px;border-top:2px dashed var(--line);border-bottom:2px dashed var(--line);padding:10px 0;margin-bottom:14px}
+.hub-tab{border:2px solid var(--line);background:#11111b;color:var(--ink);padding:9px 12px;font:18px 'VT323';cursor:pointer}
+.hub-tab:hover,.hub-tab.active{border-color:var(--a);background:#25233a;box-shadow:inset 0 -3px 0 var(--a)}
+.hub-panel{display:none}.hub-panel.active{display:block}
+.hub-section-title{font:14px 'Press Start 2P';color:var(--a);margin-bottom:12px}
+.gamepick{max-height:62vh}
+.multi-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:14px}
+.multi-games{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:12px 0}
+.multi-game-btn{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:12px;text-align:left;font:inherit;cursor:pointer}
+.multi-game-btn:hover,.multi-game-btn.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}
+.multi-selected{border:2px solid var(--line);background:#0d0d16;padding:10px;margin:8px 0;color:var(--a)}
+.room-stack{display:grid;gap:12px}
+.profile-grid,.stats-grid,.achievement-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat-card,.achievement-card,.daily-card{border:2px solid var(--line);background:#11111b;padding:13px}
+.stat-card .num{font:22px 'Press Start 2P';color:var(--a);margin-top:6px}
+.achievement-card.locked{opacity:.45}.achievement-card.unlocked{border-color:var(--g)}
+.achievement-icon{font-size:26px}.achievement-name{font:12px 'Press Start 2P';color:var(--a);margin:7px 0}
+.daily-card{max-width:760px;margin:auto;text-align:center;padding:24px}.daily-game{font:20px 'Press Start 2P';color:var(--a);margin:15px 0}
+.leader-table{width:100%;border-collapse:collapse}.leader-table th,.leader-table td{border:2px solid var(--line);padding:9px;text-align:left}.leader-table th{color:var(--a);font:12px 'Press Start 2P'}
+@media(max-width:900px){.multi-layout{grid-template-columns:1fr}.multi-games{grid-template-columns:1fr}.profile-grid,.stats-grid,.achievement-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.hub{padding:12px}.hub-tabs{display:grid;grid-template-columns:1fr 1fr}.hub-tab{font-size:16px}.profile-grid,.stats-grid,.achievement-grid{grid-template-columns:1fr}.hub-logo{font-size:15px}}
+
+
+*{box-sizing:border-box}body{margin:0;background-image:linear-gradient(rgba(13,13,21,.46),rgba(13,13,21,.46)),url('/background.png'),radial-gradient(circle at top,#292844,#0d0d15 62%);background-size:cover;background-position:center;background-attachment:fixed;background-color:#0d0d15;color:var(--ink);font:23px 'VT323',monospace;padding-bottom:52px}.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font:20px 'Press Start 2P';line-height:1.6;color:var(--a);text-shadow:3px 3px #5c3e00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge{border:2px solid var(--line);background:var(--panel);padding:8px 11px}.layout{display:grid;grid-template-columns:285px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--line);background:var(--panel);box-shadow:7px 7px #07070b}.side{padding:11px}.side-title{font:13px 'Press Start 2P';color:var(--a);margin-bottom:10px}.game-list{display:grid;gap:7px}.gb{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gb:hover,.gb.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.gb .online{float:right;color:var(--g);font-size:16px}.main{padding:15px;min-height:760px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:2px dashed var(--line);padding-bottom:12px}.head h1{margin:0;font:18px 'Press Start 2P';line-height:1.5;color:var(--a)}.desc{color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:3px solid var(--ink);background:var(--a);color:#17130a;padding:9px 13px;font:inherit;font-weight:bold;cursor:pointer;box-shadow:4px 4px #6b4a00}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:590px;border:3px solid #55516f;background:#09090f;padding:16px;overflow:auto}.center{min-height:550px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}.big{font:28px 'Press Start 2P';line-height:1.7;color:var(--a)}.status{color:var(--g);min-height:28px}.error{color:var(--r)}input{background:#09090f;color:var(--ink);border:3px solid var(--line);padding:9px;font:inherit}.room-card{width:min(720px,100%);border:3px solid var(--line);background:#12121d;padding:16px;text-align:left}.room-card h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin:0 0 8px}.share-row{display:flex;gap:7px;margin-top:8px}.share-row input{flex:1;min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--line);color:var(--a);font:25px 'Press Start 2P';cursor:pointer}.rps-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--line);color:transparent;font:24px 'Press Start 2P';cursor:pointer}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.login{position:fixed;inset:0;background:#0b0b13f2;z-index:30;display:grid;place-items:center;padding:20px}.loginbox{width:min(560px,100%);background:var(--panel);border:4px solid var(--line);padding:30px;text-align:center;box-shadow:9px 9px #07070b}.loginbox input{width:min(330px,100%)}.loginbox h2{font:15px 'Press Start 2P';line-height:1.7;color:var(--a)}.lobby{position:fixed;inset:0;background:#0b0b13f2;z-index:20;display:none;place-items:center;padding:20px}.lobbybox{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--line);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}.lcard h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin-top:0}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:68vh;overflow:auto}.gamepick button{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover,.gamepick button.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.searchrow{display:flex;gap:7px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#11111b;color:var(--ink);border:2px solid var(--line);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}canvas{max-width:100%;height:auto;background:#050509;border:3px solid var(--line)}.keyhint{color:var(--muted);text-align:center}.game-controls{width:min(980px,100%);border:3px solid var(--line);background:#12121d;padding:12px 14px;text-align:left;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:4px}.game-controls-title{font:12px 'Press Start 2P';color:var(--a);grid-column:1/-1}.game-control-item{border:2px solid #3c3955;background:#0d0d16;padding:8px 10px;color:var(--ink);min-height:38px}.color-btn{width:120px;height:70px;border:3px solid var(--ink);cursor:pointer}.flap{font-size:55px}.jump-player{font-size:45px}.t2048{display:grid;grid-template-columns:repeat(4,72px);gap:7px}.t2048 button{width:72px;height:72px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:20px 'Press Start 2P'}@media(max-width:900px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}@media(max-width:520px){.head{flex-direction:column}.grid3{grid-template-columns:repeat(3,72px)}.cell{width:72px;height:72px}.mem-grid{grid-template-columns:repeat(4,64px)}.mem{width:64px;height:64px;font-size:18px}.big{font-size:20px}}
 
 .wordle-grid{display:grid;grid-template-columns:repeat(5,58px);gap:6px}.letter{width:58px;height:58px;border:3px solid var(--line);display:grid;place-items:center;font:20px 'Press Start 2P'}.letter.correct{background:#2d9d67;border-color:#55e6a5}.letter.present{background:#9b7b25;border-color:#ffcc33}.letter.absent{background:#252532;color:#777}.wordle-keys{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;max-width:620px}.key{min-width:38px;padding:9px 7px;background:#252536;color:var(--ink);border:2px solid var(--line);font:18px 'VT323';cursor:pointer}.key.wide{min-width:90px}.color-target{font:24px 'Press Start 2P';color:var(--a);padding:12px}.color-grid{display:grid;grid-template-columns:repeat(5,minmax(90px,1fr));gap:7px;max-width:700px;width:100%}.color-choice{height:58px;border:3px solid var(--ink);color:#fff;text-shadow:2px 2px #000;font:18px 'Press Start 2P';cursor:pointer}.mine-grid{display:grid;grid-template-columns:repeat(9,38px);gap:3px}.mine-cell{width:38px;height:38px;background:#252536;color:var(--a);border:2px solid var(--line);font:18px 'Press Start 2P';cursor:pointer}.mine-cell.revealed{background:#11111b;border-color:#333047}.t2048{display:grid;grid-template-columns:repeat(4,78px);gap:7px;padding:8px;background:#151522;border:3px solid var(--line)}.tile2048{width:78px;height:78px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:18px 'Press Start 2P';transition:transform .12s,filter .12s}.tile2048:not(:empty){animation:pop2048 .18s ease}.tile2048.max{background:#ffcc33;color:#111}
 .tile2048.tile-2{background:#fff4b0;color:#2a2510}
@@ -35,21 +65,138 @@
   </div>
 </div>
 
+
+<div class="site-footer" aria-label="Site footer">
+  <div class="made"><span class="controller">🎮</span> MADE BY MRU</div>
+  <div class="clock" id="siteClock">--/--/---- • --:--:--</div>
+</div>
+
 <div class="login" id="loginOverlay"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. A unique suffix is added if it is already online.</p><input id="loginName" maxlength="16"><div style="height:12px"></div><button class="btn" id="loginBtn">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
 
-<div class="lobby" id="lobby"><div class="lobbybox">
-  <div class="lcard"><h2>WHAT GAME WOULD YOU LIKE TO PLAY?</h2><div class="gamepick" id="gamePick"></div></div>
-  <div class="lcard"><h2>PLAY WITH FRIENDS</h2>
-    <p class="desc">Search an online username or use a room link.</p>
-    <div class="room-card"><h2>FRIEND SEARCH</h2><div class="searchrow"><input id="searchInput" placeholder="username"><button class="btn alt" id="searchBtn">SEARCH</button></div><div class="results" id="searchResults"></div></div>
-    <div class="room-card"><h2>OPEN ROOMS</h2><div id="openRooms" class="desc">No open rooms.</div></div>
-    <button class="btn alt" id="closeLobby">← BACK TO ARCADE</button>
+<div class="lobby" id="lobby">
+  <div class="hub">
+    <div class="hub-top">
+      <div>
+        <div class="hub-logo">PIXEL PLAYGROUND</div>
+        <div class="desc">ARCADE HUB • <span id="hubUser">PLAYER</span></div>
+      </div>
+      <button class="btn alt" id="hubClose">← CLOSE</button>
+    </div>
+
+    <div class="hub-tabs" role="tablist">
+      <button class="hub-tab active" data-tab="solo">SOLO GAMES</button>
+      <button class="hub-tab" data-tab="multi">MULTIPLAYER</button>
+      <button class="hub-tab" data-tab="profile">PROFILE</button>
+      <button class="hub-tab" data-tab="leaderboard">LEADERBOARD</button>
+      <button class="hub-tab" data-tab="achievements">ACHIEVEMENTS</button>
+      <button class="hub-tab" data-tab="daily">DAILY CHALLENGE</button>
+    </div>
+
+    <section class="hub-panel active" data-panel="solo">
+      <div class="hub-section-title">CHOOSE YOUR GAME</div>
+      <div class="gamepick" id="gamePick"></div>
+    </section>
+
+    <section class="hub-panel" data-panel="multi">
+      <div class="multi-layout">
+        <div class="room-card">
+          <h2>MULTIPLAYER GAMES</h2>
+          <p class="desc">Choose a game, create a room, then send the link to your friend.</p>
+          <div class="multi-games" id="multiGames"></div>
+          <div class="multi-selected" id="multiSelected">SELECT A MULTIPLAYER GAME</div>
+          <button class="btn" id="createHubRoom">CREATE ROOM</button>
+          <div class="status" id="hubRoomStatus">No room created.</div>
+          <div class="share-row">
+            <input id="hubRoomLink" readonly placeholder="Your invite link appears here">
+            <button class="btn alt" id="copyHubLink">COPY</button>
+            <button class="btn alt" id="shareHubLink">SHARE</button>
+          </div>
+        </div>
+
+        <div class="room-stack">
+          <div class="room-card">
+            <h2>JOIN A ROOM</h2>
+            <p class="desc">Paste the room code your friend sent you.</p>
+            <div class="searchrow"><input id="hubRoomCode" maxlength="8" placeholder="ROOM CODE"><button class="btn" id="joinHubRoom">JOIN</button></div>
+          </div>
+
+          <div class="room-card">
+            <h2>FIND A FRIEND</h2>
+            <p class="desc">Search players who are currently online.</p>
+            <div class="searchrow"><input id="searchInput" placeholder="username"><button class="btn alt" id="searchBtn">SEARCH</button></div>
+            <div class="results" id="searchResults"></div>
+          </div>
+
+          <div class="room-card">
+            <h2>OPEN ROOMS</h2>
+            <div id="openRooms" class="desc">No open rooms.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hub-panel" data-panel="profile">
+      <div id="profilePanel"></div>
+    </section>
+
+    <section class="hub-panel" data-panel="leaderboard">
+      <div id="leaderboardPanel"></div>
+    </section>
+
+    <section class="hub-panel" data-panel="achievements">
+      <div id="achievementPanel"></div>
+    </section>
+
+    <section class="hub-panel" data-panel="daily">
+      <div id="dailyPanel"></div>
+    </section>
   </div>
-</div></div>
+</div>
 
 <script>
 (() => {
 "use strict";
+
+/* PIXEL PLAYGROUND V12 AUDIO + CLOCK */
+let audioCtx = null, lastEndSignature = "";
+function ensureAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==="suspended") audioCtx.resume().catch(()=>{});
+}
+function tone(freq,duration,type="square",gain=.035,delay=0){
+  try{
+    ensureAudio();
+    const o=audioCtx.createOscillator(), g=audioCtx.createGain();
+    o.type=type;o.frequency.value=freq;
+    g.gain.setValueAtTime(0,audioCtx.currentTime+delay);
+    g.gain.linearRampToValueAtTime(gain,audioCtx.currentTime+delay+.01);
+    g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+delay+duration);
+    o.connect(g);g.connect(audioCtx.destination);
+    o.start(audioCtx.currentTime+delay);o.stop(audioCtx.currentTime+delay+duration+.02);
+  }catch(e){}
+}
+function gameStartSound(){
+  tone(392,.07,"square",.045,0);
+  tone(523,.09,"square",.045,.075);
+  tone(659,.12,"square",.045,.17);
+}
+function gameOverSound(){
+  tone(440,.09,"square",.045,0);
+  tone(330,.12,"square",.045,.10);
+  tone(220,.18,"square",.045,.24);
+}
+function updateClock(){
+  const el=document.getElementById("siteClock"); if(!el)return;
+  const d=new Date();
+  const dd=String(d.getDate()).padStart(2,"0"), mm=String(d.getMonth()+1).padStart(2,"0"), yyyy=d.getFullYear();
+  const hh=String(d.getHours()).padStart(2,"0"), mi=String(d.getMinutes()).padStart(2,"0"), ss=String(d.getSeconds()).padStart(2,"0");
+  el.textContent=`${dd}/${mm}/${yyyy} • ${hh}:${mi}:${ss}`;
+}
+updateClock();setInterval(updateClock,1000);
+
+document.addEventListener("pointerdown",ensureAudio,{once:true});
+document.addEventListener("keydown",ensureAudio,{once:true});
+
 
 const socket = io({ transports:["websocket","polling"], reconnection:true, reconnectionAttempts:Infinity, reconnectionDelay:1000, reconnectionDelayMax:5000 });
 const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Pac-Man","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Minesweeper","2048","Tetris"];
@@ -74,42 +221,75 @@ const ONLINE = {2:"rps",4:"ttt",11:"pong"};
 const $ = id => document.getElementById(id);
 const ui = {
   login: $("loginOverlay"), loginName:$("loginName"), loginBtn:$("loginBtn"), loginStatus:$("loginStatus"),
-  lobby:$("lobby"), gameList:$("gameList"), gamePick:$("gamePick"), search:$("searchInput"), searchBtn:$("searchBtn"), searchResults:$("searchResults"), openRooms:$("openRooms"),
-  title:$("title"), desc:$("desc"), screen:$("screen"), me:$("me"), score:null, back:$("backBtn"), restart:$("restartBtn"), home:$("homeBtn"), closeLobby:$("closeLobby")
+  lobby:$("lobby"), gameList:$("gameList"), gamePick:$("gamePick"), multiGames:$("multiGames"),
+  search:$("searchInput"), searchBtn:$("searchBtn"), searchResults:$("searchResults"), openRooms:$("openRooms"),
+  title:$("title"), desc:$("desc"), screen:$("screen"), me:$("me"), hubUser:$("hubUser"),
+  score:null, back:$("backBtn"), restart:$("restartBtn"), home:$("homeBtn"), closeLobby:$("hubClose"),
+  createHubRoom:$("createHubRoom"), hubRoomStatus:$("hubRoomStatus"), hubRoomLink:$("hubRoomLink"),
+  hubRoomCode:$("hubRoomCode"), joinHubRoom:$("joinHubRoom"), copyHubLink:$("copyHubLink"), shareHubLink:$("shareHubLink"),
+  profilePanel:$("profilePanel"), leaderboardPanel:$("leaderboardPanel"), achievementPanel:$("achievementPanel"), dailyPanel:$("dailyPanel")
 };
+
+
+const endObserver=new MutationObserver(()=>{
+  const txt=(ui.screen?.innerText||"").toUpperCase();
+  const terminal=/GAME OVER|YOU LOSE|YOU LOST|YOU WIN|WINNER:|TIME'?S UP|OUT OF TIME|GAME COMPLETE|FINAL SCORE/.test(txt);
+  if(terminal){
+    const sig=txt.slice(-220);
+    if(sig!==lastEndSignature){lastEndSignature=sig;gameOverSound();}
+  }
+});
+setTimeout(()=>{ if(ui.screen) endObserver.observe(ui.screen,{subtree:true,childList:true,characterData:true}); },0);
 
 let current = Number(new URLSearchParams(location.search).get("game"));
 if (!Number.isInteger(current) || current < 0 || current >= GAMES.length) current = 0;
 let authed = false, username = "", roomId = "", score = 0, gameCleanup = () => {};
-let roomGame = "";
+let roomGame = "", hubMultiGame = "rps", roomPlayers = [];
+const SOLO_INDEXES = GAMES.map((_,i)=>i).filter(i=>!ONLINE[i]);
+const MULTI_INDEXES = GAMES.map((_,i)=>i).filter(i=>ONLINE[i]);
+const PROFILE_KEY = "pixel_playground_profile_v13";
+let profile = loadProfile();
 
 function randomName(){const a=["PIXEL","TURBO","NEON","RETRO","CYBER","NOVA"],b=["FOX","NINJA","GHOST","RIDER","BOT","WIZARD"];return `${a[Math.floor(Math.random()*a.length)]}_${b[Math.floor(Math.random()*b.length)]}_${Math.floor(10+Math.random()*90)}`;}
 ui.loginName.value = randomName();
 
+
 function setStatus(text, error=false){ui.loginStatus.textContent=text;ui.loginStatus.className=error?"status error":"status";}
-function showLobby(){if(!authed)return;ui.lobby.style.display="grid";refreshOpenRooms();}
+function loadProfile(){
+  try{return Object.assign({plays:0,wins:0,losses:0,draws:0,points:0,gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false,started:false}},JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}"));}
+  catch(e){return {plays:0,wins:0,losses:0,draws:0,points:0,gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false,started:false}};}
+}
+function saveProfile(){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){}}
+function awardAchievement(id){if(profile.achievements.includes(id))return false;profile.achievements.push(id);saveProfile();renderAchievements();return true;}
+function reportProfile(){if(authed)socket.emit("profile:report",{points:profile.points,plays:profile.plays,wins:profile.wins});}
+function recordPlay(index){profile.plays++;profile.gamePlays[GAMES[index]]=(profile.gamePlays[GAMES[index]]||0)+1;profile.points+=5;if(profile.plays>=1)awardAchievement("first-play");if(profile.plays>=5)awardAchievement("five-games");if(profile.plays>=10)awardAchievement("ten-games");saveProfile();reportProfile();}
+function recordWin(){profile.wins++;profile.points+=100;awardAchievement("first-win");if(profile.wins>=3)awardAchievement("three-wins");saveProfile();reportProfile();renderProfile();}
+function recordLoss(){profile.losses++;profile.points+=10;saveProfile();reportProfile();renderProfile();}
+function recordDraw(){profile.draws++;profile.points+=25;saveProfile();reportProfile();renderProfile();}
+function renderProfile(){if(!ui.profilePanel)return;const top=Object.entries(profile.gamePlays).sort((a,b)=>b[1]-a[1]).slice(0,5);ui.profilePanel.innerHTML=`<div class="hub-section-title">PLAYER PROFILE</div><div class="profile-grid"><div class="stat-card">PLAYER<div class="num" style="font-size:18px">${username||"PLAYER"}</div></div><div class="stat-card">ARCADE POINTS<div class="num">${profile.points}</div></div><div class="stat-card">GAMES PLAYED<div class="num">${profile.plays}</div></div><div class="stat-card">WINS<div class="num">${profile.wins}</div></div><div class="stat-card">LOSSES<div class="num">${profile.losses}</div></div><div class="stat-card">ACHIEVEMENTS<div class="num">${profile.achievements.length}/6</div></div></div><div class="room-card" style="margin-top:12px"><h2>RECENTLY PLAYED</h2>${top.length?top.map(x=>`<div>${x[0]} — <b>${x[1]} PLAY${x[1]===1?"":"S"}</b></div>`).join(""):"<div class='desc'>Play a game to start building your profile.</div>"}</div>`;}
+function renderAchievements(){if(!ui.achievementPanel)return;const all=[["first-play","🕹️","FIRST INSERT","Play your first game."],["five-games","⚡","GETTING SERIOUS","Play 5 games."],["ten-games","🔥","ARCADE REGULAR","Play 10 games."],["first-win","🏆","FIRST BLOOD","Win a multiplayer game."],["three-wins","👑","TRIPLE CROWN","Win 3 multiplayer games."],["daily","🎯","DAILY PLAYER","Play today's challenge."]];ui.achievementPanel.innerHTML=`<div class="hub-section-title">ACHIEVEMENTS</div><div class="achievement-grid">${all.map(a=>{const u=profile.achievements.includes(a[0]);return `<div class="achievement-card ${u?"unlocked":"locked"}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="desc">${a[3]}</div><div>${u?"✓ UNLOCKED":"LOCKED"}</div></div>`}).join("")}</div>`;}
+function dailyGame(){const pool=SOLO_INDEXES,d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;return pool[Math.abs(hash)%pool.length];}
+function renderDaily(){if(!ui.dailyPanel)return;const idx=dailyGame(),d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;if(profile.daily.date!==key){profile.daily={date:key,game:GAMES[idx],completed:false,started:false};saveProfile();}const done=profile.daily.completed;ui.dailyPanel.innerHTML=`<div class="hub-section-title">DAILY CHALLENGE</div><div class="daily-card"><div class="desc">TODAY'S FEATURED GAME</div><div class="daily-game">${GAMES[idx]}</div><p>Play today's featured game and try to beat your personal best.</p><div class="status">${done?"✓ CHALLENGE COMPLETED":"READY TO PLAY"}</div><button class="btn" id="dailyPlay">${done?"PLAY AGAIN":"PLAY TODAY'S CHALLENGE"}</button></div>`;$("dailyPlay").onclick=()=>{profile.daily.started=true;saveProfile();hideLobby();selectGame(idx);};}
+function renderLeaderboard(){if(!ui.leaderboardPanel)return;ui.leaderboardPanel.innerHTML=`<div class="hub-section-title">LIVE LEADERBOARD</div><table class="leader-table"><thead><tr><th>#</th><th>PLAYER</th><th>POINTS</th><th>WINS</th></tr></thead><tbody id="leaderBody"><tr><td colspan="4">CONNECTING...</td></tr></tbody></table>`;socket.emit("leaderboard:request");}
+function switchHubTab(tab){document.querySelectorAll(".hub-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));if(tab==="leaderboard")renderLeaderboard();}
+function initHubActions(){document.querySelectorAll(".hub-tab").forEach(b=>b.onclick=()=>switchHubTab(b.dataset.tab));ui.closeLobby.onclick=hideLobby;ui.createHubRoom.onclick=()=>{const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);if(idx===undefined)return;current=idx;titleAndDescription();createRoom(idx);};ui.joinHubRoom.onclick=()=>joinRoom(ui.hubRoomCode.value);ui.copyHubLink.onclick=async()=>copyValue(ui.hubRoomLink,ui.hubRoomStatus);ui.shareHubLink.onclick=async()=>shareValue(ui.hubRoomLink);ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});}
+function showLobby(){if(!authed)return;if(profile.daily.started&&!profile.daily.completed){profile.daily.completed=true;profile.daily.started=false;saveProfile();awardAchievement("daily");}ui.lobby.style.display="grid";ui.hubUser.textContent=username;renderProfile();renderAchievements();renderDaily();renderLeaderboard();refreshOpenRooms();}
 function hideLobby(){ui.lobby.style.display="none";}
 function home(){location.href="/";}
+
 function resetScreen(){try{gameCleanup();}catch(e){console.error("cleanup",e);}gameCleanup=()=>{};if(ui.screen)ui.screen.innerHTML="";}
 function addScore(n){score=Math.max(0,score+n);if(ui.score)ui.score.textContent=score;}
 
 function selectGame(index){
   if(index<0||index>=GAMES.length)return;
-  current=index; roomGame=""; titleAndDescription(); refreshActive(); renderSelectedGame();
+  current=index;roomGame="";lastEndSignature="";titleAndDescription();refreshActive();renderSelectedGame();gameStartSound();recordPlay(index);
 }
 function titleAndDescription(){ui.title.textContent=GAMES[current];ui.desc.textContent=ONLINE[current]?"Online multiplayer — create a room or join a friend.":"Solo game.";}
 
-function buildLists(){
-  ui.gameList.innerHTML="";ui.gamePick.innerHTML="";
-  GAMES.forEach((name,i)=>{
-    const b=document.createElement("button");b.className="gb"+(i===current?" active":"");
-    b.innerHTML=`${String(i+1).padStart(2,"0")} — ${name}${ONLINE[i]?'<span class="online">● ONLINE</span>':""}`;
-    b.onclick=()=>{hideLobby();selectGame(i);};ui.gameList.appendChild(b);
-    const p=document.createElement("button");p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><br><span class="desc">${ONLINE[i]?"ONLINE MULTIPLAYER":"SOLO"}</span>`;
-    p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);
-  });
-}
-function refreshActive(){if(ui.gameList)[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",i===current));if(ui.gamePick)[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",i===current));}
+
+function buildLists(){ui.gameList.innerHTML="";ui.gamePick.innerHTML="";ui.multiGames.innerHTML="";SOLO_INDEXES.forEach(i=>{const name=GAMES[i],b=document.createElement("button");b.className="gb"+(i===current?" active":"");b.innerHTML=`${String(i+1).padStart(2,"0")} — ${name}`;b.onclick=()=>{hideLobby();selectGame(i);};ui.gameList.appendChild(b);const p=document.createElement("button");p.className=i===current?"active":"";p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><br><span class="desc">SOLO</span>`;p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);});MULTI_INDEXES.forEach(i=>{const b=document.createElement("button");b.className="multi-game-btn"+(ONLINE[i]===hubMultiGame?" active":"");b.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${GAMES[i]}</b><br><span class="desc">ONLINE • 2 PLAYERS</span>`;b.onclick=()=>{hubMultiGame=ONLINE[i];renderMultiHub();};ui.multiGames.appendChild(b);});renderMultiHub();}
+function refreshActive(){if(ui.gameList)[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));if(ui.gamePick)[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));}
+function renderMultiHub(){[...ui.multiGames.children].forEach((b,i)=>b.classList.toggle("active",MULTI_INDEXES[i]!==undefined&&ONLINE[MULTI_INDEXES[i]]===hubMultiGame));const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);const name=idx===undefined?"SELECT A GAME":GAMES[idx];const sel=$("multiSelected");if(sel)sel.textContent=`SELECTED: ${name}`;if(ui.createHubRoom)ui.createHubRoom.textContent=`CREATE ${name.toUpperCase()} ROOM`;}
 
 function renderMultiplayerMenu(){
   const gameName=GAMES[current];
@@ -149,9 +329,9 @@ async function shareValue(input){
   await copyValue(input,$("mainRoomStatus"));
 }
 function createRoom(gameIndex, invitee=""){
-  const game=ONLINE[gameIndex];if(!game){return;}
+  const game=ONLINE[gameIndex];if(!game)return;
   socket.emit("room:create",{game,invitee});
-  const status=$("mainRoomStatus");if(status)status.textContent="CREATING ROOM...";
+  const status=$("mainRoomStatus")||ui.hubRoomStatus;if(status)status.textContent=`CREATING ${GAMES[gameIndex].toUpperCase()} ROOM...`;
 }
 function joinRoom(code){
   const id=String(code||"").trim().toUpperCase();if(!id)return;
@@ -168,8 +348,8 @@ function renderRoomReady(data){
   roomId=data.roomId;roomGame=data.game;
   const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";
   const link=url.toString();
-  const input=$("mainRoomLink");const status=$("mainRoomStatus");
-  if(input)input.value=link;if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
+  const input=$("mainRoomLink"),hubInput=ui.hubRoomLink,status=$("mainRoomStatus")||ui.hubRoomStatus;
+  if(input)input.value=link;if(hubInput)hubInput.value=link;if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
 }
 
 
@@ -184,22 +364,19 @@ function login(){
 }
 ui.loginBtn.onclick=login;ui.loginName.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 socket.on("auth:ok",data=>{
-  authed=true;username=data.username;ui.me.textContent=username;ui.login.style.display="none";
+  authed=true;username=data.username;ui.me.textContent=username;ui.hubUser.textContent=username;ui.login.style.display="none";initHubActions();reportProfile();
   const q=new URLSearchParams(location.search);
-  if(q.get("room")) socket.emit("room:join",{roomId:q.get("room")});
-  else showLobby();
+  if(q.get("room"))socket.emit("room:join",{roomId:q.get("room")});else showLobby();
 });
 
 socket.on("room:created",data=>{
-  renderRoomReady(data);
-  // If this room was created from friend search, stay on the current multiplayer screen.
-  hideLobby();
-  if(ONLINE[current]===data.game) renderMultiplayerMenu();
+  const idx=MULTI_INDEXES.find(i=>ONLINE[i]===data.game);if(idx!==undefined)current=idx;
+  renderRoomReady(data);hideLobby();titleAndDescription();refreshActive();renderMultiplayerMenu();
   const input=$("mainRoomLink"),status=$("mainRoomStatus");
   if(input){const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";input.value=url.toString();}
   if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
 });
-socket.on("room:joined",data=>renderInRoom(data));
+socket.on("room:joined",data=>{roomPlayers=data.players||[];renderInRoom(data);const r=$("rpsPlayers");if(r)r.textContent=roomPlayers.join(" VS ");const t=$("tttPlayers");if(t)t.textContent=roomPlayers.join(" VS ");const p=$("pongPlayers");if(p)p.textContent=roomPlayers.join(" VS ");});
 socket.on("room:error",message=>{
   const s=$("mainRoomStatus");if(s)s.textContent=message;
   else {showLobby();ui.searchResults.innerHTML=`<div class="error">${message}</div>`;}
@@ -229,7 +406,7 @@ socket.on("lobby:update",data=>{
 });
 ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});
 ui.home.onclick=home;ui.closeLobby.onclick=hideLobby;
-ui.back.onclick=()=>{if(roomId){socket.emit("room:leave");roomId="";}showLobby();};ui.restart.onclick=()=>renderSelectedGame();
+ui.back.onclick=()=>{if(roomId){socket.emit("room:leave");roomId="";}showLobby();};ui.restart.onclick=()=>{gameStartSound();renderSelectedGame();};
 
 const CONTROL_MAP = {"0":["WORDLE","TYPE A–Z","ENTER = SUBMIT","BACKSPACE = DELETE"],"1":["ASTEROIDS","← / → = ROTATE","↑ = THRUST","SPACE = FIRE","H = HYPERSPACE"],"2":["ROCK PAPER SCISSORS","CLICK ROCK / PAPER / SCISSORS"],"3":["GUESS THE NUMBER","TYPE 1–100","ENTER = GUESS"],"4":["TIC-TAC-TOE","CLICK AN EMPTY SQUARE"],"5":["MEMORY CARD MATCH","CLICK CARDS TO FLIP"],"6":["WHACK-A-MOLE","CLICK THE YELLOW WHACK BOX"],"7":["BUTTON DODGER","MOUSE = CHASE","CLICK = SCORE"],"8":["PAC-MAN","← / → / ↑ / ↓ OR W / A / S / D"],"9":["TYPING SPEED","TYPE THE DISPLAYED SENTENCE"],"10":["SNAKE","← / → / ↑ / ↓ OR W / A / S / D"],"11":["PONG","W / S OR ↑ / ↓"],"12":["BREAKOUT","← / → OR A / D"],"13":["FLAPPY BIRD","↑ ONLY = FLAP"],"14":["MINESWEEPER","LEFT CLICK = REVEAL","RIGHT CLICK = FLAG"],"15":["2048","← / → / ↑ / ↓ OR W / A / S / D"],"16":["TETRIS","← / → = MOVE","↑ = ROTATE","↓ = SOFT DROP","SPACE = HARD DROP"]};
 const NAV_KEYS = new Set(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"]);
@@ -349,7 +526,7 @@ const SOLO = {
     function resetBallFromPaddle(){ball.x=paddle.x+paddle.w/2;ball.y=370;const speed=(4+Math.min(level-1,8)*.45)*speedBoost;ball.vx=(Math.random()<.5?-1:1)*speed;ball.vy=-speed;}
     const kd=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.l=true;if(k==="arrowright"||k==="d")keys.r=true;};
     const ku=e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.l=false;if(k==="arrowright"||k==="d")keys.r=false;};window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);
-    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>365&&ball.y<400&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*0.75);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.25;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
+    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>365&&ball.y<400&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.25);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.25;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
       for(const b of bricks){if(!b.on)continue;if(ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;scoreB+=10;addScore(10);break;}}
       if(bricks.every(b=>!b.on)){addScore(100);nextLevel();last=performance.now();requestAnimationFrame(loop);return;}
       if(ball.y>400){ended=true;$("breakoutStatus").textContent="YOU LOSE — BALL LOST";draw();return;}draw();requestAnimationFrame(loop);}
@@ -429,6 +606,7 @@ function renderRps(){
   document.querySelectorAll("[data-move]").forEach(b=>b.onclick=()=>socket.emit("rps:move",b.dataset.move));
 }
 function renderTtt(){
+  lastTttTerminal="";
   center(`<div class="big">TIC-TAC-TOE</div><div id="tttPlayers" class="desc">Waiting for opponent...</div><div id="tttTurn" class="status"></div><div class="grid3" id="tttGrid"></div><button class="btn alt" id="tttReset">NEW GAME</button>`);
   for(let i=0;i<9;i++){const b=document.createElement("button");b.className="cell";b.onclick=()=>socket.emit("ttt:move",i);$("tttGrid").appendChild(b);}
   $("tttReset").onclick=()=>socket.emit("ttt:reset");
@@ -448,6 +626,7 @@ function renderPong(){
 function renderInRoom(data){
   roomId=data.roomId;
   roomGame=data.game;
+  roomPlayers=data.players||[];
   const idx=Object.keys(ONLINE).find(k=>ONLINE[k]===data.game);
   if(idx!==undefined) current=Number(idx);
   titleAndDescription();
@@ -455,10 +634,12 @@ function renderInRoom(data){
   hideLobby();
   renderSelectedGame();
 }
+socket.on("leaderboard:data",rows=>{const body=$("leaderBody");if(!body)return;if(!rows.length){body.innerHTML='<tr><td colspan="4">NO SCORES YET — BE THE FIRST.</td></tr>';return;}body.innerHTML=rows.map((r,i)=>`<tr><td>${String(i+1).padStart(2,"0")}</td><td>${r.username}${r.username===username?" ◀ YOU":""}</td><td>${r.points}</td><td>${r.wins}</td></tr>`).join("");});
 socket.on("rps:state",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const p=$("rpsPlayers");if(p)p.textContent=data.players.join(" VS ");});
 socket.on("rps:waiting",()=>{const s=$("rpsStatus");if(s)s.textContent="MOVE LOCKED — WAITING FOR OPPONENT";});
-socket.on("rps:result",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const s=$("rpsStatus");if(s)s.textContent=data.winner===socket.id?"YOU WIN!":data.winner?"OPPONENT WINS":"DRAW";});
-socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;});
+socket.on("rps:result",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const s=$("rpsStatus");if(s)s.textContent=data.winner===socket.id?"YOU WIN!":data.winner?"OPPONENT WINS":"DRAW";if(data.winner===socket.id)recordWin();else if(data.winner)recordLoss();else recordDraw();});
+let lastTttTerminal="";
+socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;if(state.over){const sig=state.winner||"DRAW";if(sig!==lastTttTerminal){lastTttTerminal=sig;if(sig==="DRAW")recordDraw();else{const myIndex=roomPlayers.indexOf(username),mark=myIndex===0?"X":myIndex===1?"O":"";if(mark===state.winner)recordWin();else recordLoss();}}}});
 socket.on("pong:state",p=>{const el=$("pongPlayers");if(el)el.textContent="PONG ONLINE";});
 
 function renderOnlineGame(){

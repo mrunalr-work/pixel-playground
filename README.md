@@ -21,3 +21,12 @@ For a larger public launch, add persistent authentication/database, Redis for mu
 
 `DEFAULT_BUILD_CONFIG.json` is the source of truth for the current Pixel Playground configuration.
 Future builds must preserve the game mechanics and arcade layout in that file unless the user explicitly requests a change.
+
+## V13 Product Baseline
+
+- The supplied `public/background.png` is the default visual background.
+- The Arcade Hub now separates **Solo Games** and **Multiplayer** into tabs.
+- Multiplayer contains **Create Room**, invite-link sharing, room-code join, friend search, and open rooms.
+- Profile, live leaderboard, achievements, and daily challenge are included.
+- Future builds must preserve all existing game mechanics and the arcade layout unless explicitly requested otherwise.
+- `DEFAULT_BUILD_CONFIG.json` is the baseline source of truth.

@@ -17,6 +17,7 @@ const GAME_KEYS = new Set(["rps", "ttt", "pong"]);
 const users = new Map();   // username -> { socketId, roomId }
 const sockets = new Map(); // socketId -> username
 const rooms = new Map();   // roomId -> room
+const profiles = new Map(); // username -> live arcade profile
 
 app.get("/health", (_req, res) => res.status(200).json({ ok: true, service: "pixel-playground" }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -117,6 +118,7 @@ io.on("connection", socket => {
     const name = makeUsername(username);
     users.set(name, { socketId: socket.id, roomId: null });
     sockets.set(socket.id, name);
+    if (!profiles.has(name)) profiles.set(name, { points: 0, plays: 0, wins: 0 });
     socket.emit("auth:ok", { username: name });
     emitLobby();
   });
@@ -127,6 +129,28 @@ io.on("connection", socket => {
       .filter(name => name.toLowerCase().includes(q))
       .slice(0, 20);
     socket.emit("lobby:searchResults", results);
+  });
+
+
+  socket.on("profile:report", ({ points, plays, wins } = {}) => {
+    const username = sockets.get(socket.id);
+    if (!username) return;
+    const p = profiles.get(username) || { points: 0, plays: 0, wins: 0 };
+    p.points = Math.max(p.points, Math.min(1000000, Number(points) || 0));
+    p.plays = Math.max(p.plays, Math.min(100000, Number(plays) || 0));
+    p.wins = Math.max(p.wins, Math.min(100000, Number(wins) || 0));
+    profiles.set(username, p);
+    socket.emit("leaderboard:data", [...profiles.entries()]
+      .map(([name, value]) => ({ username: name, ...value }))
+      .sort((a,b) => b.points-a.points || b.wins-a.wins)
+      .slice(0, 20));
+  });
+
+  socket.on("leaderboard:request", () => {
+    socket.emit("leaderboard:data", [...profiles.entries()]
+      .map(([name, value]) => ({ username: name, ...value }))
+      .sort((a,b) => b.points-a.points || b.wins-a.wins)
+      .slice(0, 20));
   });
 
   socket.on("room:create", ({ game, invitee } = {}) => {

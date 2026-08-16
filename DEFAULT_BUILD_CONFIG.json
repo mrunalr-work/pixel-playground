@@ -1,7 +1,7 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V11",
-  "rule": "Do not change game mechanics or arcade layout in future builds unless explicitly requested by the user.",
+  "version": "V13",
+  "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + permanent controls section",
   "mechanics": {
@@ -13,7 +13,7 @@
     "Breakout": {
       "brick_shape": "box",
       "layout_changes_each_restart": true,
-      "paddle_hit_speed": "multiply current speed by 1.25"
+      "paddle_hit_speed": "multiply current ball speed by 1.25 (25% increase)"
     },
     "2048": {
       "grid_background": true,
@@ -26,5 +26,45 @@
     "prevent_arrow_wasd_page_scroll": true,
     "show_game_controls_while_playing": true,
     "selected_game_highlight": true
+  },
+  "presentation": {
+    "background_image": "/background.png",
+    "footer_left": "\ud83c\udfae MADE BY MRU",
+    "footer_right": "Live local date/time",
+    "audio": "Web Audio synthesized game start/end cues",
+    "footer_safe_area": true
+  },
+  "background": {
+    "asset": "/background.png",
+    "source": "user-provided Retro BG.png",
+    "treatment": "dark overlay for readability",
+    "cover": true
+  },
+  "hub": {
+    "tabs": [
+      "Solo Games",
+      "Multiplayer",
+      "Profile",
+      "Leaderboard",
+      "Achievements",
+      "Daily Challenge"
+    ],
+    "multiplayer_separate_tab": true,
+    "multiplayer_games": [
+      "Rock Paper Scissors",
+      "Tic-Tac-Toe",
+      "Pong"
+    ],
+    "room_creation_in_multiplayer_tab": true,
+    "invite_link": true,
+    "friend_search": true,
+    "open_rooms": true
+  },
+  "engagement": {
+    "profile": true,
+    "achievements": true,
+    "daily_challenge": true,
+    "live_leaderboard": true,
+    "recently_played": true
   }
 }
