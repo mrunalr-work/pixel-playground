@@ -178,6 +178,30 @@ body{min-width:0;overflow-x:hidden}
 
 
 body{overflow-x:auto !important;overflow-y:auto !important;}
+
+/* V19 dashboard cleanup: home button + player identity live in the fixed dashboard. */
+.pnav-home{background:var(--a);color:#17130a;border-color:var(--ink);box-shadow:4px 4px #6b4a00;font-weight:bold;}
+.pnav-home:hover,.pnav-home.active{background:var(--a);color:#17130a;border-color:var(--ink);box-shadow:4px 4px #6b4a00;}
+.nav-player{margin-left:auto;white-space:nowrap;color:var(--a);align-self:center;}
+
+/* Keep the three layout-sensitive games visually centered without changing their mechanics. */
+.game-stage[data-game="0"] .game-stage-inner,
+.game-stage[data-game="15"] .game-stage-inner,
+.game-stage[data-game="16"] .game-stage-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;
+}
+.game-stage[data-game="0"] .wordle-grid,
+.game-stage[data-game="15"] .t2048-board,
+.game-stage[data-game="16"] .tetris-wrap{margin-left:auto;margin-right:auto;}
+.game-stage[data-game="0"] .wordle-keys{margin-left:auto;margin-right:auto;}
+
+@media(max-width:760px){
+  .persistent-nav{align-items:center;}
+  .nav-player{margin-left:0;justify-self:end;}
+}
+@media(max-width:520px){
+  .nav-player{grid-column:1 / -1;justify-self:end;}
+}
 html{overflow-x:auto !important;overflow-y:auto !important;}
 .app{overflow:visible !important;}
 /* V18 NO-CLIP GAME LAYOUT */
@@ -243,13 +267,167 @@ html{overflow-x:auto !important;overflow-y:auto !important;}
   .head h1{font-size:13px !important;}
   .head .desc{font-size:17px !important;}
 }
+/* V20 TARGETED LAYOUT FIXES — preserve V18 no-clip behavior */
+/* Wordle, 2048 and Tetris are centered as complete game compositions. */
+.game-stage[data-game="0"] .game-stage-inner,
+.game-stage[data-game="15"] .game-stage-inner,
+.game-stage[data-game="16"] .game-stage-inner{
+  width:100%;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  margin:0 auto !important;
+}
+.game-stage[data-game="0"] .wordle-grid,
+.game-stage[data-game="0"] .wordle-keys,
+.game-stage[data-game="15"] .t2048-board,
+.game-stage[data-game="16"] .tetris-wrap{
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+.game-stage[data-game="16"] .tetris-wrap{
+  justify-content:center !important;
+  align-items:flex-start !important;
+  width:max-content;
+  max-width:100%;
+}
+.game-stage[data-game="15"] .t2048-board{
+  flex:0 0 auto;
+}
+.game-stage[data-game="0"] .wordle-grid{flex:0 0 auto;}
+.game-stage[data-game="0"] .wordle-keys{flex:0 0 auto;}
+/* Dashboard identity/home are always part of the fixed dashboard. */
+.pnav-home{background:var(--a) !important;color:#17130a !important;border-color:var(--ink) !important;}
+.nav-player{margin-left:auto !important;white-space:nowrap;}
+/* There must be no legacy home heading above the game list. */
+.layout > .top,.layout > .hub-logo,.layout > .home-heading,.layout > .page-home-heading{display:none !important;}
+
+
+/* V21 FINAL UI CLEANUP
+   Keep the existing mechanics/layout baseline. Only the requested dashboard and
+   three game-composition alignment fixes are applied here. */
+.persistent-nav .pnav-home{
+  background:#ffcc33 !important;
+  color:#17130a !important;
+  border:2px solid #f4f0dc !important;
+  box-shadow:4px 4px #6b4a00 !important;
+  font-weight:bold !important;
+}
+.persistent-nav .pnav-home:hover,
+.persistent-nav .pnav-home:focus-visible{
+  background:#ffcc33 !important;
+  color:#17130a !important;
+  border-color:#f4f0dc !important;
+}
+.persistent-nav .nav-player{
+  margin-left:auto !important;
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+
+/* No legacy HOME/brand heading is allowed above the game selector. */
+.layout > .top,
+.layout > .home,
+.layout > .home-heading,
+.layout > .page-home-heading,
+.layout > .hub-logo,
+.layout > .legacy-home,
+.layout > .legacy-home-heading{display:none !important;}
+
+/* Wordle: constrain the composition so its instruction line wraps instead of
+   stretching into the controls/game boundary. The actual board remains fixed. */
+.game-stage[data-game="0"] .game-stage-inner{
+  width:min(100%,900px) !important;
+  max-width:900px !important;
+  margin:0 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+.game-stage[data-game="0"] .game-stage-inner > .desc{
+  width:100% !important;
+  max-width:820px !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+  line-height:1.25 !important;
+}
+.game-stage[data-game="0"] .wordle-grid,
+.game-stage[data-game="0"] .wordle-keys{
+  flex:0 0 auto !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+
+/* 2048: center the complete board/composition, never the individual tiles. */
+.game-stage[data-game="15"] .game-stage-inner{
+  width:min(100%,720px) !important;
+  max-width:720px !important;
+  margin:0 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+.game-stage[data-game="15"] .game-stage-inner > .desc{
+  width:100% !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+.game-stage[data-game="15"] .t2048-board{
+  flex:0 0 auto !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+}
+
+/* Tetris: center the entire board + next-piece/status column as one unit. */
+.game-stage[data-game="16"] .game-stage-inner{
+  width:min(100%,900px) !important;
+  max-width:900px !important;
+  margin:0 auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  text-align:center !important;
+  overflow:visible !important;
+}
+.game-stage[data-game="16"] .game-stage-inner > .desc{
+  width:100% !important;
+  white-space:normal !important;
+  overflow-wrap:anywhere !important;
+}
+.game-stage[data-game="16"] .tetris-wrap{
+  width:max-content !important;
+  max-width:none !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+  flex:0 0 auto !important;
+}
+
+@media(max-width:760px){
+  .persistent-nav .nav-player{margin-left:0 !important;justify-self:end;}
+  .game-stage[data-game="0"] .game-stage-inner,
+  .game-stage[data-game="15"] .game-stage-inner,
+  .game-stage[data-game="16"] .game-stage-inner{
+    width:100% !important;
+    max-width:none !important;
+  }
+}
+
 </style>
 </head>
 <body>
 <div class="app">
-  <div class="top"><div class="logo" id="homeBtn">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div></div></div>
-
-<nav class="persistent-nav" aria-label="Arcade navigation">
+  <nav class="persistent-nav" aria-label="Arcade navigation">
   <button class="pnav pnav-home" id="navHome" type="button">PIXEL PLAYGROUND</button>
   <button class="pnav active" data-pgtab="solo">SOLO GAMES</button>
   <button class="pnav" data-pgtab="multi">MULTIPLAYER</button>
@@ -257,6 +435,7 @@ html{overflow-x:auto !important;overflow-y:auto !important;}
   <button class="pnav" data-pgtab="leaderboard">LEADERBOARD</button>
   <button class="pnav" data-pgtab="achievements">ACHIEVEMENTS</button>
   <button class="pnav" data-pgtab="daily">DAILY CHALLENGE</button>
+  <div class="nav-player badge">PLAYER <b id="me">---</b></div>
 </nav>
 
   <div class="layout">
@@ -407,7 +586,7 @@ const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Ti
   // these game mechanics and the arcade layout unless the user explicitly asks
   // for a mechanic/layout change.
   const DEFAULT_BUILD_CONFIG = Object.freeze({
-    version: "V15",
+    version: "V19",
     gameCount: 17,
     layout: "retro-arcade-sidebar-selection-with-dedicated-game-panel-and-controls",
     mechanicsLocked: true,
@@ -683,7 +862,7 @@ function globalKeyGuard(e){
 }
 document.addEventListener("keydown",globalKeyGuard,true);
 
-function center(html){ui.screen.innerHTML=`<div class="center"><div class="game-stage"><div class="game-stage-inner">${html}</div></div>${controlsPanel()}</div>`;}
+function center(html){ui.screen.innerHTML=`<div class="center"><div class="game-stage" data-game="${current}"><div class="game-stage-inner">${html}</div></div>${controlsPanel()}</div>`;}
 function timerText(ms){return `${Math.max(0,Math.round(ms))} ms`;}
 
 const SOLO = {

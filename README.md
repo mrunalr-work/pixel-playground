@@ -44,7 +44,7 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - `DEFAULT_BUILD_CONFIG.json` remains the source of truth for future builds.
 
 
-## V17 Product Baseline
+## V19 Product Baseline
 
 - Quick Play removed; **RANDOM GAME** is the single random-launch action.
 - Random Game uses the former Quick Play primary-button styling.
@@ -55,3 +55,12 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - Breakout paddle hits increase current ball speed by 5%.
 - Responsive breakpoints improve desktop, tablet, and mobile scaling.
 - V17 visual polish keeps the same retro aesthetic while tightening borders, spacing, hierarchy, and focus states.
+
+
+## V19 Product Baseline
+
+- PIXEL PLAYGROUND home navigation is the leftmost yellow button in the fixed dashboard.
+- Player name is embedded at the right side of the fixed dashboard and remains visible while browsing games.
+- The duplicate PIXEL PLAYGROUND home/logo above the game list is removed.
+- Wordle, 2048, and Tetris game stages are explicitly centered with no overlap.
+- All existing V18 game mechanics and layout rules remain unchanged.

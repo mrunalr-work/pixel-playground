@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V17",
+  "version": "V21",
   "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
@@ -46,7 +46,15 @@
     "ready_countdown": true,
     "professional_polish": true,
     "responsive_scaling": "fit every selected game to its available stage with a 2% safety margin; no internal game scrolling",
-    "single_dashboard": true
+    "single_dashboard": true,
+    "dashboard_home_button": "leftmost_yellow_button",
+    "player_name": "fixed_dashboard_right",
+    "duplicate_home_above_game_list": false,
+    "centered_games": [
+      "Wordle",
+      "2048",
+      "Tetris"
+    ]
   },
   "background": {
     "asset": "/background.png",
@@ -98,5 +106,8 @@
       "TETRIS"
     ]
   },
-  "mechanicsLocked": true
+  "mechanicsLocked": true,
+  "build_version": "V21",
+  "layout_baseline": "V18 no-clip page-scroll model + V20 centered Wordle/2048/Tetris + fixed dashboard identity/home",
+  "notes": "Dashboard cleanup: yellow Pixel Playground home button, fixed player identity, remove legacy home heading, center Wordle/2048/Tetris compositions without changing mechanics."
 }

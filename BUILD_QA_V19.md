@@ -1,4 +1,4 @@
-# Pixel Playground V19 — NO-CLIP QA
+# Pixel Playground V18 — NO-CLIP QA
 
 Key layout decision: the browser page is now the scroll container. The game viewport never clips, crops, or auto-scales gameplay. If a game is taller/wider than the current window, the page can scroll so the entire game boundary remains reachable.
 
@@ -34,8 +34,3 @@ Automated checks:
 - [PASS] Render health endpoint
 
 Render: npm install / npm start / health check /health
-
-- [PASS] Pixel Playground home is the leftmost yellow dashboard button
-- [PASS] Player name is fixed in the dashboard on the right
-- [PASS] No duplicate home/logo above the game list
-- [PASS] Wordle, 2048, and Tetris are centered without overlap
