@@ -176,6 +176,59 @@ body{min-width:0;overflow-x:hidden}
   .lobby .hub{max-height:calc(100vh - 190px);padding:12px}
 }
 
+
+/* V16 responsive game-fit system: no internal game scrolling; controls always visible. */
+html{scroll-behavior:auto}
+body{overflow-x:hidden;overflow-y:auto}body.modal-open{overflow:hidden}
+.app{padding-top:82px}
+.persistent-nav{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.pnav-home{margin-right:10px;color:var(--a);border-color:#6b613c}
+.pnav-home:hover{border-color:var(--a)}
+.hub-tabs{display:none!important}
+.screen{display:flex;flex-direction:column;height:clamp(440px,calc(100vh - 250px),760px);min-height:440px;overflow:hidden;padding:12px}
+.center{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;overflow:hidden;padding:2px}
+.game-stage{width:100%;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;gap:8px}.game-stage-inner{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transform-origin:center center;will-change:transform}
+.game-stage-inner>canvas{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;flex:0 1 auto}
+.game-stage-inner>.big{flex:0 0 auto}
+.game-stage-inner>.wordle-grid,.game-stage-inner>.wordle-keys,.game-stage-inner>.mem-grid,.game-stage-inner>.mine-grid,.game-stage-inner>.t2048-board,.game-stage-inner>.tetris-wrap,.game-stage-inner>.grid3,.game-stage-inner>.rps-buttons,.game-stage-inner>.typing-sentence,.game-stage-inner>.typing-sentence+textarea,.game-stage-inner>.mole-field{max-width:100%}
+.game-controls{flex:0 0 auto;margin:5px auto 0;max-height:112px;overflow:hidden}
+.game-control-item{min-height:32px;padding:6px 8px}
+/* Compact controls on shorter desktop windows. */
+@media(max-height:820px) and (min-width:761px){
+  .app{padding-top:78px;padding-bottom:46px}
+  .screen{height:calc(100vh - 250px);min-height:440px}
+  .game-controls{padding:8px 10px;gap:5px}
+  .game-control-item{font-size:18px;min-height:28px;padding:4px 7px}
+  .game-controls-title{font-size:11px}
+  .game-stage{gap:5px}
+  .big{font-size:22px}
+  .wordle-grid{grid-template-columns:repeat(5,48px)!important;gap:4px!important}
+  .letter{width:48px!important;height:48px!important}
+  .wordle-keys{gap:3px}
+  .key{min-width:30px;padding:5px 5px}
+  .mole-field{height:250px!important}
+  .mole{width:92px;height:52px;font-size:16px}
+  .typing-sentence{font-size:23px}
+}
+@media(max-width:760px){
+  .app{padding-top:136px}
+  .persistent-nav{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  .pnav-home{grid-column:1/-1;margin-right:0}
+  .layout{grid-template-columns:1fr}
+  .side{max-height:220px;overflow:auto}
+  .screen{height:auto;min-height:620px}
+  .game-stage{min-height:470px}
+  .game-controls{max-height:none}
+}
+@media(max-width:520px){
+  .app{padding-top:190px}
+  .persistent-nav{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .pnav-home{grid-column:1/-1}
+  .screen{min-height:580px;padding:8px}
+  .game-stage{min-height:430px}
+  .game-controls{grid-template-columns:1fr;max-height:150px}
+}
+
 </style>
 </head>
 <body>
@@ -183,6 +236,7 @@ body{min-width:0;overflow-x:hidden}
   <div class="top"><div class="logo" id="homeBtn">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div></div></div>
 
 <nav class="persistent-nav" aria-label="Arcade navigation">
+  <button class="pnav pnav-home" id="navHome" type="button">PIXEL PLAYGROUND</button>
   <button class="pnav active" data-pgtab="solo">SOLO GAMES</button>
   <button class="pnav" data-pgtab="multi">MULTIPLAYER</button>
   <button class="pnav" data-pgtab="profile">PROFILE</button>
@@ -423,7 +477,7 @@ function renderDaily(){if(!ui.dailyPanel)return;const idx=dailyGame(),d=new Date
 function renderLeaderboard(){if(!ui.leaderboardPanel)return;ui.leaderboardPanel.innerHTML=`<div class="hub-section-title">LIVE LEADERBOARD</div><table class="leader-table"><thead><tr><th>#</th><th>PLAYER</th><th>POINTS</th><th>WINS</th></tr></thead><tbody id="leaderBody"><tr><td colspan="4">CONNECTING...</td></tr></tbody></table>`;socket.emit("leaderboard:request");}
 function switchHubTab(tab){document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));if(tab==="leaderboard")renderLeaderboard();}
 function syncPersistentNav(tab){
-  document.querySelectorAll(".pnav").forEach(b=>b.classList.toggle("active",b.dataset.pgtab===tab));
+  document.querySelectorAll(".pnav[data-pgtab]").forEach(b=>b.classList.toggle("active",b.dataset.pgtab===tab));
 }
 function openHubTab(tab){
   if(!authed)return;
@@ -449,18 +503,44 @@ function showArcadeSequence(){
 }
 
 function initHubActions(){
-  document.querySelectorAll(".pnav").forEach(b=>b.onclick=()=>openHubTab(b.dataset.pgtab));
+  const navHome=$("navHome"); if(navHome)navHome.onclick=home;
+  document.querySelectorAll(".pnav[data-pgtab]").forEach(b=>b.onclick=()=>openHubTab(b.dataset.pgtab));
 ui.closeLobby.onclick=hideLobby;ui.createHubRoom.onclick=()=>{const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);if(idx===undefined)return;current=idx;titleAndDescription();createRoom(idx);};ui.joinHubRoom.onclick=()=>joinRoom(ui.hubRoomCode.value);ui.copyHubLink.onclick=async()=>copyValue(ui.hubRoomLink,ui.hubRoomStatus);ui.shareHubLink.onclick=async()=>shareValue(ui.hubRoomLink);ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});}
-function showLobby(){if(!authed)return;if(profile.daily.started&&!profile.daily.completed){profile.daily.completed=true;profile.daily.started=false;saveProfile();awardAchievement("daily");}ui.lobby.style.display="grid";ui.hubUser.textContent=username;renderProfile();renderAchievements();renderDaily();renderLeaderboard();refreshOpenRooms();}
-function hideLobby(){ui.lobby.style.display="none";}
+function showLobby(){if(!authed)return;document.body.classList.add("modal-open");if(profile.daily.started&&!profile.daily.completed){profile.daily.completed=true;profile.daily.started=false;saveProfile();awardAchievement("daily");}ui.lobby.style.display="grid";ui.hubUser.textContent=username;renderProfile();renderAchievements();renderDaily();renderLeaderboard();refreshOpenRooms();}
+function hideLobby(){ui.lobby.style.display="none";document.body.classList.remove("modal-open");}
 function home(){location.href="/";}
 
 function resetScreen(){try{gameCleanup();}catch(e){console.error("cleanup",e);}gameCleanup=()=>{};if(ui.screen)ui.screen.innerHTML="";}
 function addScore(n){score=Math.max(0,score+n);if(ui.score)ui.score.textContent=score;}
 
+
+function fitCurrentGame(){
+  const stage=document.querySelector('.game-stage'); const inner=document.querySelector('.game-stage-inner'); if(!stage||!inner)return;
+  const screen=ui.screen; const controls=screen.querySelector('.game-controls');
+  const canvases=[...inner.querySelectorAll('canvas')];
+  const fit=()=>{
+    inner.style.transform='scale(1)';
+    inner.style.width='100%';
+    const available=Math.max(220, stage.clientHeight-4);
+    canvases.forEach(c=>{c.style.maxHeight=available+'px';c.style.maxWidth='100%';});
+    requestAnimationFrame(()=>{
+      const needW=inner.scrollWidth, needH=inner.scrollHeight;
+      const haveW=stage.clientWidth-4, haveH=stage.clientHeight-4;
+      const scale=Math.min(1, haveW/Math.max(1,needW), haveH/Math.max(1,needH));
+      if(scale<.999){
+        inner.style.width=(100/scale)+'%';
+        inner.style.transform=`scale(${scale})`;
+      }
+    });
+  };
+  requestAnimationFrame(()=>requestAnimationFrame(fit));
+  if(window.ResizeObserver){const ro=new ResizeObserver(fit);ro.observe(stage);setTimeout(()=>ro.disconnect(),1600);}
+}
+window.addEventListener('resize',()=>fitCurrentGame());
+
 function selectGame(index){
   if(index<0||index>=GAMES.length)return;
-  current=index;roomGame="";lastEndSignature="";titleAndDescription();refreshActive();renderSelectedGame();gameStartSound();showArcadeSequence();recordPlay(index);
+  current=index;roomGame="";lastEndSignature="";titleAndDescription();refreshActive();renderSelectedGame();fitCurrentGame();gameStartSound();showArcadeSequence();recordPlay(index);
 }
 function titleAndDescription(){ui.title.textContent=GAMES[current];ui.desc.textContent=ONLINE[current]?"Online multiplayer — create a room or join a friend.":"Solo game.";}
 
@@ -604,7 +684,7 @@ function globalKeyGuard(e){
 }
 document.addEventListener("keydown",globalKeyGuard,true);
 
-function center(html){ui.screen.innerHTML=`<div class="center">${html}${controlsPanel()}</div>`;}
+function center(html){ui.screen.innerHTML=`<div class="center"><div class="game-stage"><div class="game-stage-inner">${html}</div></div>${controlsPanel()}</div>`;}
 function timerText(ms){return `${Math.max(0,Math.round(ms))} ms`;}
 
 const SOLO = {

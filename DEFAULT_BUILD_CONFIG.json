@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V15",
+  "version": "V16",
   "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + permanent controls section",
@@ -34,7 +34,7 @@
     "audio": "Web Audio synthesized game start/end cues",
     "footer_safe_area": true,
     "homepage_uses_background": true,
-    "quick_play": true,
+    "quick_play": false,
     "random_game": true,
     "crt_scanlines": true,
     "subtle_flicker": true,
