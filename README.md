@@ -30,3 +30,15 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - Profile, live leaderboard, achievements, and daily challenge are included.
 - Future builds must preserve all existing game mechanics and the arcade layout unless explicitly requested otherwise.
 - `DEFAULT_BUILD_CONFIG.json` is the baseline source of truth.
+
+
+## V14 Product Baseline
+
+- Persistent top navigation is always visible in the game view.
+- Homepage uses the supplied Retro BG artwork as its visual background.
+- Homepage includes ENTER ARCADE, QUICK PLAY, and RANDOM GAME.
+- Quick Play / Random Game select a solo game after login.
+- Breakout increases ball speed by 5% on every paddle hit.
+- CRT scanlines, subtle flicker, pixel particles, button press motion, coin-in messaging, and a short READY countdown are part of the default arcade presentation.
+- Achievement set expanded to 12 achievements with event-based unlock hooks for Snake, Breakout, Asteroids, 2048, Minesweeper, and Tetris.
+- `DEFAULT_BUILD_CONFIG.json` remains the source of truth for future builds.

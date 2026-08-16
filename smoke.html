@@ -3,7 +3,22 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pixel Playground — Arcade</title>
-<script src="/socket.io/socket.io.js"></script>
+
+<script>
+window.__errors=[];
+window.addEventListener("error",e=>window.__errors.push(e.message));
+window.__handlers={};
+window.io=function(){
+  return {
+    on:function(ev,fn){(window.__handlers[ev]||(window.__handlers[ev]=[])).push(fn); if(ev==="connect") setTimeout(fn,0);},
+    off:function(){},
+    emit:function(ev,data){
+      if(ev==="auth") setTimeout(()=>((window.__handlers["auth:ok"]||[]).forEach(f=>f({username:data.username||"TESTER"}))),5);
+      if(ev==="leaderboard:request") setTimeout(()=>((window.__handlers["leaderboard:data"]||[]).forEach(f=>f([]))),5);
+    }
+  };
+};
+</script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap');
 :root{--bg:#0d0d15;--panel:#171725;--ink:#f4f0dc;--muted:#aaa7ba;--a:#ffcc33;--g:#55e6a5;--r:#ff6070;--line:#4a4765;--blue:#63b3ff}
@@ -34,11 +49,7 @@
 .daily-card{max-width:760px;margin:auto;text-align:center;padding:24px}.daily-game{font:20px 'Press Start 2P';color:var(--a);margin:15px 0}
 .leader-table{width:100%;border-collapse:collapse}.leader-table th,.leader-table td{border:2px solid var(--line);padding:9px;text-align:left}.leader-table th{color:var(--a);font:12px 'Press Start 2P'}
 @media(max-width:900px){.multi-layout{grid-template-columns:1fr}.multi-games{grid-template-columns:1fr}.profile-grid,.stats-grid,.achievement-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:520px){
-  .hub{padding:12px}.hub-tabs{display:grid;grid-template-columns:1fr 1fr}.hub-tab{font-size:16px}
-  .profile-grid,.stats-grid,.achievement-grid{grid-template-columns:1fr}.hub-logo{font-size:15px}
-  .persistent-nav{display:grid;grid-template-columns:1fr 1fr;gap:6px}.pnav{font-size:16px;padding:8px 7px}
-}
+@media(max-width:520px){.hub{padding:12px}.hub-tabs{display:grid;grid-template-columns:1fr 1fr}.hub-tab{font-size:16px}.profile-grid,.stats-grid,.achievement-grid{grid-template-columns:1fr}.hub-logo{font-size:15px}}
 
 
 *{box-sizing:border-box}body{margin:0;background-image:linear-gradient(rgba(13,13,21,.46),rgba(13,13,21,.46)),url('/background.png'),radial-gradient(circle at top,#292844,#0d0d15 62%);background-size:cover;background-position:center;background-attachment:fixed;background-color:#0d0d15;color:var(--ink);font:23px 'VT323',monospace;padding-bottom:52px}.app{max-width:1250px;margin:auto;padding:18px}.top{display:flex;align-items:center;justify-content:space-between;gap:15px}.logo{font:20px 'Press Start 2P';line-height:1.6;color:var(--a);text-shadow:3px 3px #5c3e00;cursor:pointer}.logo small{display:block;font:18px 'VT323';color:var(--muted);text-shadow:none}.hud{display:flex;gap:8px;flex-wrap:wrap}.badge{border:2px solid var(--line);background:var(--panel);padding:8px 11px}.layout{display:grid;grid-template-columns:285px 1fr;gap:15px;margin-top:15px}.side,.main{border:3px solid var(--line);background:var(--panel);box-shadow:7px 7px #07070b}.side{padding:11px}.side-title{font:13px 'Press Start 2P';color:var(--a);margin-bottom:10px}.game-list{display:grid;gap:7px}.gb{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gb:hover,.gb.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.gb .online{float:right;color:var(--g);font-size:16px}.main{padding:15px;min-height:760px}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:15px;border-bottom:2px dashed var(--line);padding-bottom:12px}.head h1{margin:0;font:18px 'Press Start 2P';line-height:1.5;color:var(--a)}.desc{color:var(--muted)}.controls{display:flex;gap:8px;flex-wrap:wrap}.btn{border:3px solid var(--ink);background:var(--a);color:#17130a;padding:9px 13px;font:inherit;font-weight:bold;cursor:pointer;box-shadow:4px 4px #6b4a00}.btn.alt{background:var(--panel);color:var(--ink);box-shadow:4px 4px #07070b}.screen{margin-top:15px;min-height:590px;border:3px solid #55516f;background:#09090f;padding:16px;overflow:auto}.center{min-height:550px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;text-align:center}.big{font:28px 'Press Start 2P';line-height:1.7;color:var(--a)}.status{color:var(--g);min-height:28px}.error{color:var(--r)}input{background:#09090f;color:var(--ink);border:3px solid var(--line);padding:9px;font:inherit}.room-card{width:min(720px,100%);border:3px solid var(--line);background:#12121d;padding:16px;text-align:left}.room-card h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin:0 0 8px}.share-row{display:flex;gap:7px;margin-top:8px}.share-row input{flex:1;min-width:0}.grid3{display:grid;grid-template-columns:repeat(3,90px);gap:8px}.cell{width:90px;height:90px;background:#202038;border:3px solid var(--line);color:var(--a);font:25px 'Press Start 2P';cursor:pointer}.rps-buttons{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.mem-grid{display:grid;grid-template-columns:repeat(4,90px);gap:8px}.mem{width:90px;height:90px;background:#151522;border:3px solid var(--line);color:transparent;font:24px 'Press Start 2P';cursor:pointer}.mem.flipped,.mem.matched{color:var(--a);background:#29273f}.login{position:fixed;inset:0;background:#0b0b13f2;z-index:30;display:grid;place-items:center;padding:20px}.loginbox{width:min(560px,100%);background:var(--panel);border:4px solid var(--line);padding:30px;text-align:center;box-shadow:9px 9px #07070b}.loginbox input{width:min(330px,100%)}.loginbox h2{font:15px 'Press Start 2P';line-height:1.7;color:var(--a)}.lobby{position:fixed;inset:0;background:#0b0b13f2;z-index:20;display:none;place-items:center;padding:20px}.lobbybox{width:min(1050px,100%);display:grid;grid-template-columns:1.1fr .9fr;gap:14px}.lcard{border:3px solid var(--line);background:var(--panel);padding:18px;box-shadow:7px 7px #07070b}.lcard h2{font:13px 'Press Start 2P';line-height:1.7;color:var(--a);margin-top:0}.gamepick{display:grid;grid-template-columns:repeat(2,1fr);gap:7px;max-height:68vh;overflow:auto}.gamepick button{background:#11111b;color:var(--ink);border:2px solid var(--line);padding:10px;text-align:left;font:inherit;cursor:pointer}.gamepick button:hover,.gamepick button.active{border-color:var(--a);background:#25233a;box-shadow:inset 4px 0 0 var(--a)}.searchrow{display:flex;gap:7px}.searchrow input{flex:1;min-width:0}.results button{display:block;width:100%;margin-top:6px;background:#11111b;color:var(--ink);border:2px solid var(--line);padding:8px;text-align:left;font:inherit;cursor:pointer}.results button:hover{border-color:var(--g)}canvas{max-width:100%;height:auto;background:#050509;border:3px solid var(--line)}.keyhint{color:var(--muted);text-align:center}.game-controls{width:min(980px,100%);border:3px solid var(--line);background:#12121d;padding:12px 14px;text-align:left;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:4px}.game-controls-title{font:12px 'Press Start 2P';color:var(--a);grid-column:1/-1}.game-control-item{border:2px solid #3c3955;background:#0d0d16;padding:8px 10px;color:var(--ink);min-height:38px}.color-btn{width:120px;height:70px;border:3px solid var(--ink);cursor:pointer}.flap{font-size:55px}.jump-player{font-size:45px}.t2048{display:grid;grid-template-columns:repeat(4,72px);gap:7px}.t2048 button{width:72px;height:72px;background:#29273f;color:var(--ink);border:2px solid var(--line);font:20px 'Press Start 2P'}@media(max-width:900px){.layout{grid-template-columns:1fr}.lobbybox{grid-template-columns:1fr}.gamepick{grid-template-columns:1fr}}@media(max-width:520px){.head{flex-direction:column}.grid3{grid-template-columns:repeat(3,72px)}.cell{width:72px;height:72px}.mem-grid{grid-template-columns:repeat(4,64px)}.mem{width:64px;height:64px;font-size:18px}.big{font-size:20px}}
@@ -55,67 +66,11 @@
 .tile2048.tile-512{background:#dc8b08;color:#fff}
 .tile2048.tile-1024{background:#c97b05;color:#fff}
 .tile2048.tile-2048{background:#b96b00;color:#fff}.win{color:var(--g)!important}@keyframes pop2048{0%{transform:scale(.72);filter:brightness(1.8)}100%{transform:scale(1);filter:brightness(1)}}@keyframes merge2048{0%{transform:scale(.72);filter:brightness(2.3)}55%{transform:scale(1.16);filter:brightness(1.7)}100%{transform:scale(1);filter:brightness(1)}}.tile2048.merged2048{animation:merge2048 .28s ease}
-.key.absent{background:#383844;color:#777;border-color:#383844}.key.present{background:#9b7b25;color:#fff3b0;border-color:#ffcc33}.key.correct{background:#2d9d67;color:#fff;border-color:#55e6a5}.mole-hud{display:flex;justify-content:center;gap:35px;font:18px 'Press Start 2P';color:var(--a);width:min(560px,100%)}.mole-field{position:relative;width:min(560px,100%);height:320px;border:3px solid var(--line);background:#12121d;overflow:hidden}.mole{position:absolute;width:110px;height:62px;background:var(--a);color:#17130a;border:3px solid var(--ink);font:18px 'Press Start 2P';cursor:pointer;transition:left .08s,top .08s}.typing-sentence{max-width:850px;border:3px solid var(--line);background:#12121d;padding:18px;font-size:27px;line-height:1.25;text-align:left}.typing-sentence+textarea{width:min(850px,100%);resize:none;line-height:1.3}.t2048-board{position:relative;width:351px;height:351px;padding:7px;background-color:#151522;background-image:linear-gradient(to right,rgba(255,204,51,.16) 2px,transparent 2px),linear-gradient(to bottom,rgba(255,204,51,.16) 2px,transparent 2px);background-size:86px 86px;background-position:7px 7px;border:3px solid var(--line)}.t2048-board::before{content:"";position:absolute;inset:7px;background:repeating-linear-gradient(90deg,#25243a 0 78px,transparent 78px 86px),repeating-linear-gradient(0deg,#25243a 0 78px,transparent 78px 86px);opacity:.7}.t2048-board .tile2048{position:absolute;left:7px;top:7px;width:78px;height:78px;display:grid;place-items:center;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease;z-index:2}.t2048-board .tile2048:not(:empty){animation:none}.tile2048.new2048{animation:pop2048 .18s ease}.tetris-wrap{display:flex;gap:18px;align-items:flex-start}.tetris-side{min-width:150px;display:grid;gap:10px;text-align:left;font:18px 'Press Start 2P';color:var(--ink)}#tetrisNext{border:2px solid var(--line)}@media(max-width:620px){.tetris-wrap{transform:scale(.82);transform-origin:top center;margin-bottom:-80px}}
-/* V14 ARCADE CABINET FX */
-body::before{
-  content:"";position:fixed;inset:0;z-index:50;pointer-events:none;
-  background:repeating-linear-gradient(to bottom,rgba(255,255,255,.028) 0,rgba(255,255,255,.028) 1px,transparent 1px,transparent 4px);
-  mix-blend-mode:screen;opacity:.28;
-}
-body::after{
-  content:"";position:fixed;inset:0;z-index:49;pointer-events:none;
-  background:radial-gradient(ellipse at center,transparent 52%,rgba(0,0,0,.28) 100%);
-  animation:crtFlicker 7s steps(1,end) infinite;
-}
-@keyframes crtFlicker{0%,93%,100%{opacity:.82}94%{opacity:.76}95%{opacity:.86}96%{opacity:.80}}
-.persistent-nav{
-  position:sticky;top:0;z-index:25;display:flex;flex-wrap:wrap;gap:8px;
-  padding:10px 0 12px;margin-top:8px;background:rgba(13,13,21,.88);
-  backdrop-filter:blur(4px);border-bottom:2px solid var(--line);
-}
-.pnav{
-  border:2px solid var(--line);background:#11111b;color:var(--ink);
-  padding:9px 13px;font:18px 'VT323';cursor:pointer;letter-spacing:.3px;
-  transition:transform .08s ease,box-shadow .08s ease,border-color .12s ease;
-}
-.pnav:hover,.pnav.active{border-color:var(--a);background:#25233a;box-shadow:inset 0 -3px 0 var(--a)}
-.pnav:active{transform:translate(2px,2px);box-shadow:none}
-.arcade-sequence{
-  position:fixed;inset:0;z-index:70;display:none;place-items:center;
-  background:rgba(5,5,10,.90);pointer-events:none;text-align:center;
-}
-.arcade-sequence.show{display:grid}
-.seq-box{display:flex;flex-direction:column;gap:13px;align-items:center}
-.seq-insert{font:clamp(16px,3vw,26px) 'Press Start 2P';color:var(--a);text-shadow:4px 4px #5c3e00;animation:coinBlink .55s steps(2,end) infinite}
-.seq-player{font:18px 'VT323';color:var(--ink);letter-spacing:2px}
-.seq-ready{font:clamp(18px,3vw,30px) 'Press Start 2P';color:var(--g)}
-.seq-count{font:clamp(34px,7vw,72px) 'Press Start 2P';color:var(--a);text-shadow:5px 5px #5c3e00}
-@keyframes coinBlink{50%{opacity:.35}}
-.pixel-particles{
-  position:fixed;inset:0;z-index:48;pointer-events:none;opacity:.18;
-  background-image:
-    radial-gradient(circle at 12% 22%,#ffcc33 0 1px,transparent 2px),
-    radial-gradient(circle at 33% 72%,#63b3ff 0 1px,transparent 2px),
-    radial-gradient(circle at 74% 18%,#55e6a5 0 1px,transparent 2px),
-    radial-gradient(circle at 88% 61%,#ff6070 0 1px,transparent 2px),
-    radial-gradient(circle at 56% 44%,#ffcc33 0 1px,transparent 2px);
-}
-
-</style>
+.key.absent{background:#383844;color:#777;border-color:#383844}.key.present{background:#9b7b25;color:#fff3b0;border-color:#ffcc33}.key.correct{background:#2d9d67;color:#fff;border-color:#55e6a5}.mole-hud{display:flex;justify-content:center;gap:35px;font:18px 'Press Start 2P';color:var(--a);width:min(560px,100%)}.mole-field{position:relative;width:min(560px,100%);height:320px;border:3px solid var(--line);background:#12121d;overflow:hidden}.mole{position:absolute;width:110px;height:62px;background:var(--a);color:#17130a;border:3px solid var(--ink);font:18px 'Press Start 2P';cursor:pointer;transition:left .08s,top .08s}.typing-sentence{max-width:850px;border:3px solid var(--line);background:#12121d;padding:18px;font-size:27px;line-height:1.25;text-align:left}.typing-sentence+textarea{width:min(850px,100%);resize:none;line-height:1.3}.t2048-board{position:relative;width:351px;height:351px;padding:7px;background-color:#151522;background-image:linear-gradient(to right,rgba(255,204,51,.16) 2px,transparent 2px),linear-gradient(to bottom,rgba(255,204,51,.16) 2px,transparent 2px);background-size:86px 86px;background-position:7px 7px;border:3px solid var(--line)}.t2048-board::before{content:"";position:absolute;inset:7px;background:repeating-linear-gradient(90deg,#25243a 0 78px,transparent 78px 86px),repeating-linear-gradient(0deg,#25243a 0 78px,transparent 78px 86px);opacity:.7}.t2048-board .tile2048{position:absolute;left:7px;top:7px;width:78px;height:78px;display:grid;place-items:center;transition:transform .18s cubic-bezier(.2,.8,.2,1),opacity .18s ease;z-index:2}.t2048-board .tile2048:not(:empty){animation:none}.tile2048.new2048{animation:pop2048 .18s ease}.tetris-wrap{display:flex;gap:18px;align-items:flex-start}.tetris-side{min-width:150px;display:grid;gap:10px;text-align:left;font:18px 'Press Start 2P';color:var(--ink)}#tetrisNext{border:2px solid var(--line)}@media(max-width:620px){.tetris-wrap{transform:scale(.82);transform-origin:top center;margin-bottom:-80px}}</style>
 </head>
 <body>
 <div class="app">
   <div class="top"><div class="logo" id="homeBtn">PIXEL PLAYGROUND<small>← HOME</small></div><div class="hud"><div class="badge">PLAYER <b id="me">---</b></div></div></div>
-
-<nav class="persistent-nav" aria-label="Arcade navigation">
-  <button class="pnav active" data-pgtab="solo">SOLO GAMES</button>
-  <button class="pnav" data-pgtab="multi">MULTIPLAYER</button>
-  <button class="pnav" data-pgtab="profile">PROFILE</button>
-  <button class="pnav" data-pgtab="leaderboard">LEADERBOARD</button>
-  <button class="pnav" data-pgtab="achievements">ACHIEVEMENTS</button>
-  <button class="pnav" data-pgtab="daily">DAILY CHALLENGE</button>
-</nav>
-
   <div class="layout">
     <aside class="side"><div class="side-title">SELECT GAME</div><div class="game-list" id="gameList"></div></aside>
     <main class="main">
@@ -131,16 +86,7 @@ body::after{
   <div class="clock" id="siteClock">--/--/---- • --:--:--</div>
 </div>
 
-<div class="pixel-particles" aria-hidden="true"></div>
-<div class="arcade-sequence" id="arcadeSequence" aria-hidden="true">
-  <div class="seq-box">
-    <div class="seq-insert">INSERT COIN</div>
-    <div class="seq-player">PLAYER 1</div>
-    <div class="seq-ready" id="seqReady">READY!</div>
-    <div class="seq-count" id="seqCount">3</div>
-  </div>
-</div>
-<div class="login" id="loginOverlay"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. A unique suffix is added if it is already online.<br><span style="color:var(--a)">INSERT COIN • PLAYER 1</span></p><input id="loginName" maxlength="16"><div style="height:12px"></div><button class="btn" id="loginBtn">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
+<div class="login" id="loginOverlay"><div class="loginbox"><div class="logo">PIXEL PLAYGROUND</div><h2>PLAYER LOGIN</h2><p class="desc">Choose a username. A unique suffix is added if it is already online.</p><input id="loginName" maxlength="16"><div style="height:12px"></div><button class="btn" id="loginBtn">ENTER ARCADE</button><div class="status" id="loginStatus"></div></div></div>
 
 <div class="lobby" id="lobby">
   <div class="hub">
@@ -274,19 +220,15 @@ const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Ti
   // these game mechanics and the arcade layout unless the user explicitly asks
   // for a mechanic/layout change.
   const DEFAULT_BUILD_CONFIG = Object.freeze({
-    version: "V14",
+    version: "V11",
     gameCount: 17,
     layout: "retro-arcade-sidebar-selection-with-dedicated-game-panel-and-controls",
     mechanicsLocked: true,
     asteroids: { shipThrust: 0.04, maxVelocity: 3, startingWave: "half-scale", gradualSpawns: true },
-    breakout: { paddleHitSpeedMultiplier: 1.05, brickShape: "box", randomizedLayoutOnRestart: true },
+    breakout: { paddleHitSpeedMultiplier: 1.25, brickShape: "box", randomizedLayoutOnRestart: true },
     2048: { gridBackground: true, movement: "slide-all-tiles", mergeRule: "standard-2048", smoothSlideAnimation: true },
     keyboardScrollLock: true,
-    controlsAlwaysVisible: true,
-    persistentTopNavigation: true,
-    quickPlay: true,
-    randomGame: true,
-    crtPresentation: true
+    controlsAlwaysVisible: true
   });
 
 const ONLINE = {2:"rps",4:"ttt",11:"pong"};
@@ -326,85 +268,174 @@ let profile = loadProfile();
 function randomName(){const a=["PIXEL","TURBO","NEON","RETRO","CYBER","NOVA"],b=["FOX","NINJA","GHOST","RIDER","BOT","WIZARD"];return `${a[Math.floor(Math.random()*a.length)]}_${b[Math.floor(Math.random()*b.length)]}_${Math.floor(10+Math.random()*90)}`;}
 ui.loginName.value = randomName();
 
-
 function setStatus(text, error=false){ui.loginStatus.textContent=text;ui.loginStatus.className=error?"status error":"status";}
-function loadProfile(){
-  try{return Object.assign({plays:0,wins:0,losses:0,draws:0,points:0,gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false,started:false}},JSON.parse(localStorage.getItem(PROFILE_KEY)||"{}"));}
-  catch(e){return {plays:0,wins:0,losses:0,draws:0,points:0,gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false,started:false}};}
-}
-function saveProfile(){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){}}
-function awardAchievement(id){if(profile.achievements.includes(id))return false;profile.achievements.push(id);saveProfile();renderAchievements();return true;}
-function reportProfile(){if(authed)socket.emit("profile:report",{points:profile.points,plays:profile.plays,wins:profile.wins});}
-function recordPlay(index){profile.plays++;profile.gamePlays[GAMES[index]]=(profile.gamePlays[GAMES[index]]||0)+1;profile.points+=5;if(profile.plays>=1)awardAchievement("first-play");if(profile.plays>=5)awardAchievement("five-games");if(profile.plays>=10)awardAchievement("ten-games");saveProfile();reportProfile();}
-function recordWin(){profile.wins++;profile.points+=100;awardAchievement("first-win");if(profile.wins>=3)awardAchievement("three-wins");saveProfile();reportProfile();renderProfile();}
-function recordLoss(){profile.losses++;profile.points+=10;saveProfile();reportProfile();renderProfile();}
-function recordDraw(){profile.draws++;profile.points+=25;saveProfile();reportProfile();renderProfile();}
-function renderProfile(){if(!ui.profilePanel)return;const top=Object.entries(profile.gamePlays).sort((a,b)=>b[1]-a[1]).slice(0,5);ui.profilePanel.innerHTML=`<div class="hub-section-title">PLAYER PROFILE</div><div class="profile-grid"><div class="stat-card">PLAYER<div class="num" style="font-size:18px">${username||"PLAYER"}</div></div><div class="stat-card">ARCADE POINTS<div class="num">${profile.points}</div></div><div class="stat-card">GAMES PLAYED<div class="num">${profile.plays}</div></div><div class="stat-card">WINS<div class="num">${profile.wins}</div></div><div class="stat-card">LOSSES<div class="num">${profile.losses}</div></div><div class="stat-card">ACHIEVEMENTS<div class="num">${profile.achievements.length}/12</div></div></div><div class="room-card" style="margin-top:12px"><h2>RECENTLY PLAYED</h2>${top.length?top.map(x=>`<div>${x[0]} — <b>${x[1]} PLAY${x[1]===1?"":"S"}</b></div>`).join(""):"<div class='desc'>Play a game to start building your profile.</div>"}</div>`;}
-function renderAchievements(){if(!ui.achievementPanel)return;const all=[
-  ["first-play","🕹️","FIRST INSERT","Play your first game."],
-  ["five-games","⚡","GETTING SERIOUS","Play 5 games."],
-  ["ten-games","🔥","ARCADE REGULAR","Play 10 games."],
-  ["first-win","🏆","FIRST BLOOD","Win your first multiplayer game."],
-  ["three-wins","👑","TRIPLE CROWN","Win 3 multiplayer games."],
-  ["daily","🎯","DAILY PLAYER","Play today's challenge."],
-  ["snake-master","🐍","SNAKE MASTER","Reach 500 points in Snake."],
-  ["brick-breaker","🧱","BRICK BREAKER","Clear 5 Breakout levels."],
-  ["space-cadet","🚀","SPACE CADET","Destroy 100 Asteroids."],
-  ["club-2048","🟨","2048 CLUB","Reach the 2048 tile."],
-  ["mine-sweeper","🧩","MINESWEEPER","Clear a board without a mine."],
-  ["tetris","🟪","TETRIS","Clear 4 lines simultaneously."]
-];ui.achievementPanel.innerHTML=`<div class="hub-section-title">ACHIEVEMENTS</div><div class="achievement-grid">${all.map(a=>{const u=profile.achievements.includes(a[0]);return `<div class="achievement-card ${u?"unlocked":"locked"}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="desc">${a[3]}</div><div>${u?"✓ UNLOCKED":"LOCKED"}</div></div>`}).join("")}</div>`;}
-function dailyGame(){const pool=SOLO_INDEXES,d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;return pool[Math.abs(hash)%pool.length];}
-function renderDaily(){if(!ui.dailyPanel)return;const idx=dailyGame(),d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;if(profile.daily.date!==key){profile.daily={date:key,game:GAMES[idx],completed:false,started:false};saveProfile();}const done=profile.daily.completed;ui.dailyPanel.innerHTML=`<div class="hub-section-title">DAILY CHALLENGE</div><div class="daily-card"><div class="desc">TODAY'S FEATURED GAME</div><div class="daily-game">${GAMES[idx]}</div><p>Play today's featured game and try to beat your personal best.</p><div class="status">${done?"✓ CHALLENGE COMPLETED":"READY TO PLAY"}</div><button class="btn" id="dailyPlay">${done?"PLAY AGAIN":"PLAY TODAY'S CHALLENGE"}</button></div>`;$("dailyPlay").onclick=()=>{profile.daily.started=true;saveProfile();hideLobby();selectGame(idx);};}
-function renderLeaderboard(){if(!ui.leaderboardPanel)return;ui.leaderboardPanel.innerHTML=`<div class="hub-section-title">LIVE LEADERBOARD</div><table class="leader-table"><thead><tr><th>#</th><th>PLAYER</th><th>POINTS</th><th>WINS</th></tr></thead><tbody id="leaderBody"><tr><td colspan="4">CONNECTING...</td></tr></tbody></table>`;socket.emit("leaderboard:request");}
-function switchHubTab(tab){document.querySelectorAll(".hub-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));if(tab==="leaderboard")renderLeaderboard();}
-function syncPersistentNav(tab){
-  document.querySelectorAll(".pnav").forEach(b=>b.classList.toggle("active",b.dataset.pgtab===tab));
-}
-function openHubTab(tab){
+function showLobby(){
   if(!authed)return;
-  syncPersistentNav(tab);
-  showLobby();
-  switchHubTab(tab);
+  ui.lobby.style.display="grid";
+  ui.hubUser.textContent=username;
+  renderProfile();
+  renderAchievements();
+  renderDaily();
+  renderLeaderboard();
+  refreshOpenRooms();
 }
-function launchRandomGame(){
-  const pool=SOLO_INDEXES.slice();
-  const idx=pool[Math.floor(Math.random()*pool.length)];
-  hideLobby();
-  selectGame(idx);
-}
-function showArcadeSequence(){
-  const ov=$("arcadeSequence"), count=$("seqCount"), ready=$("seqReady");
-  if(!ov)return;
-  ov.classList.add("show");
-  ready.textContent="READY!";
-  count.textContent="3";
-  const steps=[["3",0],["2",350],["1",700],["GO!",1050]];
-  steps.forEach(([text,ms])=>setTimeout(()=>{count.textContent=text;},ms));
-  setTimeout(()=>ov.classList.remove("show"),1450);
-}
-
-function initHubActions(){
-  document.querySelectorAll(".hub-tab").forEach(b=>b.onclick=()=>{syncPersistentNav(b.dataset.tab);switchHubTab(b.dataset.tab);});
-  document.querySelectorAll(".pnav").forEach(b=>b.onclick=()=>openHubTab(b.dataset.pgtab));
-ui.closeLobby.onclick=hideLobby;ui.createHubRoom.onclick=()=>{const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);if(idx===undefined)return;current=idx;titleAndDescription();createRoom(idx);};ui.joinHubRoom.onclick=()=>joinRoom(ui.hubRoomCode.value);ui.copyHubLink.onclick=async()=>copyValue(ui.hubRoomLink,ui.hubRoomStatus);ui.shareHubLink.onclick=async()=>shareValue(ui.hubRoomLink);ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});}
-function showLobby(){if(!authed)return;if(profile.daily.started&&!profile.daily.completed){profile.daily.completed=true;profile.daily.started=false;saveProfile();awardAchievement("daily");}ui.lobby.style.display="grid";ui.hubUser.textContent=username;renderProfile();renderAchievements();renderDaily();renderLeaderboard();refreshOpenRooms();}
 function hideLobby(){ui.lobby.style.display="none";}
 function home(){location.href="/";}
+function loadProfile(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(PROFILE_KEY)||"null");
+    return Object.assign({
+      plays:0,wins:0,losses:0,draws:0,points:0,
+      gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false}
+    },raw||{});
+  }catch(e){return {plays:0,wins:0,losses:0,draws:0,points:0,gamePlays:{},bestScores:{},achievements:[],daily:{date:"",game:"",completed:false}};}
+}
+function saveProfile(){try{localStorage.setItem(PROFILE_KEY,JSON.stringify(profile));}catch(e){}}
+function awardAchievement(id){
+  if(profile.achievements.includes(id))return false;
+  profile.achievements.push(id);saveProfile();renderAchievements();return true;
+}
+function recordPlay(index){
+  profile.plays++;
+  profile.gamePlays[GAMES[index]]=(profile.gamePlays[GAMES[index]]||0)+1;
+  profile.points+=5;
+  if(profile.plays>=1)awardAchievement("first-play");
+  if(profile.plays>=5)awardAchievement("five-games");
+  if(profile.plays>=10)awardAchievement("ten-games");
+  if(ONLINE[index])profile.points+=5;
+  saveProfile();
+  reportProfile();
+}
+function recordWin(){
+  profile.wins++;profile.points+=100;
+  awardAchievement("first-win");
+  if(profile.wins>=3)awardAchievement("three-wins");
+  saveProfile();reportProfile();renderProfile();renderAchievements();
+}
+function recordLoss(){profile.losses++;profile.points+=10;saveProfile();reportProfile();renderProfile();}
+function recordDraw(){profile.draws++;profile.points+=25;saveProfile();reportProfile();renderProfile();}
+function reportProfile(){
+  if(!authed)return;
+  socket.emit("profile:report",{points:profile.points,plays:profile.plays,wins:profile.wins});
+}
+function renderProfile(){
+  if(!ui.profilePanel)return;
+  const top=Object.entries(profile.gamePlays).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  ui.profilePanel.innerHTML=`<div class="hub-section-title">PLAYER PROFILE</div>
+    <div class="profile-grid">
+      <div class="stat-card">PLAYER<div class="num" style="font-size:18px">${username||"PLAYER"}</div></div>
+      <div class="stat-card">ARCADE POINTS<div class="num">${profile.points}</div></div>
+      <div class="stat-card">GAMES PLAYED<div class="num">${profile.plays}</div></div>
+      <div class="stat-card">WINS<div class="num">${profile.wins}</div></div>
+      <div class="stat-card">LOSSES<div class="num">${profile.losses}</div></div>
+      <div class="stat-card">ACHIEVEMENTS<div class="num">${profile.achievements.length}/6</div></div>
+    </div>
+    <div class="room-card" style="margin-top:12px"><h2>RECENTLY PLAYED</h2>${top.length?top.map(x=>`<div>${x[0]} — <b>${x[1]} PLAY${x[1]===1?"":"S"}</b></div>`).join(""):"<div class='desc'>Play a game to start building your profile.</div>"}</div>`;
+}
+function renderAchievements(){
+  if(!ui.achievementPanel)return;
+  const all=[
+    ["first-play","🕹️","FIRST INSERT","Play your first game."],
+    ["five-games","⚡","GETTING SERIOUS","Play 5 games."],
+    ["ten-games","🔥","ARCADE REGULAR","Play 10 games."],
+    ["first-win","🏆","FIRST BLOOD","Win a multiplayer game."],
+    ["three-wins","👑","TRIPLE CROWN","Win 3 multiplayer games."],
+    ["daily","🎯","DAILY PLAYER","Complete a daily challenge."]
+  ];
+  ui.achievementPanel.innerHTML=`<div class="hub-section-title">ACHIEVEMENTS</div><div class="achievement-grid">${all.map(a=>{
+    const unlocked=profile.achievements.includes(a[0]);
+    return `<div class="achievement-card ${unlocked?"unlocked":"locked"}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="desc">${a[3]}</div><div>${unlocked?"✓ UNLOCKED":"LOCKED"}</div></div>`;
+  }).join("")}</div>`;
+}
+function dailyGame(){
+  const pool=SOLO_INDEXES;
+  const d=new Date();const key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;
+  return pool[Math.abs(hash)%pool.length];
+}
+function renderDaily(){
+  if(!ui.dailyPanel)return;
+  const idx=dailyGame(),d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+  if(profile.daily.date!==key){profile.daily={date:key,game:GAMES[idx],completed:false};saveProfile();}
+  const done=profile.daily.completed;
+  const target={Wordle:"Solve the word in as few guesses as possible.",Asteroids:"Survive and destroy as many asteroids as you can.",["Guess the Number"]:"Find the number using the fewest guesses.",["Memory Card Match"]:"Clear the board with the fewest flips.",["Whack-a-Mole"]:"Beat your previous score.",["Button Dodger"]:"Catch the moving button.",["Pac-Man"]:"Clear as many pellets as possible.",["Typing Speed Game"]:"Finish the sentence with your best time.",Snake:"Beat your personal best.",Breakout:"Clear the bricks.",["Flappy Bird Clone"]:"Survive as long as possible.",Minesweeper:"Clear the board.",["2048"]:"Reach the highest tile you can.",Tetris:"Set a new high score."}[GAMES[idx]]||"Beat your best.";
+  ui.dailyPanel.innerHTML=`<div class="hub-section-title">DAILY CHALLENGE</div><div class="daily-card">
+    <div class="desc">TODAY'S FEATURED GAME</div><div class="daily-game">${GAMES[idx]}</div><p>${target}</p>
+    <div class="status">${done?"✓ CHALLENGE COMPLETED":"READY TO PLAY"}</div>
+    <button class="btn" id="dailyPlay">${done?"PLAY AGAIN":"PLAY TODAY'S CHALLENGE"}</button>
+  </div>`;
+  $("dailyPlay").onclick=()=>{profile.daily.completed=true;awardAchievement("daily");saveProfile();hideLobby();selectGame(idx);};
+}
+function renderLeaderboard(){
+  if(!ui.leaderboardPanel)return;
+  ui.leaderboardPanel.innerHTML=`<div class="hub-section-title">LIVE LEADERBOARD</div><table class="leader-table"><thead><tr><th>#</th><th>PLAYER</th><th>POINTS</th><th>WINS</th></tr></thead><tbody id="leaderBody"><tr><td colspan="4">CONNECTING...</td></tr></tbody></table>`;
+  socket.emit("leaderboard:request");
+}
+function switchHubTab(tab){
+  document.querySelectorAll(".hub-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  document.querySelectorAll(".hub-panel").forEach(p=>p.classList.toggle("active",p.dataset.panel===tab));
+  if(tab==="leaderboard")renderLeaderboard();
+}
+function initHubTabs(){
+  document.querySelectorAll(".hub-tab").forEach(b=>b.onclick=()=>switchHubTab(b.dataset.tab));
+  ui.closeLobby.onclick=hideLobby;
+}
+function initHubActions(){
+  initHubTabs();
+  ui.createHubRoom.onclick=()=>{
+    const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);
+    if(idx===undefined)return;
+    current=idx; refreshActive(); titleAndDescription(); createRoom(idx);
+  };
+  ui.joinHubRoom.onclick=()=>joinRoom(ui.hubRoomCode.value);
+  ui.copyHubLink.onclick=async()=>copyValue(ui.hubRoomLink,ui.hubRoomStatus);
+  ui.shareHubLink.onclick=async()=>shareValue(ui.hubRoomLink);
+  ui.searchBtn.onclick=searchUsers;
+  ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});
+}
+
 
 function resetScreen(){try{gameCleanup();}catch(e){console.error("cleanup",e);}gameCleanup=()=>{};if(ui.screen)ui.screen.innerHTML="";}
 function addScore(n){score=Math.max(0,score+n);if(ui.score)ui.score.textContent=score;}
 
 function selectGame(index){
   if(index<0||index>=GAMES.length)return;
-  current=index;roomGame="";lastEndSignature="";titleAndDescription();refreshActive();renderSelectedGame();gameStartSound();showArcadeSequence();recordPlay(index);
+  current=index; roomGame=""; lastEndSignature=""; titleAndDescription(); refreshActive(); renderSelectedGame(); gameStartSound(); recordPlay(index);
 }
 function titleAndDescription(){ui.title.textContent=GAMES[current];ui.desc.textContent=ONLINE[current]?"Online multiplayer — create a room or join a friend.":"Solo game.";}
 
-
-function buildLists(){ui.gameList.innerHTML="";ui.gamePick.innerHTML="";ui.multiGames.innerHTML="";SOLO_INDEXES.forEach(i=>{const name=GAMES[i],b=document.createElement("button");b.className="gb"+(i===current?" active":"");b.innerHTML=`${String(i+1).padStart(2,"0")} — ${name}`;b.onclick=()=>{hideLobby();selectGame(i);};ui.gameList.appendChild(b);const p=document.createElement("button");p.className=i===current?"active":"";p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><br><span class="desc">SOLO</span>`;p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);});MULTI_INDEXES.forEach(i=>{const b=document.createElement("button");b.className="multi-game-btn"+(ONLINE[i]===hubMultiGame?" active":"");b.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${GAMES[i]}</b><br><span class="desc">ONLINE • 2 PLAYERS</span>`;b.onclick=()=>{hubMultiGame=ONLINE[i];renderMultiHub();};ui.multiGames.appendChild(b);});renderMultiHub();}
-function refreshActive(){if(ui.gameList)[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));if(ui.gamePick)[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));}
-function renderMultiHub(){[...ui.multiGames.children].forEach((b,i)=>b.classList.toggle("active",MULTI_INDEXES[i]!==undefined&&ONLINE[MULTI_INDEXES[i]]===hubMultiGame));const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);const name=idx===undefined?"SELECT A GAME":GAMES[idx];const sel=$("multiSelected");if(sel)sel.textContent=`SELECTED: ${name}`;if(ui.createHubRoom)ui.createHubRoom.textContent=`CREATE ${name.toUpperCase()} ROOM`;}
+function buildLists(){
+  ui.gameList.innerHTML="";ui.gamePick.innerHTML="";ui.multiGames.innerHTML="";
+  SOLO_INDEXES.forEach(i=>{
+    const name=GAMES[i];
+    const b=document.createElement("button");b.className="gb"+(i===current?" active":"");
+    b.innerHTML=`${String(i+1).padStart(2,"0")} — ${name}`;
+    b.onclick=()=>{hideLobby();selectGame(i);};ui.gameList.appendChild(b);
+    const p=document.createElement("button");p.className=i===current?"active":"";
+    p.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${name}</b><br><span class="desc">SOLO</span>`;
+    p.onclick=()=>{hideLobby();selectGame(i);};ui.gamePick.appendChild(p);
+  });
+  MULTI_INDEXES.forEach(i=>{
+    const game=ONLINE[i],b=document.createElement("button");
+    b.className="multi-game-btn"+(game===hubMultiGame?" active":"");
+    b.innerHTML=`<b>${String(i+1).padStart(2,"0")} — ${GAMES[i]}</b><br><span class="desc">ONLINE • 2 PLAYERS</span>`;
+    b.onclick=()=>{hubMultiGame=game;renderMultiHub();};
+    ui.multiGames.appendChild(b);
+  });
+  renderMultiHub();
+}
+function refreshActive(){
+  if(ui.gameList)[...ui.gameList.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));
+  if(ui.gamePick)[...ui.gamePick.children].forEach((b,i)=>b.classList.toggle("active",SOLO_INDEXES[i]===current));
+}
+function renderMultiHub(){
+  if(!ui.multiGames)return;
+  [...ui.multiGames.children].forEach((b,i)=>b.classList.toggle("active",MULTI_INDEXES[i]!==undefined&&ONLINE[MULTI_INDEXES[i]]===hubMultiGame));
+  const idx=MULTI_INDEXES.find(i=>ONLINE[i]===hubMultiGame);
+  const name=idx===undefined?"SELECT A GAME":GAMES[idx];
+  const sel=$("multiSelected");if(sel)sel.textContent=`SELECTED: ${name}`;
+  if(ui.createHubRoom)ui.createHubRoom.textContent=`CREATE ${name.toUpperCase()} ROOM`;
+}
 
 function renderMultiplayerMenu(){
   const gameName=GAMES[current];
@@ -444,9 +475,10 @@ async function shareValue(input){
   await copyValue(input,$("mainRoomStatus"));
 }
 function createRoom(gameIndex, invitee=""){
-  const game=ONLINE[gameIndex];if(!game)return;
+  const game=ONLINE[gameIndex];if(!game){return;}
   socket.emit("room:create",{game,invitee});
-  const status=$("mainRoomStatus")||ui.hubRoomStatus;if(status)status.textContent=`CREATING ${GAMES[gameIndex].toUpperCase()} ROOM...`;
+  const msg=`CREATING ${GAMES[gameIndex].toUpperCase()} ROOM...`;
+  const status=$("mainRoomStatus")||ui.hubRoomStatus;if(status)status.textContent=msg;
 }
 function joinRoom(code){
   const id=String(code||"").trim().toUpperCase();if(!id)return;
@@ -463,8 +495,10 @@ function renderRoomReady(data){
   roomId=data.roomId;roomGame=data.game;
   const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";
   const link=url.toString();
-  const input=$("mainRoomLink"),hubInput=ui.hubRoomLink,status=$("mainRoomStatus")||ui.hubRoomStatus;
-  if(input)input.value=link;if(hubInput)hubInput.value=link;if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
+  const input=$("mainRoomLink");const hubInput=ui.hubRoomLink;
+  const status=$("mainRoomStatus")||ui.hubRoomStatus;
+  if(input)input.value=link;if(hubInput)hubInput.value=link;
+  if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
 }
 
 
@@ -479,16 +513,21 @@ function login(){
 }
 ui.loginBtn.onclick=login;ui.loginName.addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 socket.on("auth:ok",data=>{
-  authed=true;username=data.username;ui.me.textContent=username;ui.hubUser.textContent=username;ui.login.style.display="none";initHubActions();reportProfile();
+  authed=true;username=data.username;ui.me.textContent=username;ui.hubUser.textContent=username;ui.login.style.display="none";
+  initHubActions();reportProfile();
   const q=new URLSearchParams(location.search);
-  if(q.get("room"))socket.emit("room:join",{roomId:q.get("room")});
-  else if(q.get("quick")||q.get("random"))launchRandomGame();
+  if(q.get("room")) socket.emit("room:join",{roomId:q.get("room")});
   else showLobby();
 });
 
 socket.on("room:created",data=>{
-  const idx=MULTI_INDEXES.find(i=>ONLINE[i]===data.game);if(idx!==undefined)current=idx;
-  renderRoomReady(data);hideLobby();titleAndDescription();refreshActive();renderMultiplayerMenu();
+  const idx=MULTI_INDEXES.find(i=>ONLINE[i]===data.game);
+  if(idx!==undefined)current=idx;
+  renderRoomReady(data);
+  hideLobby();
+  titleAndDescription();
+  refreshActive();
+  renderMultiplayerMenu();
   const input=$("mainRoomLink"),status=$("mainRoomStatus");
   if(input){const url=new URL(location.href);url.pathname=`/join/${data.roomId}`;url.search="";input.value=url.toString();}
   if(status)status.textContent=`ROOM ${data.roomId} READY — SEND THIS LINK`;
@@ -559,14 +598,14 @@ const SOLO = {
   1: function(){
     center('<canvas id="asteroidsCanvas" width="760" height="500"></canvas><div id="asteroidsStatus" class="status">← / → ROTATE • ↑ THRUST • SPACE FIRE • H HYPERSPACE</div>');
     const c=$("asteroidsCanvas"),ctx=c.getContext("2d"),W=c.width,H=c.height;
-    const TAU=Math.PI*2;let ship,shots=[],asteroids=[],saucer=null,scoreA=0,lives=3,level=1,gameOver=false,spawnTimer=0,shotCooldown=0,hyperCooldown=0,elapsedFrames=0,destroyedA=0;
+    const TAU=Math.PI*2;let ship,shots=[],asteroids=[],saucer=null,scoreA=0,lives=3,level=1,gameOver=false,spawnTimer=0,shotCooldown=0,hyperCooldown=0,elapsedFrames=0;
     const keys={left:false,right:false,thrust:false};
     function wrap(o){if(o.x<0)o.x+=W;if(o.x>W)o.x-=W;if(o.y<0)o.y+=H;if(o.y>H)o.y-=H;}
     function dist(a,b){let dx=a.x-b.x,dy=a.y-b.y;return Math.hypot(dx,dy);}
     function makeShip(){return {x:W/2,y:H/2,vx:0,vy:0,a:-Math.PI/2,r:11,inv:150};}
     function makeAsteroid(size,x,y){const r=size===3?42:size===2?26:15;let a=Math.random()*TAU,spd=(size===3?1.0:1.6)+level*.08;return {x:x??Math.random()*W,y:y??Math.random()*H,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,r,size,rot:(Math.random()-.5)*.03,angle:Math.random()*TAU};}
     function spawnWave(){asteroids=[];const count=Math.max(2,Math.ceil((4+level)/2));for(let i=0;i<count;i++){let x,y;do{x=Math.random()*W;y=Math.random()*H;}while(ship&&dist({x,y},ship)<130);asteroids.push(makeAsteroid(3,x,y));}saucer=null;}
-    function reset(){ship=makeShip();shots=[];scoreA=0;lives=3;level=1;gameOver=false;destroyedA=0;shotCooldown=0;hyperCooldown=0;spawnTimer=0;elapsedFrames=0;spawnWave();status();draw();}
+    function reset(){ship=makeShip();shots=[];scoreA=0;lives=3;level=1;gameOver=false;shotCooldown=0;hyperCooldown=0;spawnTimer=0;elapsedFrames=0;spawnWave();status();draw();}
     function status(msg){$("asteroidsStatus").textContent=msg||`SCORE ${scoreA} • LIVES ${lives} • LEVEL ${level} — ←/→ ROTATE • ↑ THRUST • SPACE FIRE • H HYPERSPACE`;}
     function fire(){if(gameOver||shotCooldown>0||shots.length>=4)return;shots.push({x:ship.x+Math.cos(ship.a)*16,y:ship.y+Math.sin(ship.a)*16,vx:ship.vx+Math.cos(ship.a)*7,vy:ship.vy+Math.sin(ship.a)*7,life:60});shotCooldown=9;}
     function hyperspace(){if(gameOver||hyperCooldown>0)return;ship.x=Math.random()*W;ship.y=Math.random()*H;ship.vx*=.35;ship.vy*=.35;ship.inv=70;hyperCooldown=90;}
@@ -577,7 +616,7 @@ const SOLO = {
     function draw(){ctx.fillStyle="#050509";ctx.fillRect(0,0,W,H);ctx.strokeStyle="#191827";for(let x=0;x<W;x+=38){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}for(let y=0;y<H;y+=38){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}asteroids.forEach(drawAsteroid);shots.forEach(s=>{ctx.fillStyle="#ffcc33";ctx.fillRect(s.x-2,s.y-2,4,4);});if(saucer){ctx.strokeStyle="#ffcc33";ctx.beginPath();ctx.ellipse(saucer.x,saucer.y,18,7,0,0,TAU);ctx.moveTo(saucer.x-9,saucer.y+7);ctx.lineTo(saucer.x+9,saucer.y+7);ctx.stroke();}if(ship&&!gameOver){ctx.globalAlpha=ship.inv%10<5?.35:1;drawShip();ctx.globalAlpha=1;}ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText(`SCORE ${scoreA}`,16,28);ctx.fillText(`LIVES ${lives}`,W-105,28);}
     function tick(){if(gameOver)return;const dt=1;elapsedFrames++;spawnTimer++; if(keys.left)ship.a-=.075;if(keys.right)ship.a+=.075;if(keys.thrust){ship.vx+=Math.cos(ship.a)*.04;ship.vy+=Math.sin(ship.a)*.04;}ship.vx*=.995;ship.vy*=.995;const maxV=3;const sp=Math.hypot(ship.vx,ship.vy);if(sp>maxV){ship.vx=ship.vx/sp*maxV;ship.vy=ship.vy/sp*maxV;}ship.x+=ship.vx;ship.y+=ship.vy;wrap(ship);if(ship.inv>0)ship.inv--;if(shotCooldown>0)shotCooldown--;if(hyperCooldown>0)hyperCooldown--;shots.forEach(s=>{s.x+=s.vx;s.y+=s.vy;s.life--;wrap(s);});shots=shots.filter(s=>s.life>0);asteroids.forEach(a=>{a.x+=a.vx;a.y+=a.vy;a.angle+=a.rot;wrap(a);});
       const maxAsteroids=Math.min(14,2+level*2);if(spawnTimer>=900&&asteroids.length<maxAsteroids){let x,y;do{x=Math.random()*W;y=Math.random()*H;}while(dist({x,y},ship)<130);asteroids.push(makeAsteroid(3,x,y));spawnTimer=0;status(`ASTEROID INBOUND — ${asteroids.length} ON FIELD`);}
-      for(let si=shots.length-1;si>=0;si--){let removed=false;if(!shots[si].saucerShot){for(let ai=asteroids.length-1;ai>=0;ai--){if(dist(shots[si],asteroids[ai])<asteroids[ai].r){const a=asteroids[ai];asteroids.splice(ai,1);splitAsteroid(a);destroyedA++;if(destroyedA>=100)awardAchievement("space-cadet");shots.splice(si,1);removed=true;break;}}if(removed)continue;if(saucer&&dist(shots[si],saucer)<18){scoreA+=200;shots.splice(si,1);saucer=null;}}}
+      for(let si=shots.length-1;si>=0;si--){let removed=false;if(!shots[si].saucerShot){for(let ai=asteroids.length-1;ai>=0;ai--){if(dist(shots[si],asteroids[ai])<asteroids[ai].r){const a=asteroids[ai];asteroids.splice(ai,1);splitAsteroid(a);shots.splice(si,1);removed=true;break;}}if(removed)continue;if(saucer&&dist(shots[si],saucer)<18){scoreA+=200;shots.splice(si,1);saucer=null;}}}
       for(const a of asteroids)if(dist(ship,a)<a.r+ship.r){hitShip();break;}
       if(!asteroids.length){level++;addScore(100);spawnWave();status(`LEVEL ${level} — NEW ASTEROID FIELD`);}else if(!saucer&&scoreA>=10000){saucer={x:0,y:Math.random()*H,vx:2.2};}
       if(saucer){saucer.x+=saucer.vx;wrap(saucer);if(Math.random()<.012&&shots.length<4){const dx=ship.x-saucer.x,dy=ship.y-saucer.y,mag=Math.hypot(dx,dy)||1;shots.push({x:saucer.x,y:saucer.y,vx:dx/mag*4,vy:dy/mag*4,life:100,saucerShot:true});}if(dist(ship,saucer)<ship.r+18)hitShip();}if(shots.some(s=>s.saucerShot&&dist(s,ship)<ship.r+3)){shots=shots.filter(s=>!(s.saucerShot&&dist(s,ship)<ship.r+3));hitShip();}
@@ -629,7 +668,7 @@ const SOLO = {
     center('<canvas id="snakeCanvas" width="480" height="360"></canvas><div id="snakeStatus" class="status">Arrow keys or WASD.</div>');const c=$("snakeCanvas"),ctx=c.getContext("2d"),size=20,cols=24,rows=18;let snake=[{x:12,y:9},{x:11,y:9},{x:10,y:9}],dir={x:1,y:0},next={x:1,y:0},food={x:5,y:5},alive=true;
     function draw(){ctx.fillStyle="#09090f";ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle="#24233a";ctx.lineWidth=1;for(let x=0;x<=cols;x++){ctx.beginPath();ctx.moveTo(x*size,0);ctx.lineTo(x*size,c.height);ctx.stroke();}for(let y=0;y<=rows;y++){ctx.beginPath();ctx.moveTo(0,y*size);ctx.lineTo(c.width,y*size);ctx.stroke();}ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.arc(food.x*size+size/2,food.y*size+size/2,size/2-3,0,Math.PI*2);ctx.fill();snake.forEach((p,i)=>{ctx.fillStyle=i===0?"#55e6a5":"#3dba7e";ctx.fillRect(p.x*size+2,p.y*size+2,size-4,size-4);});const head=snake[0],cx=head.x*size+size/2,cy=head.y*size+size/2;ctx.fillStyle="#75f2b8";ctx.fillRect(head.x*size+1,head.y*size+1,size-2,size-2);ctx.fillStyle="#111";const e1={x:dir.x!==0?cx+dir.x*5:cx+5,y:dir.y!==0?cy+dir.y*5:cy-5},e2={x:dir.x!==0?cx+dir.x*5:cx-5,y:dir.y!==0?cy+dir.y*5:cy+5};ctx.beginPath();ctx.arc(e1.x,e1.y,2,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(e2.x,e2.y,2,0,Math.PI*2);ctx.fill();}
     const key=e=>{const k=e.key.toLowerCase(),controls=["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"];if(controls.includes(k))e.preventDefault();if((k==="arrowup"||k==="w")&&dir.y===0)next={x:0,y:-1};if((k==="arrowdown"||k==="s")&&dir.y===0)next={x:0,y:1};if((k==="arrowleft"||k==="a")&&dir.x===0)next={x:-1,y:0};if((k==="arrowright"||k==="d")&&dir.x===0)next={x:1,y:0};};
-    const timer=setInterval(()=>{if(!alive)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(p=>p.x===head.x&&p.y===head.y)){alive=false;$("snakeStatus").textContent="GAME OVER — SNAKE HIT THE BOUNDARY OR ITSELF";draw();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){addScore(10);if(score>=500)awardAchievement("snake-master");do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(p=>p.x===food.x&&p.y===food.y));}else snake.pop();draw();},120);window.addEventListener("keydown",key);draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
+    const timer=setInterval(()=>{if(!alive)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(p=>p.x===head.x&&p.y===head.y)){alive=false;$("snakeStatus").textContent="GAME OVER — SNAKE HIT THE BOUNDARY OR ITSELF";draw();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){addScore(10);do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(p=>p.x===food.x&&p.y===food.y));}else snake.pop();draw();},120);window.addEventListener("keydown",key);draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
   },
   12: function(){
     center('<canvas id="breakoutCanvas" width="640" height="400"></canvas><div id="breakoutStatus" class="status">BREAKOUT — CLEAR THE BOXES. PADDLE HIT = 0.75× SPEED.</div>');
@@ -638,16 +677,16 @@ const SOLO = {
     function buildLevel(){const base=layouts[(level-1)%layouts.length]();const shuffled=base.sort(()=>Math.random()-.5);const cols=[...Array(10).keys()];const rows=Math.max(...base.map(b=>b.r))+1;const jitter=()=>Math.floor(Math.random()*Math.max(1,10-Math.min(8,level-1)));const used=new Set();bricks=shuffled.map(b=>{let col=b.col,row=b.r;let tries=0;do{col=Math.floor(Math.random()*10);row=Math.floor(Math.random()*5);tries++;}while(used.has(row+","+col)&&tries<50);used.add(row+","+col);return {x:col*64+6,y:row*24+4,w:52,h:16,on:true};});paddle={x:255,w:130};const baseSpeed=4+Math.min(level-1,8)*.45;const a=Math.random()<.5?-1:1;ball={x:320,y:340,vx:a*baseSpeed,vy:-baseSpeed};speedBoost=1;ended=false;$("breakoutStatus").textContent=`LEVEL ${level} — ${bricks.length} BOXES — CLEAR THE WALL`;
       draw();}
     function restart(){level=1;scoreB=0;buildLevel();}
-    function nextLevel(){level++;paddle.w=Math.max(90,130-(level-1)*8);if(level>=6)awardAchievement("brick-breaker");buildLevel();}
+    function nextLevel(){level++;paddle.w=Math.max(90,130-(level-1)*8);buildLevel();}
     function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";ctx.fillRect(paddle.x,380,paddle.w,12);ctx.fillStyle="#f4f0dc";ctx.beginPath();ctx.arc(ball.x,ball.y,7,0,Math.PI*2);ctx.fill();bricks.filter(b=>b.on).forEach((b,i)=>{ctx.fillStyle=i%2?"#55e6a5":"#63b3ff";ctx.fillRect(b.x,b.y,b.w,b.h);ctx.strokeStyle="#17130a";ctx.strokeRect(b.x,b.y,b.w,b.h);});ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText(`LEVEL ${level}`,15,395);}
     function resetBallFromPaddle(){ball.x=paddle.x+paddle.w/2;ball.y=370;const speed=(4+Math.min(level-1,8)*.45)*speedBoost;ball.vx=(Math.random()<.5?-1:1)*speed;ball.vy=-speed;}
     const kd=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.l=true;if(k==="arrowright"||k==="d")keys.r=true;};
     const ku=e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.l=false;if(k==="arrowright"||k==="d")keys.r=false;};window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);
-    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>365&&ball.y<400&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.05);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.05;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
+    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*7*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>365&&ball.y<400&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.25);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.25;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
       for(const b of bricks){if(!b.on)continue;if(ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;scoreB+=10;addScore(10);break;}}
       if(bricks.every(b=>!b.on)){addScore(100);nextLevel();last=performance.now();requestAnimationFrame(loop);return;}
       if(ball.y>400){ended=true;$("breakoutStatus").textContent="YOU LOSE — BALL LOST";draw();return;}draw();requestAnimationFrame(loop);}
-    $("breakoutStatus").textContent="LEVEL 1 — BOXES CHANGE PLACEMENT EACH RESTART • PADDLE +5% SPEED";restart();requestAnimationFrame(loop);gameCleanup=()=>{ended=true;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
+    $("breakoutStatus").textContent="LEVEL 1 — BOXES CHANGE PLACEMENT EACH RESTART";restart();requestAnimationFrame(loop);gameCleanup=()=>{ended=true;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
   },
   13: function(){
     center('<canvas id="flappyCanvas" width="640" height="420"></canvas><div id="flappyStatus" class="status">PRESS ↑ TO START</div>');const c=$("flappyCanvas"),ctx=c.getContext("2d");let bird={x:120,y:210,vy:0,r:12},pipes=[],frame=0,alive=true,started=false,scoreLocal=0;function spawn(){const gap=145,top=50+Math.random()*180;pipes.push({x:640,top,gap,w:52,passed:false});}function restart(){bird={x:120,y:210,vy:0,r:12};pipes=[];frame=0;scoreLocal=0;alive=true;started=false;$("flappyStatus").textContent="PRESS ↑ TO START";draw();}function flap(){if(!alive){restart();return;}if(!started){started=true;spawn();$("flappyStatus").textContent="↑ TO FLAP";}bird.vy=-7;}const key=e=>{if(e.key==="ArrowUp"){e.preventDefault();flap();}};window.addEventListener("keydown",key);const timer=setInterval(()=>{if(!alive||!started)return;frame++;if(frame%95===0)spawn();bird.vy+=0.38;bird.y+=bird.vy;pipes.forEach(p=>{p.x-=3.2;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;scoreLocal++;addScore(10);}});pipes=pipes.filter(p=>p.x+p.w>-10);const hitWall=bird.y-bird.r<0||bird.y+bird.r>420,hitPipe=pipes.some(p=>bird.x+bird.r>p.x&&bird.x-bird.r<p.x+p.w&&(bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap));if(hitWall||hitPipe){alive=false;$("flappyStatus").textContent="GAME OVER — PRESS ↑ TO RESTART";}draw();},16);function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";pipes.forEach(p=>{ctx.fillRect(p.x,0,p.w,p.top);ctx.fillRect(p.x,p.top+p.gap,p.w,420-(p.top+p.gap));});ctx.fillStyle="#3b9cff";ctx.beginPath();ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#1976d2";ctx.beginPath();ctx.ellipse(bird.x-4,bird.y+3,7,4,-0.35,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.moveTo(bird.x+9,bird.y);ctx.lineTo(bird.x+17,bird.y+3);ctx.lineTo(bird.x+9,bird.y+6);ctx.closePath();ctx.fill();ctx.fillStyle="#111";ctx.beginPath();ctx.arc(bird.x+5,bird.y-5,2,0,Math.PI*2);ctx.fill();ctx.font="24px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText("SCORE "+scoreLocal,20,30);}restart();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
@@ -665,7 +704,7 @@ const SOLO = {
       revealed[i]=true;
       if(mineSet.has(i)){ended=true;mineSet.forEach(m=>revealed[m]=true);$("mineStatus").textContent="GAME OVER — YOU HIT A MINE";draw();return;}
       if(board[i]===0)neighbors(i).forEach(reveal);
-      const safe=N*N-mines;if(revealed.filter(Boolean).length===safe){ended=true;awardAchievement("mine-sweeper");$("mineStatus").textContent="YOU WIN!";addScore(100);}
+      const safe=N*N-mines;if(revealed.filter(Boolean).length===safe){ended=true;$("mineStatus").textContent="YOU WIN!";addScore(100);}
       draw();
     }
     function flag(i){if(ended||revealed[i])return;flags[i]=!flags[i];draw();}
@@ -690,7 +729,7 @@ const SOLO = {
         }
       }
       if(!changed)return;animating=true;tiles.forEach(t=>{const el=boardEl.querySelector(`[data-id="${t.id}"]`),to=moves.get(t.id);if(!el||!to)return;el.style.transform=`translate(${to.c*step}px,${to.r*step}px)`;if(to.mergedOut){el.style.opacity="0";}});
-      setTimeout(()=>{tiles=final;addRandom();tiles.forEach(t=>t.newTile=false);paint();animating=false;status.textContent=`SCORE ${score2048}`;if(tiles.some(t=>t.value===2048)){won=true;over=true;awardAchievement("club-2048");status.textContent="YOU WIN — 2048 CREATED!";return;}if(!canMove()){over=true;status.textContent="GAME OVER — NO MORE MOVES";}},190);
+      setTimeout(()=>{tiles=final;addRandom();tiles.forEach(t=>t.newTile=false);paint();animating=false;status.textContent=`SCORE ${score2048}`;if(tiles.some(t=>t.value===2048)){won=true;over=true;status.textContent="YOU WIN — 2048 CREATED!";return;}if(!canMove()){over=true;status.textContent="GAME OVER — NO MORE MOVES";}},190);
     }
     function canMove(){if(tiles.length<16)return true;const g=Array(16).fill(0);tiles.forEach(t=>g[t.r*N+t.c]=t.value);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(x<N-1&&g[i]===g[i+1])return true;if(y<N-1&&g[i]===g[i+N])return true;}return false;}
     const key=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","arrowup","arrowdown","w","a","s","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")move("left");else if(k==="arrowright"||k==="d")move("right");else if(k==="arrowup"||k==="w")move("up");else if(k==="arrowdown"||k==="s")move("down");};window.addEventListener("keydown",key);$("twoRestart").onclick=start;start();gameCleanup=()=>window.removeEventListener("keydown",key);
@@ -705,7 +744,7 @@ const SOLO = {
     function makePiece(type){const m=clone(SHAPES[type]);return {type,m,x:Math.floor((W-m[0].length)/2),y:0};}function randomPiece(){const k=Object.keys(SHAPES)[Math.floor(Math.random()*7)];return makePiece(k);}
     function collides(p,m=p.m,px=p.x,py=p.y){for(let y=0;y<m.length;y++)for(let x=0;x<m[y].length;x++)if(m[y][x]){const bx=px+x,by=py+y;if(bx<0||bx>=W||by>=H||by>=0&&board[by][bx])return true;}return false;}
     function merge(){for(let y=0;y<currentPiece.m.length;y++)for(let x=0;x<currentPiece.m[y].length;x++)if(currentPiece.m[y][x]&&currentPiece.y+y>=0)board[currentPiece.y+y][currentPiece.x+x]=currentPiece.type;}
-    function clearLines(){let n=0;for(let y=H-1;y>=0;y--)if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(W).fill(0));n++;y++;}if(n){if(n===4)awardAchievement("tetris");lines+=n;scoreT+=[0,100,300,500,800][n]*level;level=1+Math.floor(lines/10);dropMs=Math.max(90,800-(level-1)*65);$("tetrisLines").textContent=lines;$("tetrisLevel").textContent=level;$("tetrisScore").textContent=scoreT;resetTimer();}}
+    function clearLines(){let n=0;for(let y=H-1;y>=0;y--)if(board[y].every(Boolean)){board.splice(y,1);board.unshift(Array(W).fill(0));n++;y++;}if(n){lines+=n;scoreT+=[0,100,300,500,800][n]*level;level=1+Math.floor(lines/10);dropMs=Math.max(90,800-(level-1)*65);$("tetrisLines").textContent=lines;$("tetrisLevel").textContent=level;$("tetrisScore").textContent=scoreT;resetTimer();}}
     function spawn(){currentPiece=nextPiece||randomPiece();nextPiece=randomPiece();if(collides(currentPiece)){over=true;$('tetrisStatus').textContent='GAME OVER — TOP OUT';clearInterval(timer);return;}draw();}
     function resetTimer(){clearInterval(timer);timer=setInterval(drop,dropMs);}
     function drop(){if(over)return;if(!collides(currentPiece,currentPiece.m,currentPiece.x,currentPiece.y+1)){currentPiece.y++;draw();}else{merge();clearLines();spawn();}}
@@ -751,12 +790,18 @@ function renderInRoom(data){
   hideLobby();
   renderSelectedGame();
 }
-socket.on("leaderboard:data",rows=>{const body=$("leaderBody");if(!body)return;if(!rows.length){body.innerHTML='<tr><td colspan="4">NO SCORES YET — BE THE FIRST.</td></tr>';return;}body.innerHTML=rows.map((r,i)=>`<tr><td>${String(i+1).padStart(2,"0")}</td><td>${r.username}${r.username===username?" ◀ YOU":""}</td><td>${r.points}</td><td>${r.wins}</td></tr>`).join("");});
+
+socket.on("leaderboard:data",rows=>{
+  const body=$("leaderBody");
+  if(!body)return;
+  if(!rows.length){body.innerHTML='<tr><td colspan="4">NO SCORES YET — BE THE FIRST.</td></tr>';return;}
+  body.innerHTML=rows.map((r,i)=>`<tr><td>${String(i+1).padStart(2,"0")}</td><td>${r.username}${r.username===username?" ◀ YOU":""}</td><td>${r.points}</td><td>${r.wins}</td></tr>`).join("");
+});
 socket.on("rps:state",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const p=$("rpsPlayers");if(p)p.textContent=data.players.join(" VS ");});
 socket.on("rps:waiting",()=>{const s=$("rpsStatus");if(s)s.textContent="MOVE LOCKED — WAITING FOR OPPONENT";});
 socket.on("rps:result",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const s=$("rpsStatus");if(s)s.textContent=data.winner===socket.id?"YOU WIN!":data.winner?"OPPONENT WINS":"DRAW";if(data.winner===socket.id)recordWin();else if(data.winner)recordLoss();else recordDraw();});
 let lastTttTerminal="";
-socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;if(state.over){const sig=state.winner||"DRAW";if(sig!==lastTttTerminal){lastTttTerminal=sig;if(sig==="DRAW")recordDraw();else{const myIndex=roomPlayers.indexOf(username),mark=myIndex===0?"X":myIndex===1?"O":"";if(mark===state.winner)recordWin();else recordLoss();}}}});
+socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;if(state.over){const sig=state.winner||"DRAW";if(sig!==lastTttTerminal){lastTttTerminal=sig;if(sig==="DRAW")recordDraw();else{const myIndex=roomPlayers.indexOf(username);const mark=myIndex===0?"X":myIndex===1?"O":"";if(mark===state.winner)recordWin();else recordLoss();}}}});
 socket.on("pong:state",p=>{const el=$("pongPlayers");if(el)el.textContent="PONG ONLINE";});
 
 function renderOnlineGame(){
@@ -809,4 +854,18 @@ if(new URLSearchParams(location.search).has("game")) selectGame(current);
 
 })();
 </script>
-</body></html>
+
+<script>
+setTimeout(()=>{
+  const login=document.querySelector("#loginBtn"); if(login) login.click();
+  setTimeout(()=>{
+    const results={tabs:[],solo:[],errors:window.__errors};
+    document.querySelectorAll(".hub-tab").forEach(b=>{b.click();results.tabs.push(b.dataset.tab);});
+    document.querySelectorAll("#gamePick button").forEach((b,i)=>{
+      try{b.click();results.solo.push([i,document.querySelector("#screen").innerText.slice(0,80)]);}
+      catch(e){results.solo.push([i,"ERR "+e.message]);}
+    });
+    document.body.setAttribute("data-smoke",JSON.stringify(results));
+  },150);
+},100);
+</script></body></html>

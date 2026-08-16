@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V13",
+  "version": "V14",
   "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + permanent controls section",
@@ -13,7 +13,7 @@
     "Breakout": {
       "brick_shape": "box",
       "layout_changes_each_restart": true,
-      "paddle_hit_speed": "multiply current ball speed by 1.25 (25% increase)"
+      "paddle_hit_speed": "multiply current ball speed by 1.05 (5% increase)"
     },
     "2048": {
       "grid_background": true,
@@ -32,7 +32,17 @@
     "footer_left": "\ud83c\udfae MADE BY MRU",
     "footer_right": "Live local date/time",
     "audio": "Web Audio synthesized game start/end cues",
-    "footer_safe_area": true
+    "footer_safe_area": true,
+    "homepage_uses_background": true,
+    "quick_play": true,
+    "random_game": true,
+    "crt_scanlines": true,
+    "subtle_flicker": true,
+    "pixel_particles": true,
+    "crt_glow": true,
+    "button_press_animation": true,
+    "coin_in_animation": true,
+    "ready_countdown": true
   },
   "background": {
     "asset": "/background.png",
@@ -58,13 +68,29 @@
     "room_creation_in_multiplayer_tab": true,
     "invite_link": true,
     "friend_search": true,
-    "open_rooms": true
+    "open_rooms": true,
+    "persistent_top_navigation": true
   },
   "engagement": {
     "profile": true,
     "achievements": true,
     "daily_challenge": true,
     "live_leaderboard": true,
-    "recently_played": true
+    "recently_played": true,
+    "achievement_count": 12,
+    "achievement_set": [
+      "FIRST INSERT",
+      "GETTING SERIOUS",
+      "ARCADE REGULAR",
+      "FIRST BLOOD",
+      "TRIPLE CROWN",
+      "DAILY PLAYER",
+      "SNAKE MASTER",
+      "BRICK BREAKER",
+      "SPACE CADET",
+      "2048 CLUB",
+      "MINESWEEPER",
+      "TETRIS"
+    ]
   }
 }
