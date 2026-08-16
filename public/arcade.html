@@ -148,7 +148,7 @@ body{min-width:0;overflow-x:hidden}
 @media(max-width:1000px){
   .layout{grid-template-columns:minmax(190px,235px) minmax(0,1fr)}
   .pnav{padding:8px 10px}
-  .game-controls{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .game-control-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 @media(max-width:760px){
   .app{padding-top:132px}
@@ -185,19 +185,25 @@ body{overflow-x:hidden;overflow-y:auto}body.modal-open{overflow:hidden}
 .pnav-home{margin-right:10px;color:var(--a);border-color:#6b613c}
 .pnav-home:hover{border-color:var(--a)}
 .hub-tabs{display:none!important}
-.screen{display:flex;flex-direction:column;height:clamp(440px,calc(100vh - 250px),760px);min-height:440px;overflow:hidden;padding:12px}
-.center{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;overflow:hidden;padding:2px}
-.game-stage{width:100%;min-height:0;flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;gap:8px}.game-stage-inner{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;transform-origin:center center;will-change:transform}
-.game-stage-inner>canvas{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;flex:0 1 auto}
+.screen{display:flex;flex-direction:column;height:clamp(440px,calc(100vh - 250px),760px);min-height:440px;overflow:hidden;padding:10px}
+.center{width:100%;height:100%;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;overflow:hidden;padding:0}
+.game-stage{width:100%;min-height:0;flex:1 1 auto;display:flex;align-items:center;justify-content:center;overflow:hidden;gap:0;position:relative}
+.game-stage-inner{width:max-content;height:max-content;min-width:0;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;transform-origin:center center;will-change:transform;flex:0 0 auto}
+.game-stage-inner>canvas{width:auto;height:auto;max-width:none;max-height:none;object-fit:contain;flex:0 0 auto}
 .game-stage-inner>.big{flex:0 0 auto}
-.game-stage-inner>.wordle-grid,.game-stage-inner>.wordle-keys,.game-stage-inner>.mem-grid,.game-stage-inner>.mine-grid,.game-stage-inner>.t2048-board,.game-stage-inner>.tetris-wrap,.game-stage-inner>.grid3,.game-stage-inner>.rps-buttons,.game-stage-inner>.typing-sentence,.game-stage-inner>.typing-sentence+textarea,.game-stage-inner>.mole-field{max-width:100%}
-.game-controls{flex:0 0 auto;margin:5px auto 0;max-height:112px;overflow:hidden}
-.game-control-item{min-height:32px;padding:6px 8px}
+.game-stage-inner>.wordle-grid,.game-stage-inner>.wordle-keys,.game-stage-inner>.mem-grid,.game-stage-inner>.mine-grid,.game-stage-inner>.t2048-board,.game-stage-inner>.tetris-wrap,.game-stage-inner>.grid3,.game-stage-inner>.rps-buttons,.game-stage-inner>.typing-sentence,.game-stage-inner>.typing-sentence+textarea,.game-stage-inner>.mole-field{max-width:none}
+.game-controls{flex:0 0 auto;width:min(100%,980px);margin:4px auto 0;border:0;background:transparent;padding:0;max-height:none;overflow:visible}
+.game-controls>summary{list-style:none;cursor:pointer;display:block;width:max-content;max-width:100%;margin:0 auto;border:2px solid var(--line);background:#12121d;color:var(--a);padding:6px 12px;font:12px 'Press Start 2P';box-shadow:3px 3px #07070b}
+.game-controls>summary::-webkit-details-marker{display:none}
+.game-controls[open]{border:3px solid var(--line);background:#12121d;padding:7px 9px;max-height:120px;overflow:auto}
+.game-controls[open]>summary{border:0;box-shadow:none;padding:0 0 6px;margin:0}
+.game-control-item{min-height:28px;padding:5px 7px}
+.game-control-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px}
 /* Compact controls on shorter desktop windows. */
 @media(max-height:820px) and (min-width:761px){
   .app{padding-top:78px;padding-bottom:46px}
   .screen{height:calc(100vh - 250px);min-height:440px}
-  .game-controls{padding:8px 10px;gap:5px}
+  .game-controls{padding:0;gap:0}
   .game-control-item{font-size:18px;min-height:28px;padding:4px 7px}
   .game-controls-title{font-size:11px}
   .game-stage{gap:5px}
@@ -226,7 +232,7 @@ body{overflow-x:hidden;overflow-y:auto}body.modal-open{overflow:hidden}
   .pnav-home{grid-column:1/-1}
   .screen{min-height:580px;padding:8px}
   .game-stage{min-height:430px}
-  .game-controls{grid-template-columns:1fr;max-height:150px}
+  .game-control-grid{grid-template-columns:1fr}
 }
 
 </style>
@@ -515,26 +521,30 @@ function addScore(n){score=Math.max(0,score+n);if(ui.score)ui.score.textContent=
 
 
 function fitCurrentGame(){
-  const stage=document.querySelector('.game-stage'); const inner=document.querySelector('.game-stage-inner'); if(!stage||!inner)return;
-  const screen=ui.screen; const controls=screen.querySelector('.game-controls');
-  const canvases=[...inner.querySelectorAll('canvas')];
+  const stage=document.querySelector('.game-stage');
+  const inner=document.querySelector('.game-stage-inner');
+  if(!stage||!inner)return;
   const fit=()=>{
     inner.style.transform='scale(1)';
-    inner.style.width='100%';
-    const available=Math.max(220, stage.clientHeight-4);
-    canvases.forEach(c=>{c.style.maxHeight=available+'px';c.style.maxWidth='100%';});
+    inner.style.width='max-content';
+    inner.style.height='max-content';
+    inner.style.maxWidth='none';
+    inner.style.maxHeight='none';
+    [...inner.querySelectorAll('canvas')].forEach(c=>{c.style.maxHeight='none';c.style.maxWidth='none';});
     requestAnimationFrame(()=>{
-      const needW=inner.scrollWidth, needH=inner.scrollHeight;
-      const haveW=stage.clientWidth-4, haveH=stage.clientHeight-4;
-      const scale=Math.min(1, haveW/Math.max(1,needW), haveH/Math.max(1,needH));
-      if(scale<.999){
-        inner.style.width=(100/scale)+'%';
-        inner.style.transform=`scale(${scale})`;
-      }
+      const rect=inner.getBoundingClientRect();
+      const needW=Math.max(1,rect.width);
+      const needH=Math.max(1,rect.height);
+      const haveW=Math.max(120,stage.clientWidth-8);
+      const haveH=Math.max(120,stage.clientHeight-8);
+      let scale=Math.min(1,haveW/needW,haveH/needH);
+      if(scale<1) scale*=0.98;
+      inner.style.transform=`scale(${scale})`;
+      inner.dataset.fitScale=scale.toFixed(3);
     });
   };
   requestAnimationFrame(()=>requestAnimationFrame(fit));
-  if(window.ResizeObserver){const ro=new ResizeObserver(fit);ro.observe(stage);setTimeout(()=>ro.disconnect(),1600);}
+  if(window.ResizeObserver){const ro=new ResizeObserver(fit);ro.observe(stage);setTimeout(()=>ro.disconnect(),2500);}
 }
 window.addEventListener('resize',()=>fitCurrentGame());
 
@@ -672,10 +682,11 @@ const CONTROL_MAP = {"0":["WORDLE","TYPE A–Z","ENTER = SUBMIT","BACKSPACE = DE
 const NAV_KEYS = new Set(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"]);
 function controlsPanel(){
   const items = CONTROL_MAP[current] || ["USE THE CONTROLS SHOWN IN THE GAME"];
-  return `<div class="game-controls" aria-label="Game controls">
-    <div class="game-controls-title">CONTROLS</div>
-    ${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}
-  </div>`;
+  return `<details class="game-controls" aria-label="Game controls">
+    <summary>CONTROLS ▾</summary>
+    <div class="game-controls-title">${items[0]||"GAME CONTROLS"}</div>
+    <div class="game-control-grid">${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}</div>
+  </details>`;
 }
 function globalKeyGuard(e){
   const tag=(e.target?.tagName||"").toLowerCase();

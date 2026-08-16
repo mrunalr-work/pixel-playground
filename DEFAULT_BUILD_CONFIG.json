@@ -1,9 +1,9 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V16",
+  "version": "V17",
   "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
-  "layout": "Retro arcade: game list sidebar + selected game panel + permanent controls section",
+  "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
   "mechanics": {
     "Asteroids": {
       "ship_speed": "50% of the previous V10 thrust/max-speed values",
@@ -25,7 +25,8 @@
   "global": {
     "prevent_arrow_wasd_page_scroll": true,
     "show_game_controls_while_playing": true,
-    "selected_game_highlight": true
+    "selected_game_highlight": true,
+    "controls_ui": "collapsible tab; opening it reduces the game stage rather than clipping the game"
   },
   "presentation": {
     "background_image": "/background.png",
@@ -44,7 +45,7 @@
     "coin_in_animation": true,
     "ready_countdown": true,
     "professional_polish": true,
-    "responsive_scaling": true,
+    "responsive_scaling": "fit every selected game to its available stage with a 2% safety margin; no internal game scrolling",
     "single_dashboard": true
   },
   "background": {
