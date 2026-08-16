@@ -842,7 +842,7 @@ socket.on("lobby:update",data=>{
   });
 });
 ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.key==="Enter")searchUsers();});
-ui.home.onclick=home;ui.closeLobby.onclick=hideLobby;
+if(ui.closeLobby)ui.closeLobby.onclick=hideLobby;
 ui.back.onclick=()=>{if(roomId){socket.emit("room:leave");roomId="";}showLobby();};ui.restart.onclick=()=>{gameStartSound();renderSelectedGame();};
 
 const CONTROL_MAP = {"0":["WORDLE","TYPE A–Z","ENTER = SUBMIT","BACKSPACE = DELETE"],"1":["ASTEROIDS","← / → = ROTATE","↑ = THRUST","SPACE = FIRE","H = HYPERSPACE"],"2":["ROCK PAPER SCISSORS","CLICK ROCK / PAPER / SCISSORS"],"3":["GUESS THE NUMBER","TYPE 1–100","ENTER = GUESS"],"4":["TIC-TAC-TOE","CLICK AN EMPTY SQUARE"],"5":["MEMORY CARD MATCH","CLICK CARDS TO FLIP"],"6":["WHACK-A-MOLE","CLICK THE YELLOW WHACK BOX"],"7":["BUTTON DODGER","MOUSE = CHASE","CLICK = SCORE"],"8":["PAC-MAN","← / → / ↑ / ↓ OR W / A / S / D"],"9":["TYPING SPEED","TYPE THE DISPLAYED SENTENCE"],"10":["SNAKE","← / → / ↑ / ↓ OR W / A / S / D"],"11":["PONG","W / S OR ↑ / ↓"],"12":["BREAKOUT","← / → OR A / D"],"13":["FLAPPY BIRD","↑ ONLY = FLAP"],"14":["MINESWEEPER","LEFT CLICK = REVEAL","RIGHT CLICK = FLAG"],"15":["2048","← / → / ↑ / ↓ OR W / A / S / D"],"16":["TETRIS","← / → = MOVE","↑ = ROTATE","↓ = SOFT DROP","SPACE = HARD DROP"]};
@@ -1117,7 +1117,7 @@ function refreshOpenRooms(){ /* server pushes updates; no polling required */ }
 
 
 // Rebind list and controls after all functions are defined.
-ui.home.onclick=home;
+const navHomeBtn=$("navHome"); if(navHomeBtn)navHomeBtn.onclick=home;
 ui.back.onclick=()=>{if(ONLINE[current] && roomId){socket.emit("room:leave");roomId="";}showLobby();};
 ui.restart.onclick=()=>renderSelectedGame();
 buildLists();
