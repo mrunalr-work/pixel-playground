@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V21",
+  "version": "V23",
   "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
@@ -107,7 +107,7 @@
     ]
   },
   "mechanicsLocked": true,
-  "build_version": "V21",
+  "build_version": "V23",
   "layout_baseline": "V18 no-clip page-scroll model + V20 centered Wordle/2048/Tetris + fixed dashboard identity/home",
   "notes": "Dashboard cleanup: yellow Pixel Playground home button, fixed player identity, remove legacy home heading, center Wordle/2048/Tetris compositions without changing mechanics."
 }

@@ -64,3 +64,14 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - The duplicate PIXEL PLAYGROUND home/logo above the game list is removed.
 - Wordle, 2048, and Tetris game stages are explicitly centered with no overlap.
 - All existing V18 game mechanics and layout rules remain unchanged.
+
+
+Current baseline: V23.
+
+
+## V23 update
+- Breakout paddle speed +25%.
+- Snake waits for an arrow-key start.
+- Typing Speed uses paragraph prompts.
+- Footer branding is Developed By Mrunal.
+- Mobile/desktop responsive fitting added without changing the V22 game mechanics.
