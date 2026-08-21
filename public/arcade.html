@@ -277,7 +277,7 @@ html{overflow-x:auto !important;overflow-y:auto !important;}
   .head .desc{font-size:17px !important;}
 }
 /* V20 TARGETED LAYOUT FIXES — preserve V18 no-clip behavior */
-/* Wordle, 2048 and Tetris are centered as complete game compositions. */
+/* Word Grid, Tile Merge and Falling Blocks are centered as complete game compositions. */
 .game-stage[data-game="0"] .game-stage-inner,
 .game-stage[data-game="15"] .game-stage-inner,
 .game-stage[data-game="16"] .game-stage-inner{
@@ -345,7 +345,7 @@ html{overflow-x:auto !important;overflow-y:auto !important;}
 .layout > .legacy-home,
 .layout > .legacy-home-heading{display:none !important;}
 
-/* Wordle: constrain the composition so its instruction line wraps instead of
+/* Word Grid: constrain the composition so its instruction line wraps instead of
    stretching into the controls/game boundary. The actual board remains fixed. */
 .game-stage[data-game="0"] .game-stage-inner{
   width:min(100%,900px) !important;
@@ -395,7 +395,7 @@ html{overflow-x:auto !important;overflow-y:auto !important;}
   margin-right:auto !important;
 }
 
-/* Tetris: center the entire board + next-piece/status column as one unit. */
+/* Falling Blocks: center the entire board + next-piece/status column as one unit. */
 .game-stage[data-game="16"] .game-stage-inner{
   width:min(100%,900px) !important;
   max-width:900px !important;
@@ -549,6 +549,30 @@ body.is-mobile .lobby{padding:5px}.hub{max-width:100%}.hub-tabs{overflow-x:auto;
   body.is-mobile .nav-player{max-width:25vw}
   body.is-mobile .persistent-nav{width:100vw;max-width:100vw}
 }
+
+/* V28 DESKTOP DASHBOARD COLLAPSE + LOCKED GAME MENU */
+.dashboard-toggle{margin-left:auto;font-size:15px;padding:7px 10px;background:#11111b;color:var(--ink);border:2px solid var(--line);cursor:pointer;white-space:nowrap}
+.dashboard-toggle:hover{border-color:var(--a);color:var(--a)}
+@media(min-width:761px){
+  :root{--dashboard-height:60px;--dashboard-gap:14px}
+  .persistent-nav{height:var(--dashboard-height)!important;min-height:var(--dashboard-height)!important}
+  .app{padding-top:calc(var(--dashboard-height) + var(--dashboard-gap)) !important}
+  .layout{margin-top:0!important}
+  .persistent-nav.dashboard-collapsed{height:34px!important;min-height:34px!important;padding-top:3px!important;padding-bottom:3px!important;overflow:hidden}
+  .persistent-nav.dashboard-collapsed .pnav:not(.pnav-home):not(.dashboard-toggle),
+  .persistent-nav.dashboard-collapsed .nav-player{display:none!important}
+  .persistent-nav.dashboard-collapsed .pnav-home{font-size:12px;padding:4px 8px}
+  .persistent-nav.dashboard-collapsed .dashboard-toggle{margin-left:auto;font-size:12px;padding:4px 8px}
+  body.dashboard-collapsed{--dashboard-height:34px;--dashboard-gap:8px}
+  .layout{grid-template-columns:minmax(210px,230px) minmax(0,1fr)!important;gap:12px!important}
+  .layout.menu-collapsed{grid-template-columns:58px minmax(0,1fr)!important}
+  .side{position:sticky!important;top:calc(var(--dashboard-height) + 8px)!important;height:calc(100vh - var(--dashboard-height) - 20px)!important;max-height:none!important;overflow:hidden!important}
+  .side .side-head{flex:0 0 auto}
+  .side .game-list{height:calc(100% - 34px);max-height:none!important;overflow-y:auto!important;overflow-x:hidden!important;padding-right:3px}
+  .side.is-collapsed{height:fit-content!important;max-height:none!important;overflow:visible!important}
+  .main{min-width:0}
+}
+@media(max-width:760px){.dashboard-toggle{display:none!important}}
 </style>
 </head>
 <body>
@@ -561,6 +585,7 @@ body.is-mobile .lobby{padding:5px}.hub{max-width:100%}.hub-tabs{overflow-x:auto;
   <button class="pnav" data-pgtab="leaderboard">LEADERBOARD</button>
   <button class="pnav" data-pgtab="achievements">ACHIEVEMENTS</button>
   <button class="pnav" data-pgtab="daily">DAILY CHALLENGE</button>
+  <button class="pnav dashboard-toggle" id="dashboardToggle" type="button" aria-expanded="true" aria-label="Collapse dashboard">⌃ DASHBOARD</button>
   <div class="nav-player badge">PLAYER <b id="me">---</b></div>
 </nav>
 
@@ -683,14 +708,16 @@ function tone(freq,duration,type="square",gain=.035,delay=0){
   }catch(e){}
 }
 function gameStartSound(){
-  tone(392,.07,"square",.045,0);
-  tone(523,.09,"square",.045,.075);
-  tone(659,.12,"square",.045,.17);
+  // Original synthesized arcade cue — no sampled game audio.
+  tone(330,.06,"triangle",.035,0);
+  tone(494,.07,"triangle",.035,.065);
+  tone(660,.11,"sine",.032,.14);
 }
 function gameOverSound(){
-  tone(440,.09,"square",.045,0);
-  tone(330,.12,"square",.045,.10);
-  tone(220,.18,"square",.045,.24);
+  // Original synthesized fail cue — no sampled game audio.
+  tone(370,.08,"sawtooth",.028,0);
+  tone(277,.10,"triangle",.028,.09);
+  tone(185,.15,"sine",.026,.20);
 }
 function updateClock(){
   const el=document.getElementById("siteClock"); if(!el)return;
@@ -706,7 +733,7 @@ document.addEventListener("keydown",ensureAudio,{once:true});
 
 
 const socket = io({ transports:["websocket","polling"], reconnection:true, reconnectionAttempts:Infinity, reconnectionDelay:1000, reconnectionDelayMax:5000 });
-const GAMES = ["Wordle","Asteroids","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Pac-Man","Typing Speed Game","Snake","Pong","Breakout","Flappy Bird Clone","Minesweeper","2048","Tetris"];
+const GAMES = ["Word Grid","Cosmic Drift","Rock Paper Scissors","Guess the Number","Tic-Tac-Toe","Memory Card Match","Whack-a-Mole","Button Dodger","Maze Chomper","Typing Speed Game","Snake","Paddle Duel","Brick Bounce","Sky Hopper","Mine Grid","Tile Merge","Falling Blocks"];
   // PIXEL PLAYGROUND DEFAULT BASELINE
   // This configuration is intentionally frozen: future builds must preserve
   // these game mechanics and the arcade layout unless the user explicitly asks
@@ -785,11 +812,11 @@ function renderAchievements(){if(!ui.achievementPanel)return;const all=[
   ["three-wins","👑","TRIPLE CROWN","Win 3 multiplayer games."],
   ["daily","🎯","DAILY PLAYER","Play today's challenge."],
   ["snake-master","🐍","SNAKE MASTER","Reach 500 points in Snake."],
-  ["brick-breaker","🧱","BRICK BREAKER","Clear 5 Breakout levels."],
-  ["space-cadet","🚀","SPACE CADET","Destroy 100 Asteroids."],
-  ["club-2048","🟨","2048 CLUB","Reach the 2048 tile."],
-  ["mine-sweeper","🧩","MINESWEEPER","Clear a board without a mine."],
-  ["tetris","🟪","TETRIS","Clear 4 lines simultaneously."]
+  ["brick-breaker","🧱","BRICK BREAKER","Clear 5 Brick Bounce levels."],
+  ["space-cadet","🚀","SPACE CADET","Destroy 100 drifting rocks."],
+  ["club-2048","🟨","TILE MERGE CLUB","Reach the top Tile Merge tile."],
+  ["mine-sweeper","🧩","MINE GRID","Clear a board without a mine."],
+  ["tetris","🟪","FALLING BLOCKS","Clear 4 lines simultaneously."]
 ];ui.achievementPanel.innerHTML=`<div class="hub-section-title">ACHIEVEMENTS</div><div class="achievement-grid">${all.map(a=>{const u=profile.achievements.includes(a[0]);return `<div class="achievement-card ${u?"unlocked":"locked"}"><div class="achievement-icon">${a[1]}</div><div class="achievement-name">${a[2]}</div><div class="desc">${a[3]}</div><div>${u?"✓ UNLOCKED":"LOCKED"}</div></div>`}).join("")}</div>`;}
 function dailyGame(){const pool=SOLO_INDEXES,d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;let hash=0;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))|0;return pool[Math.abs(hash)%pool.length];}
 function renderDaily(){if(!ui.dailyPanel)return;const idx=dailyGame(),d=new Date(),key=`${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;if(profile.daily.date!==key){profile.daily={date:key,game:GAMES[idx],completed:false,started:false};saveProfile();}const done=profile.daily.completed;ui.dailyPanel.innerHTML=`<div class="hub-section-title">DAILY CHALLENGE</div><div class="daily-card"><div class="desc">TODAY'S FEATURED GAME</div><div class="daily-game">${GAMES[idx]}</div><p>Play today's featured game and try to beat your personal best.</p><div class="status">${done?"✓ CHALLENGE COMPLETED":"READY TO PLAY"}</div><button class="btn" id="dailyPlay">${done?"PLAY AGAIN":"PLAY TODAY'S CHALLENGE"}</button></div>`;$("dailyPlay").onclick=()=>{profile.daily.started=true;saveProfile();hideLobby();selectGame(idx);};}
@@ -971,12 +998,12 @@ ui.searchBtn.onclick=searchUsers;ui.search.addEventListener("keydown",e=>{if(e.k
 if(ui.closeLobby)ui.closeLobby.onclick=hideLobby;
 ui.back.onclick=()=>{if(roomId){socket.emit("room:leave");roomId="";}showLobby();};ui.restart.onclick=()=>{gameStartSound();renderSelectedGame();};
 
-const CONTROL_MAP = {"0":["WORDLE","TYPE A–Z","ENTER = SUBMIT","BACKSPACE = DELETE"],"1":["ASTEROIDS","← / → = ROTATE","↑ = THRUST","SPACE = FIRE","H = HYPERSPACE"],"2":["ROCK PAPER SCISSORS","CLICK ROCK / PAPER / SCISSORS"],"3":["GUESS THE NUMBER","TYPE 1–100","ENTER = GUESS"],"4":["TIC-TAC-TOE","CLICK AN EMPTY SQUARE"],"5":["MEMORY CARD MATCH","CLICK CARDS TO FLIP"],"6":["WHACK-A-MOLE","CLICK THE YELLOW WHACK BOX"],"7":["BUTTON DODGER","MOUSE = CHASE","CLICK = SCORE"],"8":["PAC-MAN","← / → / ↑ / ↓ OR W / A / S / D"],"9":["TYPING SPEED","TYPE THE DISPLAYED PARAGRAPH"],"10":["SNAKE","← / → / ↑ / ↓ OR W / A / S / D"],"11":["PONG","W / S OR ↑ / ↓"],"12":["BREAKOUT","← / → OR A / D"],"13":["FLAPPY BIRD","↑ ONLY = FLAP"],"14":["MINESWEEPER","LEFT CLICK = REVEAL","RIGHT CLICK = FLAG"],"15":["2048","← / → / ↑ / ↓ OR W / A / S / D"],"16":["TETRIS","← / → = MOVE","↑ = ROTATE","↓ = SOFT DROP","SPACE = HARD DROP"]};
+const CONTROL_MAP = {"0":["WORD GRID","TYPE A–Z","ENTER = SUBMIT","BACKSPACE = DELETE"],"1":["COSMIC DRIFT","← / → = ROTATE","↑ = THRUST","SPACE = FIRE","H = HYPERSPACE"],"2":["ROCK PAPER SCISSORS","CLICK ROCK / PAPER / SCISSORS"],"3":["GUESS THE NUMBER","TYPE 1–100","ENTER = GUESS"],"4":["TIC-TAC-TOE","CLICK AN EMPTY SQUARE"],"5":["MEMORY CARD MATCH","CLICK CARDS TO FLIP"],"6":["WHACK-A-MOLE","CLICK THE YELLOW WHACK BOX"],"7":["BUTTON DODGER","MOUSE = CHASE","CLICK = SCORE"],"8":["MAZE CHOMPER","← / → / ↑ / ↓ OR W / A / S / D"],"9":["TYPING SPEED","TYPE THE DISPLAYED PARAGRAPH"],"10":["SNAKE","← / → / ↑ / ↓ OR W / A / S / D"],"11":["PADDLE DUEL","W / S OR ↑ / ↓"],"12":["BRICK BOUNCE","← / → OR A / D"],"13":["SKY HOPPER","↑ ONLY = FLAP"],"14":["MINE GRID","LEFT CLICK = REVEAL","RIGHT CLICK = FLAG"],"15":["TILE MERGE","← / → / ↑ / ↓ OR W / A / S / D"],"16":["FALLING BLOCKS","← / → = MOVE","↑ = ROTATE","↓ = SOFT DROP","SPACE = HARD DROP"]};
 const MOBILE_MAP = {
   0:{note:"Tap the on-screen QWERTY keyboard.",buttons:[]},
   1:{note:"Swipe left/right to rotate • swipe up to thrust.",buttons:[["left","◀ ROTATE","ArrowLeft"],["thrust","▲ THRUST","ArrowUp"],["right","ROTATE ▶","ArrowRight"],["fire","🔥 FIRE"," ","primary"],["hyper","HYPERSPACE","h","wide"]]},
   2:{note:"Tap Rock, Paper or Scissors.",buttons:[]},3:{note:"Tap the number field and use your phone keyboard.",buttons:[]},4:{note:"Tap an empty square.",buttons:[]},5:{note:"Tap cards to flip them.",buttons:[]},6:{note:"Tap the yellow target.",buttons:[]},7:{note:"Tap the moving button.",buttons:[]},
-  8:{note:"Swipe in the direction you want Pac-Man to move.",buttons:[]},9:{note:"Tap the paragraph box and type normally.",buttons:[]},10:{note:"Swipe to change direction. The snake starts on the first swipe.",buttons:[]},11:{note:"Use the on-screen arrows to move your paddle.",buttons:[]},12:{note:"Hold ◀ / ▶ to move the paddle.",buttons:[["left","◀","ArrowLeft"],["right","▶","ArrowRight"]]},13:{note:"Tap FLAP. The first tap starts the game.",buttons:[["flap","▲ FLAP","ArrowUp","primary","wide"]]},14:{note:"Tap a cell to reveal. Long-press a cell to flag it.",buttons:[]},15:{note:"Swipe in a direction or use the on-screen arrows.",buttons:[]},16:{note:"Tap the controls or swipe left/right/down.",buttons:[["left","◀","ArrowLeft"],["rotate","↻ ROTATE","ArrowUp"],["right","▶","ArrowRight"],["down","▼ SOFT DROP","ArrowDown"],["drop","⬇ HARD DROP"," ","primary","wide"]]}
+  8:{note:"Swipe in the direction you want Maze Chomper to move.",buttons:[]},9:{note:"Tap the paragraph box and type normally.",buttons:[]},10:{note:"Swipe to change direction. The snake starts on the first swipe.",buttons:[]},11:{note:"Use the on-screen arrows to move your paddle.",buttons:[]},12:{note:"Hold ◀ / ▶ to move the paddle.",buttons:[["left","◀","ArrowLeft"],["right","▶","ArrowRight"]]},13:{note:"Tap FLAP. The first tap starts the game.",buttons:[["flap","▲ FLAP","ArrowUp","primary","wide"]]},14:{note:"Tap a cell to reveal. Long-press a cell to flag it.",buttons:[]},15:{note:"Swipe in a direction or use the on-screen arrows.",buttons:[]},16:{note:"Tap the controls or swipe left/right/down.",buttons:[["left","◀","ArrowLeft"],["rotate","↻ ROTATE","ArrowUp"],["right","▶","ArrowRight"],["down","▼ SOFT DROP","ArrowDown"],["drop","⬇ HARD DROP"," ","primary","wide"]]}
 };
 function mobileControlMarkup(){const cfg=MOBILE_MAP[current]||{note:"Tap the game controls shown on screen.",buttons:[]};const btns=(cfg.buttons||[]).map(b=>`<button type="button" class="mobile-control${b[3]==="primary"?" primary":""}${b[4]==="wide"?" wide":""}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("");let dpad="";if([8,10,11,15].includes(current)){const keys=current===11?[["up","▲","ArrowUp"],["down","▼","ArrowDown"]]:[["up","▲","ArrowUp"],["left","◀","ArrowLeft"],["right","▶","ArrowRight"],["down","▼","ArrowDown"]];dpad=`<div class="mobile-dpad">${keys.map(b=>`<button type="button" class="mobile-control ${b[0]}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("")}</div>`;}return `<div class="mobile-controls"><div class="mobile-control-note">${cfg.note}</div>${dpad}<div class="mobile-control-grid">${btns}</div></div>`;}
 function controlsPanel(){const items=CONTROL_MAP[current]||["USE THE CONTROLS SHOWN IN THE GAME"];return `<details class="game-controls" aria-label="Game controls"><summary>CONTROLS ▾</summary><div class="desktop-control-grid"><div class="game-controls-title">${items[0]||"GAME CONTROLS"}</div><div class="game-control-grid">${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}</div></div>${mobileControlMarkup()}</details>`;}
@@ -1000,7 +1027,7 @@ const SOLO = {
   0: function(){
     const WORDS=["APPLE","BRAVE","CHAIR","CLOUD","CRANE","DREAM","FLAME","GRAPE","HOUSE","LIGHT","MOUSE","NIGHT","PLANT","ROBOT","SHARE","SMILE","SNAKE","SPACE","STONE","TRAIN","WATER","WORLD","ABOUT","ABOVE","ADULT","AFTER","AGAIN","ALONE","ANGEL","ANGLE","BEACH","BLACK","BRAIN","BREAD","BRICK","BRING","BROWN","BUILD","CARRY","CAUSE","CHESS","CHILD","CLEAN","CLEAR","CLOCK","COAST","COLOR","COUNT","COVER","CROWN","DANCE","DEATH","DEPTH","DOUBT","EARTH","EMPTY","ENJOY","EVERY","FAIRY","FAITH","FIELD","FINAL","FIRST","FLOOR","FRUIT","FUNNY","GIANT","GREEN","HEART","HONEY","HORSE","HOUSE","HUMAN","IDEAL","IMAGE","INNER","JOINT","KNIFE","LEARN","LEMON","LEVEL","LOCAL","LUCKY","MAGIC","MAKER","MARCH","METAL","MONEY","MUSIC","OCEAN","ORDER","OTHER","PAPER","PARTY","PEACE","PHONE","PIANO","PILOT","PLANE","PLATE","POINT","POWER","PRIDE","PRIME","QUEEN","QUIET","RADIO","RAINY","READY","ROBIN","ROUND","ROYAL","RULER","SCALE","SCHOOL","SHEEP","SHORT","SILLY","SMALL","SOLID","SOUND","SOUTH","SPOON","SPORT","STAGE","STAND","START","STEAM","STEEL","STORM","STORY","SUGAR","TABLE","TASTE","TEACH","THINK","TIGER","TODAY","TOUCH","TOWER","TRACK","TRADE","TRAIL","TRUST","UNCLE","UNDER","UNION","VALUE","VOICE","WATCH","WHEEL","WHITE","WHOLE","WOMAN","WORLD","WRITE","YOUNG","ZEBRA"].filter(w=>w.length===5);
     const answer=WORDS[Math.floor(Math.random()*WORDS.length)]; let row=0,guess="",gameOver=false; const keyState={};
-    center('<div class="big">WORDLE</div><div class="desc">5-letter words only • 6 tries • common dictionary words; no pure proper names.</div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
+    center('<div class="big">WORD GRID</div><div class="desc">5-letter words only • 6 tries • common dictionary words; no pure proper names.</div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
     const grid=$("wordleGrid"),status=$("wordleStatus"),keys=$("wordleKeys"); for(let i=0;i<30;i++){const d=document.createElement("div");d.className="letter";grid.appendChild(d);} const keyChars="QWERTYUIOPASDFGHJKLZXCVBNM",rank={absent:1,present:2,correct:3};
     function paintKey(ch,state){if(rank[state]>(rank[keyState[ch]]||0))keyState[ch]=state;const b=document.querySelector(`[data-key="${ch}"]`);if(b)b.className="key "+(keyState[ch]||"");}
     function submit(){if(guess.length!==5||gameOver)return;const cells=[...grid.children].slice(row*5,row*5+5),counts={};[...answer].forEach(ch=>counts[ch]=(counts[ch]||0)+1);const result=Array(5).fill("absent");[...guess].forEach((ch,i)=>{if(ch===answer[i]){result[i]="correct";counts[ch]--;}});[...guess].forEach((ch,i)=>{if(result[i]==="correct")return;if(counts[ch]>0){result[i]="present";counts[ch]--;}});[...guess].forEach((ch,i)=>{cells[i].textContent=ch;cells[i].className="letter "+result[i];paintKey(ch,result[i]);});if(guess===answer){status.textContent="YOU WIN!";addScore(100);gameOver=true;return;}row++;guess="";if(row>=6){status.textContent="GAME OVER — WORD: "+answer;gameOver=true}else status.textContent="Try again.";}
@@ -1068,11 +1095,32 @@ const SOLO = {
     const c=$("pacCanvas"),ctx=c.getContext("2d"),cell=30,cols=20,rows=14,walls=new Set();
     for(let x=0;x<cols;x++){walls.add(`${x},0`);walls.add(`${x},${rows-1}`);}for(let y=0;y<rows;y++){walls.add(`0,${y}`);walls.add(`${cols-1},${y}`);}
     [[4,2,4,5],[8,2,8,5],[12,2,12,5],[16,2,16,5],[4,8,4,11],[8,8,8,11],[12,8,12,11],[16,8,16,11],[2,4,5,4],[7,4,10,4],[12,4,15,4],[2,9,5,9],[7,9,10,9],[12,9,15,9]].forEach(([x1,y1,x2,y2])=>{for(let x=x1;x<=x2;x++)for(let y=y1;y<=y2;y++)walls.add(`${x},${y}`);});
-    let player={x:1,y:1,dir:{x:1,y:0}},scoreLocal=0,alive=true;const pellets=new Set();for(let y=1;y<rows-1;y++)for(let x=1;x<cols-1;x++)if(!walls.has(`${x},${y}`)&&!(x===1&&y===1))pellets.add(`${x},${y}`);const ghosts=[{x:18,y:1,color:"#ff6070",dir:{x:-1,y:0}},{x:18,y:12,color:"#63b3ff",dir:{x:-1,y:0}},{x:10,y:6,color:"#ff8ad8",dir:{x:1,y:0}}];
+    let player={x:1,y:1,dir:{x:1,y:0}},scoreLocal=0,alive=true;const pellets=new Set();for(let y=1;y<rows-1;y++)for(let x=1;x<cols-1;x++)if(!walls.has(`${x},${y}`)&&!(x===1&&y===1))pellets.add(`${x},${y}`);const ghosts=[{x:18,y:1,color:"#ff8a5b",dir:{x:-1,y:0}},{x:18,y:12,color:"#8b7bff",dir:{x:-1,y:0}}];
     function canMove(x,y){return x>=0&&y>=0&&x<cols&&y<rows&&!walls.has(`${x},${y}`);}
-    function drawMaze(){ctx.fillStyle="#080811";ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle="#3155ff";ctx.lineWidth=3;walls.forEach(k=>{const [x,y]=k.split(",").map(Number);ctx.strokeRect(x*cell+3,y*cell+3,cell-6,cell-6);});pellets.forEach(k=>{const [x,y]=k.split(",").map(Number);ctx.fillStyle="#f4f0dc";ctx.beginPath();ctx.arc(x*cell+15,y*cell+15,3,0,Math.PI*2);ctx.fill();});ghosts.forEach(g=>{ctx.fillStyle=g.color;ctx.beginPath();ctx.arc(g.x*cell+15,g.y*cell+14,11,Math.PI,0);ctx.lineTo(g.x*cell+26,g.y*cell+26);ctx.lineTo(g.x*cell+20,g.y*cell+21);ctx.lineTo(g.x*cell+15,g.y*cell+26);ctx.lineTo(g.x*cell+10,g.y*cell+21);ctx.lineTo(g.x*cell+4,g.y*cell+26);ctx.closePath();ctx.fill();ctx.fillStyle="#fff";ctx.fillRect(g.x*cell+9,g.y*cell+10,5,5);ctx.fillRect(g.x*cell+17,g.y*cell+10,5,5);});const px=player.x*cell+15,py=player.y*cell+15,angle=Math.atan2(player.dir.y,player.dir.x),mouth=.28;ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.moveTo(px,py);ctx.arc(px,py,13,angle+mouth,angle+Math.PI*2-mouth);ctx.closePath();ctx.fill();ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText("SCORE "+scoreLocal,10,20);}
+    function drawMaze(){
+      ctx.fillStyle="#080811";ctx.fillRect(0,0,c.width,c.height);
+      ctx.strokeStyle="#3155ff";ctx.lineWidth=3;
+      walls.forEach(k=>{const [x,y]=k.split(",").map(Number);ctx.strokeRect(x*cell+3,y*cell+3,cell-6,cell-6);});
+      pellets.forEach(k=>{const [x,y]=k.split(",").map(Number);ctx.fillStyle="#63b3ff";ctx.fillRect(x*cell+12,y*cell+12,6,6);});
+      // Original enemy drone sprites rather than a classic arcade ghost silhouette.
+      ghosts.forEach(g=>{
+        const gx=g.x*cell+15,gy=g.y*cell+15;
+        ctx.save();ctx.translate(gx,gy);ctx.rotate(Math.PI/4);
+        ctx.fillStyle=g.color;ctx.fillRect(-8,-8,16,16);
+        ctx.fillStyle="#111";ctx.fillRect(-4,-3,3,3);ctx.fillRect(1,-3,3,3);
+        ctx.restore();
+      });
+      // Original Maze Chomper player sprite: compact bot with a directional bite.
+      const px=player.x*cell+15,py=player.y*cell+15,angle=Math.atan2(player.dir.y,player.dir.x);
+      ctx.save();ctx.translate(px,py);ctx.rotate(angle);
+      ctx.fillStyle="#55e6a5";ctx.beginPath();ctx.arc(0,0,12,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle="#111";ctx.fillRect(-6,-5,4,4);ctx.fillRect(3,-5,4,4);
+      ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.moveTo(7,0);ctx.lineTo(15,-5);ctx.lineTo(15,5);ctx.closePath();ctx.fill();
+      ctx.restore();
+      ctx.font="22px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText("SCORE "+scoreLocal,10,20);
+    }
     const key=e=>{const k=e.key.toLowerCase();if(["arrowup","arrowdown","arrowleft","arrowright","w","a","s","d"].includes(k))e.preventDefault();const dirs={arrowup:{x:0,y:-1},w:{x:0,y:-1},arrowdown:{x:0,y:1},s:{x:0,y:1},arrowleft:{x:-1,y:0},a:{x:-1,y:0},arrowright:{x:1,y:0},d:{x:1,y:0}};if(dirs[k])player.dir=dirs[k];};
-    const timer=setInterval(()=>{if(!alive)return;const nx=player.x+player.dir.x,ny=player.y+player.dir.y;if(canMove(nx,ny)){player.x=nx;player.y=ny;}if(pellets.delete(`${player.x},${player.y}`)){scoreLocal++;addScore(2);}ghosts.forEach(g=>{const opts=[{x:g.x+g.dir.x,y:g.y+g.dir.y},{x:g.x+1,y:g.y},{x:g.x-1,y:g.y},{x:g.x,y:g.y+1},{x:g.x,y:g.y-1}].filter(p=>canMove(p.x,p.y));if(opts.length){opts.sort((a,b)=>(Math.abs(a.x-player.x)+Math.abs(a.y-player.y))-(Math.abs(b.x-player.x)+Math.abs(b.y-player.y)));const p=Math.random()<.65?opts[0]:opts[Math.floor(Math.random()*opts.length)];g.dir={x:p.x-g.x,y:p.y-g.y};g.x=p.x;g.y=p.y;}});if(ghosts.some(g=>g.x===player.x&&g.y===player.y)){alive=false;$("pacStatus").textContent="GAME OVER — CAUGHT BY A GHOST";}else if(!pellets.size){alive=false;$("pacStatus").textContent="YOU WIN — MAZE CLEARED!";}drawMaze();},150);window.addEventListener("keydown",key);drawMaze();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
+    const timer=setInterval(()=>{if(!alive)return;const nx=player.x+player.dir.x,ny=player.y+player.dir.y;if(canMove(nx,ny)){player.x=nx;player.y=ny;}if(pellets.delete(`${player.x},${player.y}`)){scoreLocal++;addScore(2);}ghosts.forEach(g=>{const opts=[{x:g.x+g.dir.x,y:g.y+g.dir.y},{x:g.x+1,y:g.y},{x:g.x-1,y:g.y},{x:g.x,y:g.y+1},{x:g.x,y:g.y-1}].filter(p=>canMove(p.x,p.y));if(opts.length){opts.sort((a,b)=>(Math.abs(a.x-player.x)+Math.abs(a.y-player.y))-(Math.abs(b.x-player.x)+Math.abs(b.y-player.y)));const p=Math.random()<.35?opts[0]:opts[Math.floor(Math.random()*opts.length)];g.dir={x:p.x-g.x,y:p.y-g.y};g.x=p.x;g.y=p.y;}});if(ghosts.some(g=>g.x===player.x&&g.y===player.y)){alive=false;$("pacStatus").textContent="GAME OVER — CAUGHT BY A GHOST";}else if(!pellets.size){alive=false;$("pacStatus").textContent="YOU WIN — MAZE CLEARED!";}drawMaze();},220);window.addEventListener("keydown",key);drawMaze();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
   },
   9: function(){
     const sentences=["The little robot raced through the neon arcade as the lights flickered above the machines. Every cabinet seemed to have its own rhythm, and the crowd moved from one game to another trying to beat the highest score. The goal was simple: stay focused, type accurately, and finish the paragraph before the clock ran out.","Retro games may look simple, but every small decision can change the outcome. A player has to watch the screen, react quickly, and learn the rhythm of the game. In a busy arcade, even a short challenge can become surprisingly addictive when one more attempt feels like it could finally produce a new high score.","A bright yellow spaceship crossed the neon sky while the arcade machines flashed around the room. Asteroids drifted across the screen, alarms started ringing, and the player had only a few seconds to decide where to move next. The challenge was not just about speed; it was about staying calm while the action became faster and faster.","The fastest player in the room stayed calm and typed every sentence with careful accuracy. Instead of rushing through the paragraph, they kept a steady rhythm and watched for mistakes before they became habits. By the time the final sentence appeared, the timer was still running, but every word had already become part of the same smooth sequence.","A classic arcade becomes memorable because of the tiny details: the sound of a button press, the glow of the screen, the score appearing after a successful move, and the feeling that the next attempt might be better. Pixel Playground brings that same spirit into a modern browser while keeping the controls simple and the games quick to understand."];const sentence=sentences[Math.floor(Math.random()*sentences.length)];let started=false,start=0,interval=null,finished=false;function format(ms){const total=Math.floor(ms/1000),m=String(Math.floor(total/60)).padStart(2,"0"),s=String(total%60).padStart(2,"0");return `${m}:${s}`;}
@@ -1085,7 +1133,7 @@ const SOLO = {
     const timer=setInterval(()=>{if(!alive||!started)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(p=>p.x===head.x&&p.y===head.y)){alive=false;$("snakeStatus").textContent="GAME OVER — SNAKE HIT THE BOUNDARY OR ITSELF";draw();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){addScore(10);if(score>=500)awardAchievement("snake-master");do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(p=>p.x===food.x&&p.y===food.y));}else snake.pop();draw();},120);window.addEventListener("keydown",key);draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
   },
   12: function(){
-    center('<canvas id="breakoutCanvas" width="640" height="520"></canvas><div id="breakoutStatus" class="status">BREAKOUT — CLEAR THE BOXES. PADDLE HIT = +5% SPEED.</div>');
+    center('<canvas id="breakoutCanvas" width="640" height="520"></canvas><div id="breakoutStatus" class="status">BRICK BOUNCE — CLEAR THE BOXES. PADDLE HIT = +5% SPEED.</div>');
     const c=$("breakoutCanvas"),ctx=c.getContext("2d");let level=1,scoreB=0,ended=false,bricks=[],ball,paddle,keys={l:false,r:false},speedBoost=1;
     const layouts=[()=>Array.from({length:50},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:40},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:45},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:35},(_,i)=>({r:Math.floor(i/10),col:i%10}))];
     function buildLevel(){const base=layouts[(level-1)%layouts.length]();const shuffled=base.sort(()=>Math.random()-.5);const cols=[...Array(10).keys()];const rows=Math.max(...base.map(b=>b.r))+1;const jitter=()=>Math.floor(Math.random()*Math.max(1,10-Math.min(8,level-1)));const used=new Set();bricks=shuffled.map(b=>{let col=b.col,row=b.r;let tries=0;do{col=Math.floor(Math.random()*10);row=Math.floor(Math.random()*5);tries++;}while(used.has(row+","+col)&&tries<50);used.add(row+","+col);return {x:col*64+6,y:row*24+4,w:52,h:16,on:true};});paddle={x:255,w:130};const baseSpeed=4+Math.min(level-1,8)*.45;const a=Math.random()<.5?-1:1;ball={x:320,y:c.height-180,vx:a*baseSpeed,vy:-baseSpeed};speedBoost=1;ended=false;$("breakoutStatus").textContent=`LEVEL ${level} — ${bricks.length} BOXES — CLEAR THE WALL`;
@@ -1111,7 +1159,7 @@ const SOLO = {
     mineSet.forEach(i=>board[i]=-1);
     function neighbors(i){const x=i%N,y=Math.floor(i/N),out=[];for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const nx=x+dx,ny=y+dy;if(nx>=0&&nx<N&&ny>=0&&ny<N)out.push(ny*N+nx);}return out;}
     board.forEach((v,i)=>{if(v!==-1)board[i]=neighbors(i).filter(n=>mineSet.has(n)).length;});
-    center('<div class="big">MINESWEEPER</div><div class="desc">Left click reveal • Right click flag</div><div class="mine-grid" id="mineGrid"></div><div id="mineStatus" class="status">10 mines.</div>');
+    center('<div class="big">MINE GRID</div><div class="desc">Left click reveal • Right click flag</div><div class="mine-grid" id="mineGrid"></div><div id="mineStatus" class="status">10 mines.</div>');
     const grid=$("mineGrid");
     function reveal(i){
       if(ended||revealed[i]||flags[i])return;
@@ -1127,7 +1175,7 @@ const SOLO = {
   },
   15: function(){
     const N=4;let tiles=[],nextId=1,score2048=0,won=false,over=false,animating=false;
-    center('<div class="big">2048</div><div class="desc">Every arrow slides ALL tiles fully in that direction. Equal tiles merge once per move.</div><div class="t2048-board" id="tw"></div><div id="twoStatus" class="status"></div><button class="btn alt" id="twoRestart">NEW GAME</button>');
+    center('<div class="big">TILE MERGE</div><div class="desc">Every arrow slides ALL tiles fully in that direction. Equal tiles merge once per move.</div><div class="t2048-board" id="tw"></div><div id="twoStatus" class="status"></div><button class="btn alt" id="twoRestart">NEW GAME</button>');
     const boardEl=$("tw"),status=$("twoStatus");
     function addRandom(){const occ=new Set(tiles.map(t=>t.r*N+t.c)),empty=[];for(let i=0;i<16;i++)if(!occ.has(i))empty.push(i);if(!empty.length)return;const pos=empty[Math.floor(Math.random()*empty.length)];tiles.push({id:nextId++,value:Math.random()<.9?2:4,r:Math.floor(pos/N),c:pos%N,newTile:true});}
     function getStep(){return Math.max(48,(boardEl.clientWidth-14)/4);}function paint(){const step=getStep();boardEl.style.setProperty("--cell-step",`${step}px`);boardEl.style.setProperty("--tile-size",`${Math.max(40,step-8)}px`);boardEl.querySelectorAll(".tile2048").forEach(e=>e.remove());tiles.forEach(t=>{const b=document.createElement("div");b.className="tile2048 tile-"+t.value+(t.value>=2048?" max":"");b.dataset.id=t.id;b.textContent=t.value;b.style.width=`${Math.max(40,step-8)}px`;b.style.height=`${Math.max(40,step-8)}px`;b.style.fontSize=`${Math.max(12,Math.min(18,step*.22))}px`;b.style.transform=`translate(${t.c*step}px,${t.r*step}px)`;if(t.newTile)b.classList.add("new2048");boardEl.appendChild(b);});}
@@ -1143,7 +1191,7 @@ const SOLO = {
         }
       }
       if(!changed)return;animating=true;const step=getStep();tiles.forEach(t=>{const el=boardEl.querySelector(`[data-id="${t.id}"]`),to=moves.get(t.id);if(!el||!to)return;el.style.transform=`translate(${to.c*step}px,${to.r*step}px)`;if(to.mergedOut){el.style.opacity="0";}});
-      setTimeout(()=>{tiles=final;addRandom();tiles.forEach(t=>t.newTile=false);paint();animating=false;status.textContent=`SCORE ${score2048}`;if(tiles.some(t=>t.value===2048)){won=true;over=true;awardAchievement("club-2048");status.textContent="YOU WIN — 2048 CREATED!";return;}if(!canMove()){over=true;status.textContent="GAME OVER — NO MORE MOVES";}},190);
+      setTimeout(()=>{tiles=final;addRandom();tiles.forEach(t=>t.newTile=false);paint();animating=false;status.textContent=`SCORE ${score2048}`;if(tiles.some(t=>t.value===2048)){won=true;over=true;awardAchievement("club-2048");status.textContent="YOU WIN — TARGET TILE CREATED!";return;}if(!canMove()){over=true;status.textContent="GAME OVER — NO MORE MOVES";}},190);
     }
     function canMove(){if(tiles.length<16)return true;const g=Array(16).fill(0);tiles.forEach(t=>g[t.r*N+t.c]=t.value);for(let y=0;y<N;y++)for(let x=0;x<N;x++){const i=y*N+x;if(x<N-1&&g[i]===g[i+1])return true;if(y<N-1&&g[i]===g[i+N])return true;}return false;}
     const key=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","arrowup","arrowdown","w","a","s","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")move("left");else if(k==="arrowright"||k==="d")move("right");else if(k==="arrowup"||k==="w")move("up");else if(k==="arrowdown"||k==="s")move("down");};window.addEventListener("keydown",key);$("twoRestart").onclick=start;start();gameCleanup=()=>window.removeEventListener("keydown",key);
@@ -1152,7 +1200,7 @@ const SOLO = {
     const W=10,H=20,CELL=24,board=Array.from({length:H},()=>Array(W).fill(0));let currentPiece,nextPiece,scoreT=0,lines=0,level=1,over=false,timer=null,dropMs=800;
     const SHAPES={I:[[1,1,1,1]],O:[[1,1],[1,1]],T:[[0,1,0],[1,1,1]],S:[[0,1,1],[1,1,0]],Z:[[1,1,0],[0,1,1]],J:[[1,0,0],[1,1,1]],L:[[0,0,1],[1,1,1]]};
     const COLORS={I:"#63b3ff",O:"#ffcc33",T:"#c58cff",S:"#55e6a5",Z:"#ff6070",J:"#7d8cff",L:"#ff9b54"};
-    center('<div class="big">TETRIS</div><div class="tetris-wrap"><canvas id="tetrisCanvas" width="240" height="480"></canvas><div class="tetris-side"><div>NEXT</div><canvas id="tetrisNext" width="120" height="120"></canvas><div>LINES <b id="tetrisLines">0</b></div><div>LEVEL <b id="tetrisLevel">1</b></div><div>SCORE <b id="tetrisScore">0</b></div><div class="keyhint">← → MOVE<br>↑ ROTATE<br>↓ SOFT DROP<br>SPACE HARD DROP</div></div></div><div id="tetrisStatus" class="status">READY</div>');
+    center('<div class="big">FALLING BLOCKS</div><div class="tetris-wrap"><canvas id="tetrisCanvas" width="240" height="480"></canvas><div class="tetris-side"><div>NEXT</div><canvas id="tetrisNext" width="120" height="120"></canvas><div>LINES <b id="tetrisLines">0</b></div><div>LEVEL <b id="tetrisLevel">1</b></div><div>SCORE <b id="tetrisScore">0</b></div><div class="keyhint">← → MOVE<br>↑ ROTATE<br>↓ SOFT DROP<br>SPACE HARD DROP</div></div></div><div id="tetrisStatus" class="status">READY</div>');
     const c=$("tetrisCanvas"),ctx=c.getContext("2d"),nc=$("tetrisNext"),nctx=nc.getContext("2d");
     function clone(m){return m.map(r=>r.slice());}function rotate(m){const h=m.length,w=m[0].length,out=Array.from({length:w},()=>Array(h).fill(0));for(let y=0;y<h;y++)for(let x=0;x<w;x++)out[x][h-1-y]=m[y][x];return out;}
     function makePiece(type){const m=clone(SHAPES[type]);return {type,m,x:Math.floor((W-m[0].length)/2),y:0};}function randomPiece(){const k=Object.keys(SHAPES)[Math.floor(Math.random()*7)];return makePiece(k);}
@@ -1182,7 +1230,7 @@ function renderTtt(){
   $("tttReset").onclick=()=>socket.emit("ttt:reset");
 }
 function renderPong(){
-  center(`<div class="big">PONG</div><div id="pongPlayers" class="desc">Waiting for opponent...</div><canvas id="pongCanvas" width="720" height="440"></canvas><div class="keyhint">W/S or ↑/↓ — server controls the ball.</div>`);
+  center(`<div class="big">PADDLE DUEL</div><div id="pongPlayers" class="desc">Waiting for opponent...</div><canvas id="pongCanvas" width="720" height="440"></canvas><div class="keyhint">W/S or ↑/↓ — server controls the ball.</div>`);
   const canvas=$("pongCanvas"),ctx=canvas.getContext("2d");
   const send=e=>{if(["w","s","ArrowUp","ArrowDown"].includes(e.key))e.preventDefault();let y=window.__pongY??180;if(["w","ArrowUp"].includes(e.key))y-=20;if(["s","ArrowDown"].includes(e.key))y+=20;window.__pongY=Math.max(0,Math.min(360,y));socket.emit("pong:input",window.__pongY);};
   window.addEventListener("keydown",send);gameCleanup=()=>{window.removeEventListener("keydown",send);socket.off("pong:state",window.__pixelPongDraw);};
@@ -1210,7 +1258,7 @@ socket.on("rps:waiting",()=>{const s=$("rpsStatus");if(s)s.textContent="MOVE LOC
 socket.on("rps:result",data=>{const el=$("rpsScore");if(el)el.textContent=`${data.scores[0]} — ${data.scores[1]}`;const s=$("rpsStatus");if(s)s.textContent=data.winner===socket.id?"YOU WIN!":data.winner?"OPPONENT WINS":"DRAW";if(data.winner===socket.id)recordWin();else if(data.winner)recordLoss();else recordDraw();});
 let lastTttTerminal="";
 socket.on("ttt:state",state=>{const cells=document.querySelectorAll("#tttGrid .cell");cells.forEach((b,i)=>b.textContent=state.board[i]);const turn=$("tttTurn");if(turn)turn.textContent=state.over?(state.winner?`WINNER: ${state.winner}`:"DRAW"):`TURN: ${state.turn}`;if(state.over){const sig=state.winner||"DRAW";if(sig!==lastTttTerminal){lastTttTerminal=sig;if(sig==="DRAW")recordDraw();else{const myIndex=roomPlayers.indexOf(username),mark=myIndex===0?"X":myIndex===1?"O":"";if(mark===state.winner)recordWin();else recordLoss();}}}});
-socket.on("pong:state",p=>{const el=$("pongPlayers");if(el)el.textContent="PONG ONLINE";});
+socket.on("pong:state",p=>{const el=$("pongPlayers");if(el)el.textContent="PADDLE DUEL ONLINE";});
 
 function renderOnlineGame(){
   if(current===2)renderRps();
@@ -1250,6 +1298,21 @@ function refreshOpenRooms(){ /* server pushes updates; no polling required */ }
 
 // Rebind list and controls after all functions are defined.
 const navHomeBtn=$("navHome"); if(navHomeBtn)navHomeBtn.onclick=home;
+const dashboardToggle=$("dashboardToggle"), persistentNav=document.querySelector(".persistent-nav");
+if(dashboardToggle&&persistentNav){
+  const DASH_KEY="pixel_playground_dashboard_collapsed_v28";
+  const syncDashboard=()=>{
+    const collapsed=persistentNav.classList.contains("dashboard-collapsed");
+    document.body.classList.toggle("dashboard-collapsed",collapsed);
+    dashboardToggle.setAttribute("aria-expanded",String(!collapsed));
+    dashboardToggle.setAttribute("aria-label",collapsed?"Expand dashboard":"Collapse dashboard");
+    dashboardToggle.textContent=collapsed?"⌄ DASHBOARD":"⌃ DASHBOARD";
+  };
+  if(window.matchMedia("(min-width:761px)").matches && localStorage.getItem(DASH_KEY)==="1") persistentNav.classList.add("dashboard-collapsed");
+  dashboardToggle.onclick=()=>{persistentNav.classList.toggle("dashboard-collapsed");localStorage.setItem(DASH_KEY,persistentNav.classList.contains("dashboard-collapsed")?"1":"0");syncDashboard();};
+  syncDashboard();
+}
+
 const menuToggle=$("menuToggle"), gameMenu=$("gameMenu"), layoutRoot=document.querySelector(".layout");
 if(menuToggle&&gameMenu){
   const syncMenuState=()=>{

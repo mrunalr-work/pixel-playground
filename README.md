@@ -1,9 +1,17 @@
+## V28
+
+- Public-facing game names use original generic names to reduce brand/trademark association.
+- Desktop dashboard is collapsible and reflows the game area without overlap.
+- Desktop game selector is sticky; only its internal game list scrolls.
+- Maze Chomper is Easy and uses original canvas sprites.
+- Arcade start/end cues are original synthesized Web Audio.
+
 # Pixel Playground — Final
 
 Retro 16-game arcade with Node.js + Socket.IO multiplayer.
 
 ## Multiplayer
-Rock Paper Scissors, Tic-Tac-Toe and Pong use a server-authoritative room model. Players can create a room, copy an HTTPS invite URL, search online usernames, accept invitations, or join an open room.
+Rock Paper Scissors, Tic-Tac-Toe and Paddle Duel use a server-authoritative room model. Players can create a room, copy an HTTPS invite URL, search online usernames, accept invitations, or join an open room.
 
 ## Deploy on Render
 - Runtime: Node
@@ -38,9 +46,9 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - Homepage uses the supplied Retro BG artwork as its visual background.
 - Homepage includes ENTER ARCADE, QUICK PLAY, and RANDOM GAME.
 - Quick Play / Random Game select a solo game after login.
-- Breakout increases ball speed by 5% on every paddle hit.
+- Brick Bounce increases ball speed by 5% on every paddle hit.
 - CRT scanlines, subtle flicker, pixel particles, button press motion, coin-in messaging, and a short READY countdown are part of the default arcade presentation.
-- Achievement set expanded to 12 achievements with event-based unlock hooks for Snake, Breakout, Asteroids, 2048, Minesweeper, and Tetris.
+- Achievement set expanded to 12 achievements with event-based unlock hooks for Snake, Brick Bounce, Cosmic Drift, Tile Merge, Mine Grid, and Falling Blocks.
 - `DEFAULT_BUILD_CONFIG.json` remains the source of truth for future builds.
 
 
@@ -51,8 +59,8 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - The six dashboard categories are rendered once, in a fixed top navigation bar.
 - The internal duplicate dashboard tab row was removed.
 - Game panels use a responsive viewport so the selected game and its controls fit the window more consistently.
-- Breakout playfield is vertically expanded and the paddle remains near the bottom with more separation from the brick field.
-- Breakout paddle hits increase current ball speed by 5%.
+- Brick Bounce playfield is vertically expanded and the paddle remains near the bottom with more separation from the brick field.
+- Brick Bounce paddle hits increase current ball speed by 5%.
 - Responsive breakpoints improve desktop, tablet, and mobile scaling.
 - V17 visual polish keeps the same retro aesthetic while tightening borders, spacing, hierarchy, and focus states.
 
@@ -62,7 +70,7 @@ Future builds must preserve the game mechanics and arcade layout in that file un
 - PIXEL PLAYGROUND home navigation is the leftmost yellow button in the fixed dashboard.
 - Player name is embedded at the right side of the fixed dashboard and remains visible while browsing games.
 - The duplicate PIXEL PLAYGROUND home/logo above the game list is removed.
-- Wordle, 2048, and Tetris game stages are explicitly centered with no overlap.
+- Word Grid, Tile Merge, and Falling Blocks game stages are explicitly centered with no overlap.
 - All existing V18 game mechanics and layout rules remain unchanged.
 
 
@@ -70,7 +78,7 @@ Current baseline: V23.
 
 
 ## V23 update
-- Breakout paddle speed +25%.
+- Brick Bounce paddle speed +25%.
 - Snake waits for an arrow-key start.
 - Typing Speed uses paragraph prompts.
 - Footer branding is Developed By Mrunal.

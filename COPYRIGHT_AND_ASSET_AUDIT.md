@@ -1,30 +1,32 @@
-# Pixel Playground — Copyright / Asset Risk-Hardening Audit (V27)
+# Pixel Playground — Copyright & Asset Audit (V28)
 
-## Scope
-This is a practical asset and copyright-risk checklist for the current build. It is **not legal advice** and cannot guarantee that a website is legally risk-free in every jurisdiction.
+## V28 changes
+The public-facing game names were changed to original generic names to reduce unnecessary trademark/brand association:
 
-## What is original / controlled in this build
-- Pixel Playground interface code and layout are project code.
-- Game implementations are original browser implementations written for this project.
-- Game art used by the game renderers is drawn with Canvas/CSS primitives rather than copied sprite sheets.
-- Game audio is synthesized with the Web Audio API; no third-party sound files are bundled.
-- `public/background.png` is the supplied/user-provided background asset. Confirm that the project owner has the right to use it commercially before launch.
-- The project does not bundle ROMs, extracted game sprites, screenshots, game music, or third-party game soundtracks.
+| Previous display name | V28 display name |
+|---|---|
+| Wordle | Word Grid |
+| Asteroids | Cosmic Drift |
+| Pac-Man | Maze Chomper |
+| Pong | Paddle Duel |
+| Breakout | Brick Bounce |
+| Flappy Bird Clone | Sky Hopper |
+| Minesweeper | Mine Grid |
+| 2048 | Tile Merge |
+| Tetris | Falling Blocks |
 
-## Third-party font notice
-The project uses **Press Start 2P** and **VT323** through Google Fonts. Both are distributed under the SIL Open Font License (OFL) 1.1. The current deployment references Google Fonts rather than bundling modified font binaries.
+The multiplayer protocol keys remain internal implementation identifiers where required for backwards compatibility; they are not presented as product names in the UI.
 
-Before commercial launch, keep a copy of the applicable font license/attribution notices with the deployment records and review the current font license terms.
+## Original expressive assets
+- Game sprites are drawn procedurally with Canvas in the application; no third-party sprite sheet is bundled.
+- Maze Chomper's player and enemy sprites were specifically redesigned for V28 and no longer use the familiar yellow-chomper/ghost silhouettes.
+- Audio is generated at runtime using Web Audio oscillators. No third-party recordings, game ROM audio, or extracted sound effects are bundled.
+- The CRT treatment, UI, background treatment, animations and game-specific canvas drawings are part of this project.
 
-## Game titles / trademark caution
-Names such as Wordle, Asteroids, Pac-Man, Breakout, Pong, 2048, Tetris, and Flappy Bird are names associated with third-party games. Copyright law generally does not protect game ideas, methods of play, or titles by copyright, but names can have trademark rights and the expressive presentation of a game can be protected.
+## Fonts
+The project currently references Press Start 2P and VT323 from Google Fonts. Before commercial distribution, self-host the exact licensed font files and retain their license notices in the distribution.
 
-For a commercial launch, do not imply affiliation, sponsorship, or endorsement. Prefer original descriptions, original artwork, original sound, and original branding. If the project is marketed using third-party game names, perform a trademark clearance review for the countries in which the site will operate.
+## Legal scope
+This audit is a practical risk-reduction checklist, not a legal opinion or a guarantee that the site is free from every possible intellectual-property claim. Copyright generally does not protect game ideas, methods of play, or titles, but it can protect original expressive artwork, text, software expression, and sound recordings. Trademark law can protect source-identifying words, symbols, designs, and other marks.
 
-## Launch checklist
-- Confirm ownership/license for the supplied background image.
-- Keep font license notices and source records.
-- Keep a dated archive of original source files and creation history.
-- Do not add copied sprites, ROM assets, game music, logos, character art, screenshots, or ripped sound effects from the named games.
-- Add a site Terms/Privacy page before collecting accounts, analytics, or multiplayer data.
-- Obtain legal review before commercial launch if the site will use third-party game titles prominently or be monetized.
+For a commercial launch, perform a trademark search for the final product/game names in the countries where the site will be marketed and have counsel review the final art, names, fonts, music/sound, and third-party services.
