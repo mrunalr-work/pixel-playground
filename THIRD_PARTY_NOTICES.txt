@@ -1,0 +1,23 @@
+PIXEL PLAYGROUND — THIRD-PARTY NOTICES
+
+Fonts
+-----
+Press Start 2P
+Copyright (c) 2011 Cody "CodeMan38" Boisclair / Press Start 2P Project Authors.
+Licensed under the SIL Open Font License, Version 1.1.
+
+VT323
+Copyright (c) 2011 The VT323 Project Authors.
+Licensed under the SIL Open Font License, Version 1.1.
+
+The full SIL Open Font License text is available from the font projects / Google Fonts.
+
+Project assets
+--------------
+The Pixel Playground game interface, game rendering code, UI artwork, CSS effects, and Web Audio cues are project-created assets unless otherwise noted.
+
+Background
+----------
+The file public/background.png is the user/project-supplied Retro BG artwork. Commercial-use permission should be confirmed by the project owner before launch.
+
+No third-party ROMs, ripped sprites, game music, or extracted sound effects are bundled with this build.

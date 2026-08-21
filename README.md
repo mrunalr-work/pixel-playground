@@ -75,3 +75,21 @@ Current baseline: V23.
 - Typing Speed uses paragraph prompts.
 - Footer branding is Developed By Mrunal.
 - Mobile/desktop responsive fitting added without changing the V22 game mechanics.
+
+## V27 Locked Baseline
+
+- The existing game mechanics and visual aesthetic are frozen by default.
+- Desktop dashboard clearance is reserved so the game panel and menu never sit underneath the fixed dashboard.
+- The desktop game menu is sticky and collapsible; collapsing it gives the game panel the released horizontal space.
+- Mobile behavior remains responsive and separate from the desktop shell rules.
+- No game renderer/mechanic is intentionally changed by the V27 shell patch.
+- See `COPYRIGHT_AND_ASSET_AUDIT.md` and `THIRD_PARTY_NOTICES.txt` before public/commercial launch.
+
+## V27 Locked Baseline
+
+- The existing game mechanics and visual aesthetic are frozen by default.
+- Desktop dashboard clearance is reserved so the game panel and menu never sit underneath the fixed dashboard.
+- The desktop game menu is sticky and collapsible; collapsing it gives the game panel the released horizontal space.
+- Mobile behavior remains responsive and separate from the desktop shell rules.
+- No game renderer/mechanic is intentionally changed by the V27 shell patch.
+- See `COPYRIGHT_AND_ASSET_AUDIT.md` and `THIRD_PARTY_NOTICES.txt` before public/commercial launch.

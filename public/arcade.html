@@ -516,6 +516,22 @@ body.is-mobile .lobby{padding:5px}.hub{max-width:100%}.hub-tabs{overflow-x:auto;
   .side.is-collapsed .side-head{justify-content:center}
   .side.is-collapsed .menu-toggle{width:38px}
 }
+/* V27 LOCKED SHELL PATCH — spacing/collapse only; game mechanics untouched. */
+@media (min-width:761px){
+  :root{--dashboard-clearance:76px}
+  body{overflow-x:hidden}
+  .app{padding:var(--dashboard-clearance) 14px 60px !important}
+  .persistent-nav{height:60px;min-height:60px;align-items:center;flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin}
+  .persistent-nav::-webkit-scrollbar{height:5px}
+  .layout{grid-template-columns:minmax(210px,230px) minmax(0,1fr) !important;gap:12px;margin-top:14px !important;align-items:start}
+  .layout.menu-collapsed{grid-template-columns:58px minmax(0,1fr) !important}
+  .side{position:sticky !important;top:72px !important;max-height:calc(100vh - 84px) !important;overflow:auto !important}
+  .side.is-collapsed{width:58px !important}
+  .main{width:100%;min-width:0;align-self:start}
+  .screen,.center,.game-stage,.game-stage-inner{max-width:100%}
+  .screen{overflow:visible !important}
+}
+
 /* V26 MOBILE: every shell element uses available width; no fixed desktop widths leak in. */
 @media (max-width:760px){
   body.is-mobile .app{width:100%;max-width:100vw;overflow-x:hidden}
@@ -1234,13 +1250,20 @@ function refreshOpenRooms(){ /* server pushes updates; no polling required */ }
 
 // Rebind list and controls after all functions are defined.
 const navHomeBtn=$("navHome"); if(navHomeBtn)navHomeBtn.onclick=home;
-const menuToggle=$("menuToggle"), gameMenu=$("gameMenu");
+const menuToggle=$("menuToggle"), gameMenu=$("gameMenu"), layoutRoot=document.querySelector(".layout");
 if(menuToggle&&gameMenu){
-  menuToggle.onclick=()=>{
-    const collapsed=gameMenu.classList.toggle("is-collapsed");
+  const syncMenuState=()=>{
+    const collapsed=gameMenu.classList.contains("is-collapsed");
+    if(layoutRoot) layoutRoot.classList.toggle("menu-collapsed",collapsed);
     menuToggle.setAttribute("aria-expanded",String(!collapsed));
+    menuToggle.setAttribute("aria-label",collapsed?"Expand game menu":"Collapse game menu");
     menuToggle.textContent=collapsed?"☷":"☰";
   };
+  menuToggle.onclick=()=>{
+    gameMenu.classList.toggle("is-collapsed");
+    syncMenuState();
+  };
+  syncMenuState();
 }
 ui.back.onclick=()=>{if(ONLINE[current]&&roomId){socket.emit("room:leave");roomId="";}document.body.classList.remove("mobile-game-selected");showLobby();};
 ui.restart.onclick=()=>renderSelectedGame();

@@ -1,7 +1,7 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V23",
-  "rule": "This is the default Pixel Playground baseline. Preserve all game mechanics and the arcade layout in future builds unless the user explicitly requests a change.",
+  "version": "V27",
+  "rule": "This is the locked Pixel Playground baseline. Preserve all game mechanics, visual aesthetic, game sizing, controls, navigation, and responsive behavior in future builds unless the user explicitly requests a specific change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
   "mechanics": {
@@ -30,7 +30,7 @@
   },
   "presentation": {
     "background_image": "/background.png",
-    "footer_left": "\ud83c\udfae MADE BY MRU",
+    "footer_left": "🎮 DEVELOPED BY MRUNAL",
     "footer_right": "Live local date/time",
     "audio": "Web Audio synthesized game start/end cues",
     "footer_safe_area": true,
@@ -45,7 +45,7 @@
     "coin_in_animation": true,
     "ready_countdown": true,
     "professional_polish": true,
-    "responsive_scaling": "fit every selected game to its available stage with a 2% safety margin; no internal game scrolling",
+    "responsive_scaling": "Responsive shell; selected game content remains fully visible and page scrolling is allowed when needed. No internal game-area clipping.",
     "single_dashboard": true,
     "dashboard_home_button": "leftmost_yellow_button",
     "player_name": "fixed_dashboard_right",
@@ -107,7 +107,7 @@
     ]
   },
   "mechanicsLocked": true,
-  "build_version": "V23",
-  "layout_baseline": "V18 no-clip page-scroll model + V20 centered Wordle/2048/Tetris + fixed dashboard identity/home",
-  "notes": "Dashboard cleanup: yellow Pixel Playground home button, fixed player identity, remove legacy home heading, center Wordle/2048/Tetris compositions without changing mechanics."
+  "build_version": "V27",
+  "layout_baseline": "V27 locked baseline: fixed dashboard clearance + sticky/collapsible desktop game menu + responsive mobile shell + centered Wordle/2048/Tetris.",
+  "notes": "V27 locks the existing game mechanics and visual system. This build changes only shell spacing/collapse behavior and legal/asset documentation; no game mechanics are intentionally changed."
 }
