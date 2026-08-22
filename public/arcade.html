@@ -738,6 +738,147 @@ body.is-mobile .lobby{padding:5px}.hub{max-width:100%}.hub-tabs{overflow-x:auto;
   }
 }
 
+
+/* V32 MOBILE-ONLY FALLING BLOCKS FIX
+   Desktop is intentionally untouched.
+   - Center the actual gameplay board.
+   - Remove READY/status space.
+   - Put controls immediately below the board.
+   - Keep the complete control panel inside the page width.
+*/
+@media (max-width:760px){
+  body.is-mobile .game-stage[data-game="16"] .game-stage-inner{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0 auto!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:2px!important;
+    overflow:visible!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .game-stage-inner > .big{
+    margin:0 0 2px!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-wrap{
+    width:100%!important;
+    max-width:100%!important;
+    margin:0 auto!important;
+    padding:0!important;
+    display:flex!important;
+    flex-direction:column!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:0!important;
+    transform:none!important;
+    overflow:visible!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-board-frame{
+    position:relative!important;
+    flex:0 0 auto!important;
+    width:min(190px,68vw)!important;
+    height:auto!important;
+    margin:0 auto!important;
+    display:block!important;
+    overflow:visible!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] #tetrisCanvas{
+    display:block!important;
+    width:min(190px,68vw)!important;
+    height:auto!important;
+    max-width:none!important;
+    max-height:none!important;
+    margin:0 auto!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats{
+    position:absolute!important;
+    z-index:3!important;
+    top:5px!important;
+    left:6px!important;
+    right:6px!important;
+    width:auto!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:flex-start!important;
+    gap:4px!important;
+    pointer-events:none!important;
+    font:9px 'Press Start 2P'!important;
+    line-height:1.15!important;
+    text-align:left!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span{
+    white-space:nowrap!important;
+    text-shadow:2px 2px #07070b;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:nth-child(2){
+    position:absolute!important;
+    left:0!important;
+    top:13px!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:last-child{
+    margin-left:auto!important;
+    text-align:right!important;
+  }
+
+  body.is-mobile .game-stage[data-game="16"] #tetrisStatus{
+    display:none!important;
+    min-height:0!important;
+    height:0!important;
+    margin:0!important;
+    padding:0!important;
+  }
+
+  body.is-mobile .game-controls-16{
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    margin:2px auto 0!important;
+    padding:5px!important;
+    overflow:visible!important;
+  }
+
+  body.is-mobile .game-controls-16 .mobile-control-note{
+    font-size:11px!important;
+    line-height:1.05!important;
+    margin:0 0 4px!important;
+  }
+
+  body.is-mobile .game-controls-16 .mobile-control-grid{
+    width:100%!important;
+    max-width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+    margin:0!important;
+  }
+
+  body.is-mobile .game-controls-16 .mobile-control{
+    min-height:40px!important;
+    width:100%!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    font-size:15px!important;
+    line-height:1!important;
+    padding:5px!important;
+  }
+
+  body.is-mobile .center{
+    gap:2px!important;
+    padding-bottom:calc(16px + env(safe-area-inset-bottom))!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1506,72 +1647,3 @@ if(new URLSearchParams(location.search).has("game")) selectGame(current);
 })();
 </script>
 </body></html>
-/* V31 MOBILE-ONLY FALLING BLOCKS HUD/CONTROLS PATCH — desktop locked. */
-@media(max-width:760px){
-  body.is-mobile .game-stage[data-game="16"] .tetris-board-frame{
-    position:relative!important;
-    display:flex!important;
-    justify-content:center!important;
-    width:min(190px,68vw)!important;
-    margin:0 auto!important;
-  }
-  body.is-mobile .game-stage[data-game="16"] #tetrisCanvas{
-    width:min(190px,68vw)!important;
-    height:auto!important;
-    display:block!important;
-  }
-  body.is-mobile .game-stage[data-game="16"] .tetris-stats{
-    position:absolute!important;
-    z-index:3!important;
-    top:5px!important;
-    left:6px!important;
-    right:6px!important;
-    width:auto!important;
-    display:flex!important;
-    justify-content:space-between!important;
-    align-items:flex-start!important;
-    gap:4px!important;
-    margin:0!important;
-    pointer-events:none!important;
-    font:9px 'Press Start 2P'!important;
-    line-height:1.15!important;
-    text-align:left!important;
-  }
-  body.is-mobile .game-stage[data-game="16"] .tetris-stats span{
-    white-space:nowrap!important;
-    text-shadow:2px 2px #07070b;
-  }
-  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:last-child{
-    margin-left:auto!important;
-    text-align:right!important;
-  }
-  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:nth-child(2){
-    position:absolute!important;
-    left:0!important;
-    top:13px!important;
-  }
-  body.is-mobile .game-stage[data-game="16"] #tetrisStatus{
-    display:none!important;
-  }
-  body.is-mobile .game-controls-16{
-    width:100%!important;
-    margin:2px 0 0!important;
-    padding:5px!important;
-  }
-  body.is-mobile .game-controls-16 .mobile-control-note{
-    font-size:11px!important;
-    margin:0 0 4px!important;
-  }
-  body.is-mobile .game-controls-16 .mobile-control-grid{
-    width:100%!important;
-    display:grid!important;
-    grid-template-columns:repeat(2,minmax(0,1fr))!important;
-    gap:5px!important;
-  }
-  body.is-mobile .game-controls-16 .mobile-control{
-    min-height:40px!important;
-    width:100%!important;
-    font-size:15px!important;
-    padding:5px!important;
-  }
-}
