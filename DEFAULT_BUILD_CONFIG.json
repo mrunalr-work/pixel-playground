@@ -108,7 +108,7 @@
     ]
   },
   "mechanicsLocked": true,
-  "build_version": "V29",
+  "build_version": "V31",
   "layout_baseline": "V27 locked baseline: fixed dashboard clearance + sticky/collapsible desktop game menu + responsive mobile shell + centered Wordle/2048/Tetris.",
   "notes": "V29 preserves the locked baseline except for the explicitly requested mobile UI fixes, Memory card backs, and Brick Bounce paddle movement speed.",
   "mobilePolish": {
@@ -120,5 +120,6 @@
     "fallingBlocksNoNextWindow": true,
     "fallingBlocksCentered": true
   },
-  "mobile_patch": "V30: remove legacy mobile hub top gap; add multiplayer section spacing; scale Falling Blocks board to expose controls; make Brick Bounce touch controls full-width."
+  "mobile_patch": "V30: remove legacy mobile hub top gap; add multiplayer section spacing; scale Falling Blocks board to expose controls; make Brick Bounce touch controls full-width.",
+  "baseline": "V31"
 }

@@ -1168,7 +1168,7 @@ const MOBILE_MAP = {
   0:{note:"Tap the on-screen QWERTY keyboard.",buttons:[]},
   1:{note:"Swipe left/right to rotate • swipe up to thrust.",buttons:[["left","◀ ROTATE","ArrowLeft"],["thrust","▲ THRUST","ArrowUp"],["right","ROTATE ▶","ArrowRight"],["fire","🔥 FIRE"," ","primary"],["hyper","HYPERSPACE","h","wide"]]},
   2:{note:"Tap Rock, Paper or Scissors.",buttons:[]},3:{note:"Tap the number field and use your phone keyboard.",buttons:[]},4:{note:"Tap an empty square.",buttons:[]},5:{note:"Tap cards to flip them.",buttons:[]},6:{note:"Tap the yellow target.",buttons:[]},7:{note:"Tap the moving button.",buttons:[]},
-  8:{note:"Swipe in the direction you want Maze Chomper to move.",buttons:[]},9:{note:"Tap the paragraph box and type normally.",buttons:[]},10:{note:"Swipe to change direction. The snake starts on the first swipe.",buttons:[]},11:{note:"Use the on-screen arrows to move your paddle.",buttons:[]},12:{note:"Hold ◀ / ▶ to move the paddle.",buttons:[["left","◀","ArrowLeft"],["right","▶","ArrowRight"]]},13:{note:"Tap FLAP. The first tap starts the game.",buttons:[["flap","▲ FLAP","ArrowUp","primary","wide"]]},14:{note:"Tap a cell to reveal. Long-press a cell to flag it.",buttons:[]},15:{note:"Swipe in a direction or use the on-screen arrows.",buttons:[]},16:{note:"Tap the controls or swipe left/right/down.",buttons:[["left","◀","ArrowLeft"],["rotate","↻ ROTATE","ArrowUp"],["right","▶","ArrowRight"],["down","▼ SOFT DROP","ArrowDown"],["drop","⬇ HARD DROP"," ","primary","wide"]]}
+  8:{note:"Swipe in the direction you want Maze Chomper to move.",buttons:[]},9:{note:"Tap the paragraph box and type normally.",buttons:[]},10:{note:"Swipe to change direction. The snake starts on the first swipe.",buttons:[]},11:{note:"Use the on-screen arrows to move your paddle.",buttons:[]},12:{note:"Hold ◀ / ▶ to move the paddle.",buttons:[["left","◀","ArrowLeft"],["right","▶","ArrowRight"]]},13:{note:"Tap FLAP. The first tap starts the game.",buttons:[["flap","▲ FLAP","ArrowUp","primary","wide"]]},14:{note:"Tap a cell to reveal. Long-press a cell to flag it.",buttons:[]},15:{note:"Swipe in a direction or use the on-screen arrows.",buttons:[]},16:{note:"Tap a control or swipe left/right/down.",buttons:[["left","◀ LEFT","ArrowLeft"],["right","RIGHT ▶","ArrowRight"],["rotate","↻ ROTATE","ArrowUp"],["down","▼ SOFT DROP","ArrowDown"]]}
 };
 function mobileControlMarkup(){const cfg=MOBILE_MAP[current]||{note:"Tap the game controls shown on screen.",buttons:[]};const btns=(cfg.buttons||[]).map(b=>`<button type="button" class="mobile-control${b[3]==="primary"?" primary":""}${b[4]==="wide"?" wide":""}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("");let dpad="";if([8,10,11,15].includes(current)){const keys=current===11?[["up","▲","ArrowUp"],["down","▼","ArrowDown"]]:[["up","▲","ArrowUp"],["left","◀","ArrowLeft"],["right","▶","ArrowRight"],["down","▼","ArrowDown"]];dpad=`<div class="mobile-dpad">${keys.map(b=>`<button type="button" class="mobile-control ${b[0]}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("")}</div>`;}return `<div class="mobile-controls"><div class="mobile-control-note">${cfg.note}</div>${dpad}<div class="mobile-control-grid">${btns}</div></div>`;}
 function controlsPanel(){const items=CONTROL_MAP[current]||["USE THE CONTROLS SHOWN IN THE GAME"];return `<details class="game-controls game-controls-${current}" open aria-label="Game controls"><summary>CONTROLS ▾</summary><div class="desktop-control-grid"><div class="game-controls-title">${items[0]||"GAME CONTROLS"}</div><div class="game-control-grid">${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}</div></div>${mobileControlMarkup()}</details>`;}
@@ -1365,7 +1365,7 @@ const SOLO = {
     const W=10,H=20,CELL=24,board=Array.from({length:H},()=>Array(W).fill(0));let currentPiece,nextPiece,scoreT=0,lines=0,level=1,over=false,timer=null,dropMs=800;
     const SHAPES={I:[[1,1,1,1]],O:[[1,1],[1,1]],T:[[0,1,0],[1,1,1]],S:[[0,1,1],[1,1,0]],Z:[[1,1,0],[0,1,1]],J:[[1,0,0],[1,1,1]],L:[[0,0,1],[1,1,1]]};
     const COLORS={I:"#63b3ff",O:"#ffcc33",T:"#c58cff",S:"#55e6a5",Z:"#ff6070",J:"#7d8cff",L:"#ff9b54"};
-    center('<div class="big">FALLING BLOCKS</div><div class="tetris-wrap"><canvas id="tetrisCanvas" width="240" height="480"></canvas></div><div class="tetris-stats"><span>LINES <b id="tetrisLines">0</b></span><span>LEVEL <b id="tetrisLevel">1</b></span><span>SCORE <b id="tetrisScore">0</b></span></div><div id="tetrisStatus" class="status">READY</div>');
+    center('<div class="big">FALLING BLOCKS</div><div class="tetris-wrap"><div class="tetris-board-frame"><div class="tetris-stats"><span>LINES <b id="tetrisLines">0</b></span><span>LEVEL <b id="tetrisLevel">1</b></span><span>SCORE <b id="tetrisScore">0</b></span></div><canvas id="tetrisCanvas" width="240" height="480"></canvas></div></div><div id="tetrisStatus" class="status">READY</div>');
     const c=$("tetrisCanvas"),ctx=c.getContext("2d");
     function clone(m){return m.map(r=>r.slice());}function rotate(m){const h=m.length,w=m[0].length,out=Array.from({length:w},()=>Array(h).fill(0));for(let y=0;y<h;y++)for(let x=0;x<w;x++)out[x][h-1-y]=m[y][x];return out;}
     function makePiece(type){const m=clone(SHAPES[type]);return {type,m,x:Math.floor((W-m[0].length)/2),y:0};}function randomPiece(){const k=Object.keys(SHAPES)[Math.floor(Math.random()*7)];return makePiece(k);}
@@ -1506,3 +1506,72 @@ if(new URLSearchParams(location.search).has("game")) selectGame(current);
 })();
 </script>
 </body></html>
+/* V31 MOBILE-ONLY FALLING BLOCKS HUD/CONTROLS PATCH — desktop locked. */
+@media(max-width:760px){
+  body.is-mobile .game-stage[data-game="16"] .tetris-board-frame{
+    position:relative!important;
+    display:flex!important;
+    justify-content:center!important;
+    width:min(190px,68vw)!important;
+    margin:0 auto!important;
+  }
+  body.is-mobile .game-stage[data-game="16"] #tetrisCanvas{
+    width:min(190px,68vw)!important;
+    height:auto!important;
+    display:block!important;
+  }
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats{
+    position:absolute!important;
+    z-index:3!important;
+    top:5px!important;
+    left:6px!important;
+    right:6px!important;
+    width:auto!important;
+    display:flex!important;
+    justify-content:space-between!important;
+    align-items:flex-start!important;
+    gap:4px!important;
+    margin:0!important;
+    pointer-events:none!important;
+    font:9px 'Press Start 2P'!important;
+    line-height:1.15!important;
+    text-align:left!important;
+  }
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span{
+    white-space:nowrap!important;
+    text-shadow:2px 2px #07070b;
+  }
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:last-child{
+    margin-left:auto!important;
+    text-align:right!important;
+  }
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats span:nth-child(2){
+    position:absolute!important;
+    left:0!important;
+    top:13px!important;
+  }
+  body.is-mobile .game-stage[data-game="16"] #tetrisStatus{
+    display:none!important;
+  }
+  body.is-mobile .game-controls-16{
+    width:100%!important;
+    margin:2px 0 0!important;
+    padding:5px!important;
+  }
+  body.is-mobile .game-controls-16 .mobile-control-note{
+    font-size:11px!important;
+    margin:0 0 4px!important;
+  }
+  body.is-mobile .game-controls-16 .mobile-control-grid{
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    gap:5px!important;
+  }
+  body.is-mobile .game-controls-16 .mobile-control{
+    min-height:40px!important;
+    width:100%!important;
+    font-size:15px!important;
+    padding:5px!important;
+  }
+}
