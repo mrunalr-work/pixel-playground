@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V27",
+  "version": "V29",
   "rule": "This is the locked Pixel Playground baseline. Preserve all game mechanics, visual aesthetic, game sizing, controls, navigation, and responsive behavior in future builds unless the user explicitly requests a specific change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
@@ -13,7 +13,8 @@
     "Breakout": {
       "brick_shape": "box",
       "layout_changes_each_restart": true,
-      "paddle_hit_speed": "multiply current ball speed by 1.05 (5% increase)"
+      "paddle_hit_speed": "multiply current ball speed by 1.05 (5% increase)",
+      "paddle_speed": "1.20x movement speed"
     },
     "2048": {
       "grid_background": true,
@@ -30,7 +31,7 @@
   },
   "presentation": {
     "background_image": "/background.png",
-    "footer_left": "🎮 DEVELOPED BY MRUNAL",
+    "footer_left": "\ud83c\udfae DEVELOPED BY MRUNAL",
     "footer_right": "Live local date/time",
     "audio": "Web Audio synthesized game start/end cues",
     "footer_safe_area": true,
@@ -107,7 +108,16 @@
     ]
   },
   "mechanicsLocked": true,
-  "build_version": "V27",
+  "build_version": "V29",
   "layout_baseline": "V27 locked baseline: fixed dashboard clearance + sticky/collapsible desktop game menu + responsive mobile shell + centered Wordle/2048/Tetris.",
-  "notes": "V27 locks the existing game mechanics and visual system. This build changes only shell spacing/collapse behavior and legal/asset documentation; no game mechanics are intentionally changed."
+  "notes": "V29 preserves the locked baseline except for the explicitly requested mobile UI fixes, Memory card backs, and Brick Bounce paddle movement speed.",
+  "mobilePolish": {
+    "hideUnderlyingGameMenuWhenHubOpen": true,
+    "wordGridQwerty": true,
+    "memoryCardBackVisible": true,
+    "whackTargetLabelNoClip": true,
+    "brickBounceCenteredControls": true,
+    "fallingBlocksNoNextWindow": true,
+    "fallingBlocksCentered": true
+  }
 }

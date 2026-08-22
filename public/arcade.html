@@ -573,6 +573,71 @@ body.is-mobile .lobby{padding:5px}.hub{max-width:100%}.hub-tabs{overflow-x:auto;
   .main{min-width:0}
 }
 @media(max-width:760px){.dashboard-toggle{display:none!important}}
+
+/* V29 MOBILE POLISH + HUB VISIBILITY FIXES
+   Keep desktop mechanics/layout baseline intact. Mobile-only adjustments below. */
+.mem:not(.flipped):not(.matched){color:var(--a)!important;font-size:22px!important}
+.mem.flipped,.mem.matched{color:var(--a)!important}
+.tetris-stats{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;font:16px 'Press Start 2P';color:var(--ink);text-align:center}
+.tetris-stats b{color:var(--a)}
+@media(max-width:760px){
+  /* When the hub is open, the underlying game selector must never show through. */
+  body.is-mobile.modal-open .layout{visibility:hidden!important;pointer-events:none!important}
+  body.is-mobile.modal-open .lobby{background:rgba(8,8,14,.985)!important}
+  body.is-mobile.modal-open .hub{position:relative;z-index:2}
+
+  /* Word Grid: compact board + real phone-sized QWERTY layout. */
+  body.is-mobile .game-stage[data-game="0"] .game-stage-inner{padding:0 2px!important;gap:4px!important}
+  body.is-mobile .game-stage[data-game="0"] .big{font-size:13px!important;line-height:1.1!important;margin:0!important}
+  body.is-mobile .game-stage[data-game="0"] .wordle-rules,
+  body.is-mobile .game-stage[data-game="0"] .desc{font-size:11px!important;line-height:1.05!important;max-width:330px!important;margin:0 auto!important}
+  body.is-mobile .game-stage[data-game="0"] .wordle-grid{grid-template-columns:repeat(5,40px)!important;gap:3px!important;margin:2px auto!important}
+  body.is-mobile .game-stage[data-game="0"] .letter{width:40px!important;height:40px!important;font-size:15px!important;border-width:2px!important}
+  body.is-mobile .wordle-keys{width:min(100%,360px)!important;max-width:360px!important;gap:4px!important}
+  body.is-mobile .wordle-key-row{display:flex!important;justify-content:center!important;align-items:center!important;gap:3px!important;width:100%!important}
+  body.is-mobile .wordle-key-row .key{flex:1 1 0!important;width:auto!important;min-width:0!important;height:38px!important;padding:2px 0!important;font-size:15px!important;line-height:1!important}
+  body.is-mobile .wordle-key-row .key.wide{flex:0 0 52px!important;width:52px!important;min-width:52px!important;font-size:12px!important}
+
+  /* Whack target: never clip its label. */
+  body.is-mobile .mole{width:94px!important;max-width:94px!important;height:54px!important;font-size:12px!important;white-space:nowrap!important;padding:3px 4px!important;overflow:visible!important}
+  body.is-mobile .mole-field{height:min(44vh,270px)!important}
+
+  /* Brick Bounce controls and larger/faster paddle. */
+  body.is-mobile .game-controls-12{ text-align:center!important }
+  body.is-mobile .game-controls-12 .mobile-control-grid{justify-content:center!important;max-width:220px!important;margin:0 auto!important}
+
+  /* Falling Blocks: only the playfield + stats; no next-piece panel. */
+  body.is-mobile .game-stage[data-game="16"] .tetris-wrap{width:100%!important;justify-content:center!important;align-items:center!important;margin:0 auto!important}
+  body.is-mobile .game-stage[data-game="16"] #tetrisCanvas{width:min(240px,78vw)!important;height:auto!important;max-width:100%!important}
+  body.is-mobile .game-stage[data-game="16"] .tetris-stats{font-size:11px!important;gap:8px!important;margin-top:3px!important}
+  body.is-mobile .game-stage[data-game="16"] .big{font-size:13px!important}
+  body.is-mobile .game-controls-16{margin-top:5px!important}
+  body.is-mobile .game-controls-16 .mobile-control-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+
+
+@media(max-width:760px){
+  body.is-mobile .lobby{align-items:flex-start!important;justify-items:stretch!important;padding:47px 5px 5px!important;overflow:auto!important}
+  body.is-mobile .hub{width:100%!important;max-width:100%!important;max-height:calc(100vh - 52px)!important;overflow:auto!important;padding:9px!important}
+  body.is-mobile .hub-top{gap:7px;margin-bottom:7px;align-items:center}
+  body.is-mobile .hub-logo{font-size:12px!important;line-height:1.25!important}
+  body.is-mobile .hub-top .desc{font-size:11px!important}
+  body.is-mobile .hub-top .btn{font-size:13px!important;padding:6px 8px!important;box-shadow:2px 2px #07070b!important}
+  body.is-mobile .hub-tabs{gap:4px;padding:5px 0;margin-bottom:7px}
+  body.is-mobile .hub-tab{font-size:13px!important;padding:6px 7px!important}
+  body.is-mobile .multi-layout{grid-template-columns:1fr!important;gap:7px!important}
+  body.is-mobile .multi-games{grid-template-columns:1fr 1fr!important;gap:4px!important;margin:7px 0}
+  body.is-mobile .multi-game-btn{padding:7px!important;font-size:14px!important;min-width:0}
+  body.is-mobile .room-card{padding:9px!important}
+  body.is-mobile .room-card h2{font-size:10px!important;margin-bottom:5px!important}
+  body.is-mobile .room-card .desc{font-size:12px!important;line-height:1.1!important}
+  body.is-mobile .share-row,body.is-mobile .searchrow{flex-wrap:wrap!important}
+  body.is-mobile .share-row input,body.is-mobile .searchrow input{width:100%!important;flex:1 1 100%!important}
+  body.is-mobile .share-row .btn,body.is-mobile .searchrow .btn{flex:1 1 0;min-width:0}
+  body.is-mobile .profile-grid,body.is-mobile .stats-grid,body.is-mobile .achievement-grid{grid-template-columns:1fr!important;gap:6px!important}
+  body.is-mobile .stat-card,body.is-mobile .achievement-card,body.is-mobile .daily-card{padding:9px!important}
+}
+
 </style>
 </head>
 <body>
@@ -1006,7 +1071,7 @@ const MOBILE_MAP = {
   8:{note:"Swipe in the direction you want Maze Chomper to move.",buttons:[]},9:{note:"Tap the paragraph box and type normally.",buttons:[]},10:{note:"Swipe to change direction. The snake starts on the first swipe.",buttons:[]},11:{note:"Use the on-screen arrows to move your paddle.",buttons:[]},12:{note:"Hold ◀ / ▶ to move the paddle.",buttons:[["left","◀","ArrowLeft"],["right","▶","ArrowRight"]]},13:{note:"Tap FLAP. The first tap starts the game.",buttons:[["flap","▲ FLAP","ArrowUp","primary","wide"]]},14:{note:"Tap a cell to reveal. Long-press a cell to flag it.",buttons:[]},15:{note:"Swipe in a direction or use the on-screen arrows.",buttons:[]},16:{note:"Tap the controls or swipe left/right/down.",buttons:[["left","◀","ArrowLeft"],["rotate","↻ ROTATE","ArrowUp"],["right","▶","ArrowRight"],["down","▼ SOFT DROP","ArrowDown"],["drop","⬇ HARD DROP"," ","primary","wide"]]}
 };
 function mobileControlMarkup(){const cfg=MOBILE_MAP[current]||{note:"Tap the game controls shown on screen.",buttons:[]};const btns=(cfg.buttons||[]).map(b=>`<button type="button" class="mobile-control${b[3]==="primary"?" primary":""}${b[4]==="wide"?" wide":""}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("");let dpad="";if([8,10,11,15].includes(current)){const keys=current===11?[["up","▲","ArrowUp"],["down","▼","ArrowDown"]]:[["up","▲","ArrowUp"],["left","◀","ArrowLeft"],["right","▶","ArrowRight"],["down","▼","ArrowDown"]];dpad=`<div class="mobile-dpad">${keys.map(b=>`<button type="button" class="mobile-control ${b[0]}" data-mobile-action="${b[2]}" data-mobile-hold="${b[0]}">${b[1]}</button>`).join("")}</div>`;}return `<div class="mobile-controls"><div class="mobile-control-note">${cfg.note}</div>${dpad}<div class="mobile-control-grid">${btns}</div></div>`;}
-function controlsPanel(){const items=CONTROL_MAP[current]||["USE THE CONTROLS SHOWN IN THE GAME"];return `<details class="game-controls" aria-label="Game controls"><summary>CONTROLS ▾</summary><div class="desktop-control-grid"><div class="game-controls-title">${items[0]||"GAME CONTROLS"}</div><div class="game-control-grid">${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}</div></div>${mobileControlMarkup()}</details>`;}
+function controlsPanel(){const items=CONTROL_MAP[current]||["USE THE CONTROLS SHOWN IN THE GAME"];return `<details class="game-controls game-controls-${current}" open aria-label="Game controls"><summary>CONTROLS ▾</summary><div class="desktop-control-grid"><div class="game-controls-title">${items[0]||"GAME CONTROLS"}</div><div class="game-control-grid">${items.slice(1).map(x=>`<div class="game-control-item">${x}</div>`).join("")}</div></div>${mobileControlMarkup()}</details>`;}
 function dispatchMobileKey(key,type="keydown"){if(!key)return;const ev=new KeyboardEvent(type,{key:key===" "?" ":key,code:key===" "?"Space":key,bubbles:true,cancelable:true});window.dispatchEvent(ev);}
 function bindMobileControls(){if(!document.body.classList.contains("is-mobile"))return;document.querySelectorAll(".mobile-control[data-mobile-action]").forEach(btn=>{const key=btn.dataset.mobileAction;let active=false;const down=e=>{e.preventDefault();if(active)return;active=true;dispatchMobileKey(key,"keydown");};const up=e=>{e.preventDefault();if(!active)return;active=false;dispatchMobileKey(key,"keyup");};btn.addEventListener("pointerdown",down,{passive:false});btn.addEventListener("pointerup",up,{passive:false});btn.addEventListener("pointercancel",up,{passive:false});btn.addEventListener("pointerleave",up,{passive:false});});}
 function bindMobileGestures(){if(!document.body.classList.contains("is-mobile"))return;const stage=document.querySelector(".game-stage");if(!stage||![1,8,10,15,16].includes(current))return;let sx=0,sy=0,tracking=false;const start=e=>{if(e.touches?.length!==1)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;tracking=true;};const end=e=>{if(!tracking)return;tracking=false;const t=e.changedTouches?.[0];if(!t)return;const dx=t.clientX-sx,dy=t.clientY-sy;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;const key=Math.abs(dx)>Math.abs(dy)?(dx>0?"ArrowRight":"ArrowLeft"):(dy>0?"ArrowDown":"ArrowUp");dispatchMobileKey(key,"keydown");dispatchMobileKey(key,"keyup");};stage.addEventListener("touchstart",start,{passive:true});stage.addEventListener("touchend",end,{passive:true});}
@@ -1027,7 +1092,7 @@ const SOLO = {
   0: function(){
     const WORDS=["APPLE","BRAVE","CHAIR","CLOUD","CRANE","DREAM","FLAME","GRAPE","HOUSE","LIGHT","MOUSE","NIGHT","PLANT","ROBOT","SHARE","SMILE","SNAKE","SPACE","STONE","TRAIN","WATER","WORLD","ABOUT","ABOVE","ADULT","AFTER","AGAIN","ALONE","ANGEL","ANGLE","BEACH","BLACK","BRAIN","BREAD","BRICK","BRING","BROWN","BUILD","CARRY","CAUSE","CHESS","CHILD","CLEAN","CLEAR","CLOCK","COAST","COLOR","COUNT","COVER","CROWN","DANCE","DEATH","DEPTH","DOUBT","EARTH","EMPTY","ENJOY","EVERY","FAIRY","FAITH","FIELD","FINAL","FIRST","FLOOR","FRUIT","FUNNY","GIANT","GREEN","HEART","HONEY","HORSE","HOUSE","HUMAN","IDEAL","IMAGE","INNER","JOINT","KNIFE","LEARN","LEMON","LEVEL","LOCAL","LUCKY","MAGIC","MAKER","MARCH","METAL","MONEY","MUSIC","OCEAN","ORDER","OTHER","PAPER","PARTY","PEACE","PHONE","PIANO","PILOT","PLANE","PLATE","POINT","POWER","PRIDE","PRIME","QUEEN","QUIET","RADIO","RAINY","READY","ROBIN","ROUND","ROYAL","RULER","SCALE","SCHOOL","SHEEP","SHORT","SILLY","SMALL","SOLID","SOUND","SOUTH","SPOON","SPORT","STAGE","STAND","START","STEAM","STEEL","STORM","STORY","SUGAR","TABLE","TASTE","TEACH","THINK","TIGER","TODAY","TOUCH","TOWER","TRACK","TRADE","TRAIL","TRUST","UNCLE","UNDER","UNION","VALUE","VOICE","WATCH","WHEEL","WHITE","WHOLE","WOMAN","WORLD","WRITE","YOUNG","ZEBRA"].filter(w=>w.length===5);
     const answer=WORDS[Math.floor(Math.random()*WORDS.length)]; let row=0,guess="",gameOver=false; const keyState={};
-    center('<div class="big">WORD GRID</div><div class="desc">5-letter words only • 6 tries • common dictionary words; no pure proper names.</div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
+    center('<div class="big">WORD GRID</div><div class="desc"><span class="wordle-rules">5-letter words only • 6 tries • common dictionary words; no pure proper names.</span></div><div id="wordleGrid" class="wordle-grid"></div><div id="wordleStatus" class="status">Type letters or use your keyboard.</div><div id="wordleKeys" class="wordle-keys"></div>');
     const grid=$("wordleGrid"),status=$("wordleStatus"),keys=$("wordleKeys"); for(let i=0;i<30;i++){const d=document.createElement("div");d.className="letter";grid.appendChild(d);} const keyChars="QWERTYUIOPASDFGHJKLZXCVBNM",rank={absent:1,present:2,correct:3};
     function paintKey(ch,state){if(rank[state]>(rank[keyState[ch]]||0))keyState[ch]=state;const b=document.querySelector(`[data-key="${ch}"]`);if(b)b.className="key "+(keyState[ch]||"");}
     function submit(){if(guess.length!==5||gameOver)return;const cells=[...grid.children].slice(row*5,row*5+5),counts={};[...answer].forEach(ch=>counts[ch]=(counts[ch]||0)+1);const result=Array(5).fill("absent");[...guess].forEach((ch,i)=>{if(ch===answer[i]){result[i]="correct";counts[ch]--;}});[...guess].forEach((ch,i)=>{if(result[i]==="correct")return;if(counts[ch]>0){result[i]="present";counts[ch]--;}});[...guess].forEach((ch,i)=>{cells[i].textContent=ch;cells[i].className="letter "+result[i];paintKey(ch,result[i]);});if(guess===answer){status.textContent="YOU WIN!";addScore(100);gameOver=true;return;}row++;guess="";if(row>=6){status.textContent="GAME OVER — WORD: "+answer;gameOver=true}else status.textContent="Try again.";}
@@ -1077,7 +1142,7 @@ const SOLO = {
     const symbols=["◆","●","★","▲","■","♥","☀","☾"],deck=symbols.concat(symbols).sort(()=>Math.random()-.5);
     let first=null,lock=false,matched=0;
     center('<div class="mem-grid" id="memoryGrid"></div><div class="status" id="memoryStatus">Find all pairs.</div>');
-    deck.forEach(sym=>{const b=document.createElement("button");b.className="mem";b.textContent=sym;b.onclick=function(){if(lock||b.classList.contains("flipped"))return;b.classList.add("flipped");if(!first){first={b,sym};return;}lock=true;if(first.sym===sym){first.b.classList.add("matched");b.classList.add("matched");matched++;addScore(20);first=null;lock=false;if(matched===symbols.length)$("memoryStatus").textContent="YOU WIN!";}else{const old=first.b;setTimeout(()=>{old.classList.remove("flipped");b.classList.remove("flipped");first=null;lock=false;},550);}};$("memoryGrid").appendChild(b);});
+    deck.forEach(sym=>{const b=document.createElement("button");b.className="mem";b.dataset.symbol=sym;b.textContent="?";b.onclick=function(){if(lock||b.classList.contains("flipped")||b.classList.contains("matched"))return;b.classList.add("flipped");b.textContent=sym;if(!first){first={b,sym};return;}lock=true;if(first.sym===sym){first.b.classList.add("matched");b.classList.add("matched");matched++;addScore(20);first=null;lock=false;if(matched===symbols.length)$("memoryStatus").textContent="YOU WIN!";}else{const old=first.b;setTimeout(()=>{old.classList.remove("flipped");b.classList.remove("flipped");old.textContent="?";b.textContent="?";first=null;lock=false;},550);}};$("memoryGrid").appendChild(b);});
   },
   6: function(){
     let hits=0,time=20,timer;
@@ -1133,7 +1198,7 @@ const SOLO = {
     const timer=setInterval(()=>{if(!alive||!started)return;dir=next;const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.y<0||head.x>=cols||head.y>=rows||snake.some(p=>p.x===head.x&&p.y===head.y)){alive=false;$("snakeStatus").textContent="GAME OVER — SNAKE HIT THE BOUNDARY OR ITSELF";draw();return;}snake.unshift(head);if(head.x===food.x&&head.y===food.y){addScore(10);if(score>=500)awardAchievement("snake-master");do{food={x:Math.floor(Math.random()*cols),y:Math.floor(Math.random()*rows)}}while(snake.some(p=>p.x===food.x&&p.y===food.y));}else snake.pop();draw();},120);window.addEventListener("keydown",key);draw();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
   },
   12: function(){
-    center('<canvas id="breakoutCanvas" width="640" height="520"></canvas><div id="breakoutStatus" class="status">BRICK BOUNCE — CLEAR THE BOXES. PADDLE HIT = +5% SPEED.</div>');
+    center('<canvas id="breakoutCanvas" width="640" height="520"></canvas><div id="breakoutStatus" class="status">BRICK BOUNCE — CLEAR THE BOXES. PADDLE +20% FASTER.</div>');
     const c=$("breakoutCanvas"),ctx=c.getContext("2d");let level=1,scoreB=0,ended=false,bricks=[],ball,paddle,keys={l:false,r:false},speedBoost=1;
     const layouts=[()=>Array.from({length:50},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:40},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:45},(_,i)=>({r:Math.floor(i/10),col:i%10})),()=>Array.from({length:35},(_,i)=>({r:Math.floor(i/10),col:i%10}))];
     function buildLevel(){const base=layouts[(level-1)%layouts.length]();const shuffled=base.sort(()=>Math.random()-.5);const cols=[...Array(10).keys()];const rows=Math.max(...base.map(b=>b.r))+1;const jitter=()=>Math.floor(Math.random()*Math.max(1,10-Math.min(8,level-1)));const used=new Set();bricks=shuffled.map(b=>{let col=b.col,row=b.r;let tries=0;do{col=Math.floor(Math.random()*10);row=Math.floor(Math.random()*5);tries++;}while(used.has(row+","+col)&&tries<50);used.add(row+","+col);return {x:col*64+6,y:row*24+4,w:52,h:16,on:true};});paddle={x:255,w:130};const baseSpeed=4+Math.min(level-1,8)*.45;const a=Math.random()<.5?-1:1;ball={x:320,y:c.height-180,vx:a*baseSpeed,vy:-baseSpeed};speedBoost=1;ended=false;$("breakoutStatus").textContent=`LEVEL ${level} — ${bricks.length} BOXES — CLEAR THE WALL`;
@@ -1144,11 +1209,11 @@ const SOLO = {
     function resetBallFromPaddle(){ball.x=paddle.x+paddle.w/2;ball.y=c.height-38;const speed=(4+Math.min(level-1,8)*.45)*speedBoost;ball.vx=(Math.random()<.5?-1:1)*speed;ball.vy=-speed;}
     const kd=e=>{const k=e.key.toLowerCase();if(["arrowleft","arrowright","a","d"].includes(k))e.preventDefault();if(k==="arrowleft"||k==="a")keys.l=true;if(k==="arrowright"||k==="d")keys.r=true;};
     const ku=e=>{const k=e.key.toLowerCase();if(k==="arrowleft"||k==="a")keys.l=false;if(k==="arrowright"||k==="d")keys.r=false;};window.addEventListener("keydown",kd);window.addEventListener("keyup",ku);
-    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*8.75*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>c.height-45&&ball.y<c.height-10&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.05);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.05;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
+    let last=performance.now();function loop(now){if(ended)return;const dt=Math.min(2,(now-last)/16.67);last=now;paddle.x=Math.max(0,Math.min(640-paddle.w,paddle.x+(keys.r-keys.l)*10.5*dt));ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;if(ball.x<7){ball.x=7;ball.vx=Math.abs(ball.vx);}if(ball.x>633){ball.x=633;ball.vx=-Math.abs(ball.vx);}if(ball.y<7){ball.y=7;ball.vy=Math.abs(ball.vy);}if(ball.y>c.height-45&&ball.y<c.height-10&&ball.x>paddle.x-8&&ball.x<paddle.x+paddle.w+8&&ball.vy>0){const hit=(ball.x-(paddle.x+paddle.w/2))/(paddle.w/2);const speed=Math.max(2.25,Math.hypot(ball.vx,ball.vy)*1.05);const angle=hit*1.05-Math.PI/2;ball.vx=Math.cos(angle)*speed;ball.vy=Math.sin(angle)*speed;speedBoost*=1.05;$("breakoutStatus").textContent=`LEVEL ${level} — PADDLE HIT! SPEED ×${speedBoost.toFixed(2)}`;}
       for(const b of bricks){if(!b.on)continue;if(ball.x>b.x&&ball.x<b.x+b.w&&ball.y>b.y&&ball.y<b.y+b.h){b.on=false;ball.vy*=-1;scoreB+=10;addScore(10);break;}}
       if(bricks.every(b=>!b.on)){addScore(100);nextLevel();last=performance.now();requestAnimationFrame(loop);return;}
       if(ball.y>c.height){ended=true;$("breakoutStatus").textContent="YOU LOSE — BALL LOST";draw();return;}draw();requestAnimationFrame(loop);}
-    $("breakoutStatus").textContent="LEVEL 1 — BOXES CHANGE PLACEMENT EACH RESTART • PADDLE +5% SPEED";restart();requestAnimationFrame(loop);gameCleanup=()=>{ended=true;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
+    $("breakoutStatus").textContent="LEVEL 1 — BOXES CHANGE PLACEMENT EACH RESTART • PADDLE +20% FASTER";restart();requestAnimationFrame(loop);gameCleanup=()=>{ended=true;window.removeEventListener("keydown",kd);window.removeEventListener("keyup",ku);};
   },
   13: function(){
     center('<canvas id="flappyCanvas" width="640" height="420"></canvas><div id="flappyStatus" class="status">PRESS ↑ TO START</div>');const c=$("flappyCanvas"),ctx=c.getContext("2d");let bird={x:120,y:210,vy:0,r:12},pipes=[],frame=0,alive=true,started=false,scoreLocal=0;function spawn(){const gap=145,top=50+Math.random()*180;pipes.push({x:640,top,gap,w:52,passed:false});}function restart(){bird={x:120,y:210,vy:0,r:12};pipes=[];frame=0;scoreLocal=0;alive=true;started=false;$("flappyStatus").textContent="PRESS ↑ TO START";draw();}function flap(){if(!alive){restart();return;}if(!started){started=true;spawn();$("flappyStatus").textContent="↑ TO FLAP";}bird.vy=-7;}const key=e=>{if(e.key==="ArrowUp"){e.preventDefault();flap();}};window.addEventListener("keydown",key);const timer=setInterval(()=>{if(!alive||!started)return;frame++;if(frame%95===0)spawn();bird.vy+=0.38;bird.y+=bird.vy;pipes.forEach(p=>{p.x-=3.2;if(!p.passed&&p.x+p.w<bird.x){p.passed=true;scoreLocal++;addScore(10);}});pipes=pipes.filter(p=>p.x+p.w>-10);const hitWall=bird.y-bird.r<0||bird.y+bird.r>420,hitPipe=pipes.some(p=>bird.x+bird.r>p.x&&bird.x-bird.r<p.x+p.w&&(bird.y-bird.r<p.top||bird.y+bird.r>p.top+p.gap));if(hitWall||hitPipe){alive=false;$("flappyStatus").textContent="GAME OVER — PRESS ↑ TO RESTART";}draw();},16);function draw(){ctx.clearRect(0,0,c.width,c.height);ctx.fillStyle="#ffcc33";pipes.forEach(p=>{ctx.fillRect(p.x,0,p.w,p.top);ctx.fillRect(p.x,p.top+p.gap,p.w,420-(p.top+p.gap));});ctx.fillStyle="#3b9cff";ctx.beginPath();ctx.arc(bird.x,bird.y,bird.r,0,Math.PI*2);ctx.fill();ctx.fillStyle="#1976d2";ctx.beginPath();ctx.ellipse(bird.x-4,bird.y+3,7,4,-0.35,0,Math.PI*2);ctx.fill();ctx.fillStyle="#ffcc33";ctx.beginPath();ctx.moveTo(bird.x+9,bird.y);ctx.lineTo(bird.x+17,bird.y+3);ctx.lineTo(bird.x+9,bird.y+6);ctx.closePath();ctx.fill();ctx.fillStyle="#111";ctx.beginPath();ctx.arc(bird.x+5,bird.y-5,2,0,Math.PI*2);ctx.fill();ctx.font="24px VT323";ctx.fillStyle="#f4f0dc";ctx.fillText("SCORE "+scoreLocal,20,30);}restart();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",key);};
@@ -1200,8 +1265,8 @@ const SOLO = {
     const W=10,H=20,CELL=24,board=Array.from({length:H},()=>Array(W).fill(0));let currentPiece,nextPiece,scoreT=0,lines=0,level=1,over=false,timer=null,dropMs=800;
     const SHAPES={I:[[1,1,1,1]],O:[[1,1],[1,1]],T:[[0,1,0],[1,1,1]],S:[[0,1,1],[1,1,0]],Z:[[1,1,0],[0,1,1]],J:[[1,0,0],[1,1,1]],L:[[0,0,1],[1,1,1]]};
     const COLORS={I:"#63b3ff",O:"#ffcc33",T:"#c58cff",S:"#55e6a5",Z:"#ff6070",J:"#7d8cff",L:"#ff9b54"};
-    center('<div class="big">FALLING BLOCKS</div><div class="tetris-wrap"><canvas id="tetrisCanvas" width="240" height="480"></canvas><div class="tetris-side"><div>NEXT</div><canvas id="tetrisNext" width="120" height="120"></canvas><div>LINES <b id="tetrisLines">0</b></div><div>LEVEL <b id="tetrisLevel">1</b></div><div>SCORE <b id="tetrisScore">0</b></div><div class="keyhint">← → MOVE<br>↑ ROTATE<br>↓ SOFT DROP<br>SPACE HARD DROP</div></div></div><div id="tetrisStatus" class="status">READY</div>');
-    const c=$("tetrisCanvas"),ctx=c.getContext("2d"),nc=$("tetrisNext"),nctx=nc.getContext("2d");
+    center('<div class="big">FALLING BLOCKS</div><div class="tetris-wrap"><canvas id="tetrisCanvas" width="240" height="480"></canvas></div><div class="tetris-stats"><span>LINES <b id="tetrisLines">0</b></span><span>LEVEL <b id="tetrisLevel">1</b></span><span>SCORE <b id="tetrisScore">0</b></span></div><div id="tetrisStatus" class="status">READY</div>');
+    const c=$("tetrisCanvas"),ctx=c.getContext("2d");
     function clone(m){return m.map(r=>r.slice());}function rotate(m){const h=m.length,w=m[0].length,out=Array.from({length:w},()=>Array(h).fill(0));for(let y=0;y<h;y++)for(let x=0;x<w;x++)out[x][h-1-y]=m[y][x];return out;}
     function makePiece(type){const m=clone(SHAPES[type]);return {type,m,x:Math.floor((W-m[0].length)/2),y:0};}function randomPiece(){const k=Object.keys(SHAPES)[Math.floor(Math.random()*7)];return makePiece(k);}
     function collides(p,m=p.m,px=p.x,py=p.y){for(let y=0;y<m.length;y++)for(let x=0;x<m[y].length;x++)if(m[y][x]){const bx=px+x,by=py+y;if(bx<0||bx>=W||by>=H||by>=0&&board[by][bx])return true;}return false;}
@@ -1214,7 +1279,7 @@ const SOLO = {
     function rotatePiece(){if(over)return;const r=rotate(currentPiece.m);const kicks=[0,-1,1,-2,2];for(const k of kicks)if(!collides(currentPiece,r,currentPiece.x+k,currentPiece.y)){currentPiece.m=r;currentPiece.x+=k;draw();return;}}
     function hardDrop(){if(over)return;let d=0;while(!collides(currentPiece,currentPiece.m,currentPiece.x,currentPiece.y+1)){currentPiece.y++;d++;}scoreT+=d*2;$("tetrisScore").textContent=scoreT;merge();clearLines();spawn();}
     function drawCell(g,x,y,type,size=CELL){g.fillStyle=COLORS[type]||"#55516f";g.fillRect(x*size+1,y*size+1,size-2,size-2);g.strokeStyle="#11111b";g.strokeRect(x*size+1,y*size+1,size-2,size-2);}
-    function draw(){ctx.fillStyle="#09090f";ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle="#202038";for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*CELL,0);ctx.lineTo(x*CELL,H*CELL);ctx.stroke();}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*CELL);ctx.lineTo(W*CELL,y*CELL);ctx.stroke();}for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,board[y][x]);if(currentPiece&&!over)for(let y=0;y<currentPiece.m.length;y++)for(let x=0;x<currentPiece.m[y].length;x++)if(currentPiece.m[y][x])drawCell(ctx,currentPiece.x+x,currentPiece.y+y,currentPiece.type);nctx.fillStyle="#09090f";nctx.fillRect(0,0,120,120);if(nextPiece){const ox=Math.floor((5-nextPiece.m[0].length)/2),oy=Math.floor((5-nextPiece.m.length)/2);for(let y=0;y<nextPiece.m.length;y++)for(let x=0;x<nextPiece.m[y].length;x++)if(nextPiece.m[y][x])drawCell(nctx,ox+x,oy+y,nextPiece.type,22);}}
+    function draw(){ctx.fillStyle="#09090f";ctx.fillRect(0,0,c.width,c.height);ctx.strokeStyle="#202038";for(let x=0;x<=W;x++){ctx.beginPath();ctx.moveTo(x*CELL,0);ctx.lineTo(x*CELL,H*CELL);ctx.stroke();}for(let y=0;y<=H;y++){ctx.beginPath();ctx.moveTo(0,y*CELL);ctx.lineTo(W*CELL,y*CELL);ctx.stroke();}for(let y=0;y<H;y++)for(let x=0;x<W;x++)if(board[y][x])drawCell(ctx,x,y,board[y][x]);if(currentPiece&&!over)for(let y=0;y<currentPiece.m.length;y++)for(let x=0;x<currentPiece.m[y].length;x++)if(currentPiece.m[y][x])drawCell(ctx,currentPiece.x+x,currentPiece.y+y,currentPiece.type);}
     const kd=e=>{const k=e.key;if(["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"," "].includes(k))e.preventDefault();if(k==="ArrowLeft")move(-1);else if(k==="ArrowRight")move(1);else if(k==="ArrowUp")rotatePiece();else if(k==="ArrowDown")drop();else if(k===" ")hardDrop();};window.addEventListener("keydown",kd);nextPiece=randomPiece();spawn();resetTimer();gameCleanup=()=>{clearInterval(timer);window.removeEventListener("keydown",kd);};
   }
 };

@@ -101,3 +101,15 @@ Current baseline: V23.
 - Mobile behavior remains responsive and separate from the desktop shell rules.
 - No game renderer/mechanic is intentionally changed by the V27 shell patch.
 - See `COPYRIGHT_AND_ASSET_AUDIT.md` and `THIRD_PARTY_NOTICES.txt` before public/commercial launch.
+
+## V29 Mobile UI Patch
+
+V29 preserves the locked game baseline and applies only the requested mobile/visual fixes:
+- hides the underlying game selector while the hub is open on mobile;
+- compacts Word Grid and provides a touch-friendly QWERTY keyboard;
+- gives Memory Card Match a visible card-back marker;
+- prevents Whack-a-Mole target text clipping;
+- centers Brick Bounce mobile controls and increases paddle movement speed by 20%;
+- removes the Falling Blocks next-piece panel and centers its playfield;
+- keeps controls visible below the Falling Blocks game;
+- tightens mobile multiplayer/profile/achievement hub layouts.
