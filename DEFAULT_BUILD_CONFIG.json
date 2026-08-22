@@ -1,6 +1,6 @@
 {
   "name": "Pixel Playground Default Baseline",
-  "version": "V29",
+  "version": "V30",
   "rule": "This is the locked Pixel Playground baseline. Preserve all game mechanics, visual aesthetic, game sizing, controls, navigation, and responsive behavior in future builds unless the user explicitly requests a specific change.",
   "game_count": 17,
   "layout": "Retro arcade: game list sidebar + selected game panel + compact controls tab",
@@ -119,5 +119,6 @@
     "brickBounceCenteredControls": true,
     "fallingBlocksNoNextWindow": true,
     "fallingBlocksCentered": true
-  }
+  },
+  "mobile_patch": "V30: remove legacy mobile hub top gap; add multiplayer section spacing; scale Falling Blocks board to expose controls; make Brick Bounce touch controls full-width."
 }
